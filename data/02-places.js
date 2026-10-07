@@ -75,6 +75,8 @@ const PLACES = {
   "Den Horn": P_(53.227, 6.447, "Zuidhorn", GR, { info: "Gronings dorp waar het gezin Boersma–Terwisscha van Scheltinga tussen 1915 en 1919 woonde." }),
   "Oudega": P_(52.992, 5.549, "Wymbritseradeel", FR, { name: "Oudega (Wymbritseradeel)" }),
   "Harich": P_(52.903, 5.566, "Gaasterland", FR),
+  "Ruigahuizen": P_(52.913, 5.587, "Gaasterland", FR),
+  "Sonnega": P_(52.889, 5.993, "Weststellingwerf", FR),
   "Zorgvliet": P_(52.922, 6.255, "Diever", DR, { name: "Zorgvliet (Diever)", info: "Drents dorp net over de grens met Weststellingwerf, ook gespeld als Zorgvlied. Meinte Boersma en Marianna Terwisscha van Scheltinga overleden hier." }),
   "Meppel": P_(52.696, 6.194, "Meppel", DR),
   "Scharnegoutum": P_(53.060, 5.678, "Wymbritseradeel", FR, { info: "Dorp ten noorden van Sneek. Hier woonden de Terwisscha's rond 1846–1859 en de Huitema's rond 1918–1925; Akke Huitema werd er in 1925 geboren." }),
