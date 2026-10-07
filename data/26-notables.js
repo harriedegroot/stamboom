@@ -1,0 +1,82 @@
+/* =====================================================================
+   BEKENDE VERWANTEN EN GELD
+   NOTABLES: mensen in of dicht bij de stamboom die in de geschiedenis
+   worden genoemd. verdict: 'bewezen' | 'waarschijnlijk' | 'niet bewezen'
+   | 'geen verband'. path: de stappen van voorouder naar de persoon.
+   MONEY: bedragen uit akten, met een maatstaf om ze te vergelijken.
+   ===================================================================== */
+const NOTABLES = [
+{ id: "brandsma", n: "Titus Brandsma", alt: "geboren als Anno Sjoerd Brandsma", y: "1881–1942", verdict: "bewezen", st: "A", kws: [104, 105, 52, 26, 13],
+  role: "Karmeliet, hoogleraar filosofie en mystiek en rector magnificus van de Katholieke Universiteit Nijmegen. Als geestelijk adviseur van de katholieke journalisten bracht hij in 1942 de oproep van de bisschoppen rond om geen NSB-propaganda te plaatsen. Hij werd gearresteerd en kwam op 26 juli 1942 in Dachau om het leven. Zalig verklaard in 1985, heilig verklaard op 15 mei 2022.",
+  rel: "Achterkleinzoon van voorvader Assuerus Terwisscha van Scheltinga (kw 104), en daarmee een achterneef van Marianna Terwisscha van Scheltinga (kw 13), de grootmoeder van Vronie. Via het gedeelde voorouderpaar Titus Bokkes en Abeltje Jans is hij ook aan de kant van Kees verwant.",
+  path: [["Assuerus Terwisscha van Scheltinga (1786–1857), koopman en landbouwer in Oosterwierum", 104], ["zijn dochter Apollonia Theodora (ca. 1812–1877) trouwt in 1832 met Hendrik Mevis Brandsma op Ugoklooster"], ["hun zoon Titus Brandsma (1843–1920), boer op Ugoklooster, trouwt in 1870 met Tjitje Postma"], ["hun zoon Anno Sjoerd (1881–1942), in het klooster Titus genoemd, naar zijn vader"]],
+  notes: ["Hij werd geboren op Ugoklooster bij Bolsward, de boerderij waar zijn grootouders Hendrik en Apollonia in 1832 al woonden.", "Zijn vader Titus (1843) was een volle neef van Jacobus Terwisscha van Scheltinga (kw 26), de overgrootvader van Vronie.", "Vijf van de zes kinderen uit het gezin Brandsma kozen voor het klooster."],
+  links: [["Huwelijk grootouders Brandsma × Terwisscha van Scheltinga, 1832", OA + "frl:3d01ad88-167d-1167-5dca-8420507f5131"], ["Geboorte vader Titus Brandsma, 1843", OA + "frl:957117df-4cb7-e7bc-ea8d-713e5ef269e1"], ["Huwelijk ouders Titus Brandsma × Tjitje Postma, 1870", OA + "frl:7c12fb3b-ea37-d270-d72d-e09f85d2b469"], ["Geboorte Anno Sjoerd Brandsma, Ugoklooster 1881", OA + "frl:9cfcd0a2-d405-e7a0-31a7-e22b3f09bf3a"], ["Overlijden grootmoeder Apollonia, Bolsward 1877", OA + "frl:6891003e-ee12-4743-366e-348fbec64eca"], ["Bidprentje grootmoeder Apollonia", OA + "rkf:ba08e84e-1618-79fd-4a62-48968268a01b"], ["Korte biografie (Karmelieten)", "https://carmelite.org/wp-content/uploads/2022/03/Brandsma-DL-leaflet-1-A-brief-biography.pdf"], ["Wikipedia: Titus Brandsma", "https://en.wikipedia.org/wiki/Titus_Brandsma"]] },
+{ id: "spitzen", n: "Otto Antonius Spitzen", y: "1823–1889", verdict: "bewezen", st: "A", kws: [188, 189, 94, 47],
+  role: "Priester. Kapelaan in Zwolle en Groningen, hoogleraar aan het grootseminarie Warmond (1851–1857), pastoor in Heino en vanaf 1866 in Zwolle, kanunnik van het Metropolitaan Kapittel en eredienaar van paus Pius IX. Hij schreef geleerde werken die verdedigden dat Thomas a Kempis de schrijver is van de Navolging van Christus.",
+  rel: "Volle neef van voormoeder Apollonia Spitzen (kw 47): zijn vader Hendrik was een broer van Gosse Spitzen (kw 94). Kleinzoon van Jan Spitzen en Annigje Visser (kw 188/189).",
+  path: [["Jan Spitzen en Annigje Hendriks Visser, Steenwijkerwold", 188], ["hun zoon Hendrik Spitzen trouwt in 1817 met Maria Fleer"], ["hun zoon Otto Antonius (1823–1889), geboren in Steenwijkerwold"]],
+  notes: ["Zijn overlijdensakte (Zwolle 1889) noemt hem pastoor, 65 jaar, geboren in Steenwijkerwold, zoon van Hendrik Spitzen en Maria Fleer. Het huwelijk van zijn ouders noemt als ouders van Hendrik: Jan Spitzen en Anna Hendriks."],
+  links: [["Overlijdensakte Zwolle 1889", OA + "hco:12A85BA2-7874-4F80-A62C-DDD91A6CC78D"], ["Huwelijk ouders Hendrik Spitzen × Maria Fleer, 1817", OA + "hco:4D5B0A6D-A323-49D6-BFEA-23862FDE8FAF"], ["Biografie (DBNL)", "https://dbnl.org/tekst/bran038biog01_01/bran038biog01_01_3878.php"]] },
+{ id: "lycklama", n: "Lubartus Hoytes Lycklama à Nijeholt", y: "ca. 1833", verdict: "niet bewezen", st: "A", kws: [37, 74, 75, 36],
+  role: "Landbouwer, uit een katholieke tak met de naam van het bekende Friese geslacht Lycklama à Nijeholt. Die familie leverde vanaf 1514 grietmannen in de Stellingwerven, later Kamerleden en een burgemeester van Rotterdam; één tak werd in 1817 in de adelstand verheven. Of de tak van Lubartus daar aantoonbaar bij hoort, is niet met bronnen bewezen.",
+  rel: "Aangetrouwd: hij trouwde in 1856 met Brandje Hoeben, de zus van voormoeder Trijntje Hoeben (kw 37). Zijn vader Hoyte verkocht in 1855 weiland aan Gerrit Kingma (kw 36).",
+  path: [["Jan Pieters Hoeben en Japke de Boer, winkeliers in Oosterwierum", 74], ["hun dochter Brandje (IJsbrandtje) trouwt in 1856 met Lubartus Hoytes Lycklama à Nijeholt"]],
+  notes: ["Eerdere versies van deze site noemden hem 'Lambertus H.'; de huwelijksakte zegt Lubartus Hoytes.", "Een tweede naamgenoot: voormoeder Aukje Lyklama uit Oudeschoot (kw 497), die in 1755 met Jan Westendorp trouwde. Ook bij haar is een band met het geslacht niet onderzocht.", "Een spoor dat het verband iets dichterbij brengt, maar niet bewijst: een Likle Lubbartus Lyklama, vermoedelijk een broer van Aukje, werd in 1790 burger van Dokkum als 'Likle Lubbartus Lyklama a Nijheholt'. Deze tak gebruikte de volledige naam dus ten minste één keer."],
+  links: [["Huwelijk Baarderadeel 1856", OA + "frl:02b394e3-1646-aacd-38ab-da44d6b5e404"], ["Stamboom Lycklama à Nijeholt (online, zonder bronnen)", "https://www.genealogieonline.nl/stamboom-lycklama-a-nijeholt/I8902792.php"], ["Biografie stamvader Lyckle Eebles (DBNL)", "https://www.dbnl.org/onzekinderboeken/tekst/aa__001biog06_01/aa__001biog06_01_0037.php"]] },
+{ id: "spanga", n: "Jacobus van Spanga", alt: "Jacob Jans Spanga", y: "ca. 1616–1679", verdict: "waarschijnlijk", st: "B", kws: [1666, 833, 832, 416, 208],
+  role: "Inwoner van Makkum, begraven onder een grafsteen die hij deelt met leden van de familie Lieukema. In de index van een trouwregister uit 1664 heet hij 'jonkheer': een titel voor iemand van adel. Of dat klopt, moet op de scan worden nagekeken.",
+  rel: "Vermoedelijk de vader van voormoeder Geertje Jacobi Spanga (kw 833), en daarmee een voorvader van Titus Bokkes en dus van zowel Kees als Vronie.",
+  path: [["Jacobus Spanga, overleden Makkum 1679", 1666], ["zijn dochter Geertje trouwt in 1692 met Bocco Seerps Scheltinga", 833], ["hun zoon Bocke Bockes 'Posthumus'", 416], ["diens zoon Titus Bokkes, geboren 1726 in Allingawier", 208]],
+  notes: ["Als de titel jonkheer klopt, is dit de enige voorouder met een adellijk predicaat. Tot de scan bekeken is, blijft dat onbewezen; daarom staat hier 'waarschijnlijk' voor de verwantschap, niet voor de adel.", "In 1698 bezaten de Spanga's als katholieken land in Ter Idzard, Blesdijke en het dorp Spanga in Weststellingwerf. De naam 'van Spanga' wijst dus eerder op herkomst uit dat dorp dan op adel.", "Ook bij de Scheltinga's was er een spoor naar aanzien: in 1698 en 1728 stonden zij als katholieke grondeigenaren in Arum, naast een Godefridus Scheltinga met 77 pondematen. Een verband met de adellijke Van Scheltinga's is niet aangetoond."],
+  links: [["Grafsteen Makkum", OA + "frl:e5703ef2-9434-4aa4-afb0-566e6e07c47f"], ["Huwelijk 1664 ('jonkheer' in de index)", OA + "frl:ea6601ed-c20f-4b49-8fec-5ee700634891"], ["Huwelijk zoon Tiete 1678", OA + "frl:7a3f1e29-3984-4c14-b376-f585953163de"]] },
+{ id: "lieuwkema", n: "De familie Lieuwkema van Lieuwkemastate", alt: "Rein Meies Lieuwkema en Jeltje van Hoitema", y: "ca. 1553–1647", verdict: "niet bewezen", st: "D", kws: [6668, 6669, 3334, 1667, 1666],
+  role: "Katholieke eigenerfde familie op Lieuwkemastate bij Makkum. Hun grafsteen in de kerk van Makkum noemt Reyn Luickema (overleden 1608, 55 jaar), zijn vrouw Jelke van Hoytema (1625), hun dochter Fopck (1614) en hun zoon Gatse van Liuckema (1647). Een zoon Tiete maakte in 1629 een testament; een zilveren beker met de letters TVL en GVL zou van de broers zijn geweest.",
+  rel: "Mogelijk de voorouders van Trijntje Tietes Lieuwkema, de eerste vrouw van Jacobus Spanga, en via haar dochter Geertje van zowel Kees als Vronie. De stap van Trijntje naar Geertje en die van Tiete naar Trijntje zijn hypotheses.",
+  path: [["Rein Meies Lieuwkema en Jeltje van Hoitema", 6668], ["hun zoon Tiete Reins Lieuwkema, testament 1629", 3334], ["zijn dochter Trijntje, eerste vrouw van Jacobus Spanga", 1667], ["hun dochter Geertje Spanga, grootmoeder van Titus Bokkes", 833]],
+  notes: ["De Lieukema's bleven verbonden met de familie: in 1680 trouwde Tiete Liouckema uit Makkum met Sas Seerps Scheltinga, en hun dochter Sibrigh was de moeder van Acke Terwisscha.", "Jeltje van Hoitema was volgens De Walle een dochter van Rein Hoites van Hoitema en Fopkje Broers van Hylckama: namen uit het Friese landadel- en grietmannenmilieu. Dat is niet uit akten gecontroleerd."],
+  links: [["Grafsteen Makkum (index met De Walle)", OA + "frl:e5703ef2-9434-4aa4-afb0-566e6e07c47f"], ["Testament Tiete Reins Lieuwkema 1629", OA + "frl:0d6bbe88-fb8e-421c-9571-74526c2f9938"]] },
+{ id: "westendorp", n: "Martinus Westendorp", y: "ca. 1764–1826", verdict: "waarschijnlijk", st: "B", kws: [248, 496, 497],
+  role: "Afkomstig uit Steenwijk; in 1784 burger van Bolsward en daar boelgoedsontvanger (hij inde de opbrengst van openbare veilingen), later openbaar notaris in Sloten, waar hij in december 1826 overleed. Zijn zoon Lubertus Josephus Martinus werd arts in Alkmaar.",
+  rel: "Vrijwel zeker een broer van voorvader Johannes Jans Westendorp (kw 248), grutter in Balk. Beiden waren zonen van Jan Westendorp uit Steenwijk en Aukje Lyklama, en beiden woonden in 1811 in Balk.",
+  path: [["Jan Westendorp en Aukje Lyklama, getrouwd in Oudeschoot in 1755", 496], ["hun zoon Johannes Jans Westendorp, grutter in Balk", 248], ["zijn broer Martinus, notaris in Sloten"]],
+  notes: ["Een notaris was geen edelman of bestuurder, maar wel een man van aanzien in een kleine stad. Volgens zijn memorie van successie liet hij geen onroerend goed na."],
+  links: [["Burgerboek Bolsward 1784", OA + "frl:1fb49287-19da-4463-821b-e98f0299804b"], ["Memorie van successie Sloten 1826", OA + "frl:b435bd24-fe59-8679-12ca-115dbfe97b8a"], ["Huwelijk ouders, Oudeschoot 1755", OA + "frl:e3ac0afe-6856-4b03-b007-d132e5d9036f"]] },
+{ id: "overmeer", n: "Wybe Thomas Overmeer", y: "19e eeuw", verdict: "bewezen", st: "A", kws: [104],
+  role: "Houthandelaar en koopman in Makkum: in 1832 eigenaar in het kadaster, en tussen 1826 en 1870 vaak koper, verkoper of schuldeiser in notariële akten. Een welgesteld man, maar geen historisch bekende figuur.",
+  rel: "Schoonzoon van Assuerus Terwisscha van Scheltinga (kw 104): hij trouwde met diens dochter Maria. Zijn broer Hylke trouwde met haar zus Agatha.",
+  path: [["Assuerus Terwisscha van Scheltinga", 104], ["dochters Maria en Agatha trouwen met de broers Wybe en Hylke Thomas Overmeer"]],
+  links: [["Notariële akten en kadaster op naam", "https://api.openarch.nl/1.1/records/search.json?name=Wybe+Thomas+Overmeer"]] },
+{ id: "grietmannen", n: "Grietmannen ter Wischa en Van Scheltinga", y: "16e–18e eeuw", verdict: "geen verband", st: "C", kws: [208],
+  role: "Johannes ter Wischa was vanaf 1581 grietman van Ooststellingwerf; Martinus (de Blocq) van Scheltinga was in de 18e eeuw grietman van Lemsterland en Schoterland. Een grietman was het hoofd van bestuur en rechtspraak in een Friese gemeente.",
+  rel: "Alleen een gelijke naam. Titus Bokkes kwam uit een familie Scheltinga in Makkum; met deze grietmannen is geen verband aangetoond. Ook de eigenerfde Terwisscha's in Ter Idzard blijken geen bloedverwanten.",
+  links: [["Johannes ter Wischa (DBNL)", "https://www.dbnl.org/onzekinderboeken/tekst/aa__001biog24_01/aa__001biog24_01_0701.php"], ["Martinus van Scheltinga (DBNL)", "https://www.dbnl.org/tekst/aa__001biog20_01/aa__001biog20_01_0498.php"]] }
+];
+
+/* Geraakt door de grote geschiedenis */
+const HISTORY_TOUCH = [
+  { y: "1698", kw: 520, t: "Katholiek in het stemkohier", d: "Ids Entses staat in het stemkohier van Langezwaag als mede-eigenaar van een stemdragende boerderij, met de aantekening 'papist'." },
+  { y: "1746", kw: 160, t: "De veepest", d: "Halverwege de 18e eeuw stierf in Friesland een groot deel van het vee aan de veepest. In het belastingkohier van 1749 staat bij Pier Tysses, boer in Joure en vermoedelijk een broer van voorvader Hylke Tysses: 'beesten verlooren'. Rond deze jaren trokken Titus Bokkes en zijn zussen van Makkum naar Weststellingwerf; of er een verband is, weten we niet." },
+  { y: "1793", kw: 96, t: "Van doopsgezind naar katholiek", d: "Minne Meintes Boersma en zijn broer laten zich als volwassenen katholiek dopen; hun vader blijft mennoniet." },
+  { y: "1811", kw: 64, t: "Napoleon en de achternamen", d: "Onder Frans bewind laten de families hun achternaam inschrijven: Kingma, Boesma, Westendorp, De Jong, en in 1812 De Groot en Ten Berge." },
+  { y: "1825", kw: 88, t: "De watersnood van februari 1825", d: "Bij de grootste watersnood van de 19e eeuw kwamen 379 mensen om, 305 in Overijssel; 60 procent van Friesland stond onder water. De Belts woonden toen in Kuinre aan de Zuiderzeekust; in het buurdorp Blankenham verdronken 28 van de 280 inwoners. Hoe het de Belts verging, is niet bekend." },
+  { y: "1826", kw: 210, t: "Het koortsjaar", d: "Na de watersnood volgde de malaria. In deze stamboom overleden in 1826 zeven voorouders, zes van hen tussen juli en november, onder wie de heelmeester Jan Koelman in Workum. Een doodsoorzaak staat niet in de akten." },
+  { y: "1856", kw: 52, t: "Een zoon op internaat in Brabant", d: "Johannes Terwisscha van Scheltinga overlijdt veertien jaar oud in Oudenbosch, waar het katholieke internaat Saint Louis stond." },
+  { y: "na 1865", kw: 122, t: "Naar Amerika", d: "Matthyas Asma, broer van voormoeder Marijke Asma, hertrouwt in 1865 in Gaasterland, emigreert daarna en overlijdt in 1909 in Waukegan bij Chicago." },
+  { y: "1942", kw: 104, t: "Dachau", d: "Titus Brandsma, achterkleinzoon van Assuerus Terwisscha van Scheltinga, komt om in concentratiekamp Dachau." },
+  { y: "1945", kw: 21, t: "Sumatra", d: "Elisabeth Gras, halfzus van Albert de Vries, de grootvader van Kees, overlijdt in april 1945 in Belatan op Sumatra, vermoedelijk in Japanse internering." },
+  { y: "1993", kw: 7, t: "Canada", d: "Johannes Piet Huitema, broer van Akke Huitema, de moeder van Vronie, overlijdt in Calgary." }
+];
+
+/* Bedragen uit de akten, en een maatstaf */
+const MONEY = [
+  { y: 1819, kw: 208, amt: 47313, t: "Boedelscheiding Terwisscha van Scheltinga", d: "onroerend goed in Oost- en Weststellingwerf, verdeeld onder vier kinderen" },
+  { y: 1840, kw: 98, amt: 26000, t: "Boedelscheiding Teppema", d: "boerderij met land, huis, schuur en watermolen" },
+  { y: 1855, kw: 36, amt: 7174, t: "Gerrit Kingma koopt weiland", d: "drie percelen greidland in Roordahuizum" },
+  { y: 1916, kw: 16, amt: 25415, t: "Boedelscheiding Hermanus de Groot", d: "onroerend goed onder Oldeholtpade en Oldetrijne" },
+  { y: 1919, kw: 8, amt: 9000, t: "Kornelis de Groot koopt van zijn zus", d: "huis met hooiland" },
+  { y: 1896, kw: 16, amt: 1000, t: "Hermanus de Groot koopt land", d: "land in Oldetrijne" },
+  { y: 1818, kw: 209, amt: 1320, t: "Abeltje Jans verkoopt twee huizen", d: "huizen met tuin in Oldeholtpade, uit de erfenis van haar broer" },
+  { y: 1825, kw: 66, amt: 187, t: "Harmen Bosma koopt een oogst", d: "veldvruchten van zes percelen bouwland in Steggerda" }
+];
+const WAGE = { y: 1819, low: 0.5, high: 0.8, days: 300, src: ["Brugmans, De arbeidende klasse in Nederland in de 19e eeuw (DBNL)", "https://dbnl.org/tekst/brug035arbe01_01/brug035arbe01_01_0004.php"], d: "Volgens de nijverheidsenquête van 1819 verdienden volwassen arbeiders buiten Holland en Zeeland meestal 50 tot 80 cent per dag: met ongeveer 300 werkdagen 150 tot 240 gulden per jaar. Voor landarbeiders noemt deze bron geen bedrag; het geeft een orde van grootte." };

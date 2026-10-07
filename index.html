@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Stamboom De Groot · Boersma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+<div class="treebar" id="treebar"><div class="wrap">
+  <span class="tb-lbl" id="tbLbl">Stamboom van</span>
+  <div class="tb-seg" role="group" aria-labelledby="tbLbl">
+    <button data-tree="h" aria-pressed="true"><b>Harrie</b><span>De Groot · Boersma</span></button>
+    <button data-tree="s" aria-pressed="false"><b>Marit, Tijmen &amp; Jorn</b><span>De Groot · Hoekstra</span></button>
+    <button data-tree="a" aria-pressed="false"><b>Alies</b><span>Hoekstra · Bakker</span></button>
+  </div>
+</div></div>
+
+<header class="top">
+  <div class="wrap">
+    <button class="brand" data-go="overzicht">De Groot · Boersma<small>stamboom</small></button>
+    <nav class="tabs" role="tablist" aria-label="Onderdelen">
+      <button role="tab" data-view="overzicht">Overzicht</button>
+      <button role="tab" data-view="stamboom">Stamboom</button>
+      <button role="tab" data-view="families">Families</button>
+      <button role="tab" data-view="personen">Personen</button>
+      <button role="tab" data-view="verhalen">Verhalen</button>
+      <button role="tab" data-view="tijdlijn">Tijdlijn</button>
+      <button role="tab" data-view="kaart">Kaart</button>
+      <button role="tab" data-view="beeld">Beeld</button>
+      <button role="tab" data-view="cijfers">Cijfers</button>
+      <button role="tab" data-view="bronnen">Bronnen</button>
+    </nav>
+    <button class="searchbtn" id="openSearch" aria-label="Zoeken"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4" stroke-linecap="round"/></svg><span class="lbl">Zoeken</span><kbd>/</kbd></button>
+  </div>
+</header>
+
+
+<main class="wrap">
+  <section class="view" id="v-overzicht"></section>
+
+  <section class="view" id="v-stamboom" hidden>
+    <div class="eyebrow">Stamboom</div>
+    <h1 class="page-title">Generatie na generatie</h1>
+    <p class="lede">Het midden is Harrie. Elke ring telt een generatie verder terug: vaders kant links, moeders kant rechts. Klik op een vak voor het profiel, of kies Boom om stap voor stap terug te lopen.</p>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Weergave"><button id="modeFan" aria-pressed="true">Waaier</button><button id="modeTree" aria-pressed="false">Boom</button></div>
+      <span class="small" id="treeHint"></span>
+    </div>
+    <div class="pane" id="fanPane"><div class="fan-wrap"><div id="fan"></div><aside class="side" id="fanSide"></aside></div></div>
+    <div class="pane tree" id="treePane" hidden><div class="crumbs" id="crumbs"></div><div class="scroll-x" id="tree"></div></div>
+  </section>
+
+  <section class="view" id="v-families" hidden></section>
+
+  <section class="view" id="v-personen" hidden>
+    <div class="eyebrow">Personen</div>
+    <h1 class="page-title">Iedereen op een kaart</h1>
+    <p class="lede">Per generatie, met data, plaatsen, beroep en bewijsstatus. Klik een kaart voor het volledige profiel met broers en zussen, kinderen, levensloop, scans en bronnen. Liever op achternaam? <button class="link" data-go="namen">Naar het namenregister</button>. Of de hele <button class="link" data-go="lijst">kwartierstaat als lijst</button>, om te lezen of af te drukken.</p>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Filter op naam, plaats of beroep" aria-label="Filter personen">
+      <select id="genSel" aria-label="Generatie"></select>
+      <select id="sortSel" aria-label="Sortering"><option value="kw">Op kwartiernummer</option><option value="b">Op geboortejaar</option><option value="n">Op naam</option></select>
+      <div class="chips" id="stChips"></div>
+      <div class="chips" id="chgChips"></div>
+    </div>
+    <div class="chips" id="lineChips"></div>
+    <div id="cardsOut"></div>
+  </section>
+
+  <section class="view" id="v-namen" hidden></section>
+  <section class="view" id="v-lijst" hidden></section>
+
+  <section class="view" id="v-verhalen" hidden></section>
+
+  <section class="view" id="v-tijdlijn" hidden>
+    <div class="eyebrow">Tijdlijn</div>
+    <h1 class="page-title">Drie eeuwen levens naast elkaar</h1>
+    <p class="lede">Elke balk is een leven; een ruitje is een huwelijk. Een stippellijn betekent dat de geboorte- of sterfdatum nog onbekend is, een lichte balk dat de data onzeker zijn. Op de achtergrond de gebeurtenissen die hun wereld veranderden.</p>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Sortering"><button id="tlByLine" aria-pressed="true">Per familie</button><button id="tlByYear" aria-pressed="false">Op geboortejaar</button></div>
+      <div class="chips" id="tlChips"></div>
+    </div>
+    <div class="pane tl" id="timeline"></div>
+    <div class="section-head"><h2>Hun tijd</h2><p>De gebeurtenissen op de achtergrond van de tijdlijn.</p></div>
+    <div class="grid-3" id="contextCards"></div>
+  </section>
+
+  <section class="view" id="v-kaart" hidden>
+    <div class="eyebrow">Kaart</div>
+    <h1 class="page-title">Wie woonde waar</h1>
+    <p class="lede">Geboorte, huwelijk, woonplaats en overlijden, per dorp. Schuif door de tijd of druk op Afspelen om te zien hoe de families zich verplaatsten.</p>
+    <div class="toolbar">
+      <div class="slider"><button class="btn" id="play">Afspelen</button><input type="range" id="yr" min="1730" max="2026" step="1" value="2026" aria-label="Jaar"><output id="yrOut">2026</output></div>
+      <div class="seg" role="group" aria-label="Wie staat er op de kaart"><button id="mAll" aria-pressed="true">Iedereen tot dit jaar</button><button id="mAlive" aria-pressed="false">Alleen wie in dit jaar leeft</button></div>
+      <label class="small" style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="moves" checked> verhuizingen tonen</label>
+    </div>
+    <div class="chips" id="mapChips" style="margin-bottom:14px"></div>
+    <div class="pane"><div class="map-wrap"><div class="map" id="map"></div><aside class="map-side" id="mapSide"></aside></div></div>
+  </section>
+
+  <section class="view" id="v-plaats" hidden></section>
+  <section class="view" id="v-beeld" hidden></section>
+  <section class="view" id="v-cijfers" hidden></section>
+  <section class="view" id="v-verwanten" hidden></section>
+  <section class="view" id="v-bronnen" hidden></section>
+</main>
+
+<footer><div class="wrap" id="foot"></div></footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dName">
+  <header id="dHead"></header>
+  <div class="body" id="dBody"></div>
+</aside>
+
+<div class="sdlg" id="sdlg" hidden role="dialog" aria-modal="true" aria-label="Zoeken">
+  <div class="scrim" id="sScrim" style="z-index:0"></div>
+  <div class="panel">
+    <input type="search" id="sInput" placeholder="Zoek een persoon, plaats, verhaal of begrip" autocomplete="off" aria-label="Zoekterm">
+    <div class="sres" id="sRes" role="listbox"></div>
+  </div>
+</div>
+<div class="tip" id="tip" hidden></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Afbeelding">
+  <div class="lbstage"><img id="lbImg" alt=""></div>
+  <button class="lbbtn lbclose" id="lbClose" aria-label="Sluiten">×</button>
+  <button class="lbbtn lbprev" id="lbPrev" aria-label="Vorige afbeelding">‹</button>
+  <button class="lbbtn lbnext" id="lbNext" aria-label="Volgende afbeelding">›</button>
+  <div class="lbcap" id="lbCap"></div>
+</div>
+
+<!-- databestanden -->
+<script src="data/01-meta.js"></script>
+<script src="data/02-places.js"></script>
+<script src="data/10-people-gen1-4.js"></script>
+<script src="data/11-people-gen5.js"></script>
+<script src="data/12-people-gen6.js"></script>
+<script src="data/13-people-gen7plus.js"></script>
+<script src="data/14-people-gen8plus.js"></script>
+<script src="data/20-stories.js"></script>
+<script src="data/25-media.js"></script>
+<script src="data/26-notables.js"></script>
+<script src="data/27-images.js"></script>
+<script src="data/28-packs.js"></script>
+<script src="data/30-research.js"></script>
+<script src="data/31-changes.js"></script>
+<script src="data/40-alies-meta.js"></script>
+<script src="data/41-alies-people.js"></script>
+<script src="data/42-alies-stories.js"></script>
+<script src="data/43-alies-research.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
