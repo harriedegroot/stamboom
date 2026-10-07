@@ -964,8 +964,9 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
   if (root > 1) { let depth = 1; for (let gn = 2; gn <= maxGen; gn++) { const n = 2 ** (gn - 1); for (let i = 0; i < n; i++) if (person(fanKw(root * n + i))) { depth = gn; break; } } maxGen = Math.min(maxGen, Math.max(3, depth + 1)); } /* één lege ring: daar is nog niets gevonden */
   const V = R[maxGen] + 10, rp = person(fanKw(root)), rootAlias = fanKw(root) !== root || !!ALIAS_OF[root];
   const scale = host && host.clientWidth ? host.clientWidth / (2 * V) : 1; /* hoe groot een eenheid op het scherm wordt */
+  const leesbaar = f => !minPx || f * scale >= 9; /* bijtekst (achternaam, "met …", "vaders kant") alleen als die op het scherm minstens 9 px wordt */
   const svg = el("svg", { viewBox: `${-V} ${-V} ${2 * V} ${2 * V}`, role: "img", "aria-label": "Waaier met de voorouders van " + (root > 1 && rp ? rp.n : T.root) + " per generatie" });
-  const g = el("g", {}, svg);
+  const g = el("g", {}, svg), lg = el("g", { "pointer-events": "none" }, svg); /* namen in een eigen laag boven alle vakken */
   const pt = (r, a) => { const t = a * Math.PI / 180; return [r * Math.cos(t), r * Math.sin(t)]; };
   for (let gn = 2; gn <= maxGen; gn++) {
     const n = 2 ** (gn - 1), r0 = R[gn - 1], r1 = R[gn];
@@ -991,15 +992,18 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
       if (p && gn <= Math.min(labelGen, 8) && (!minPx || fanFs(gn) * labelScale * scale >= minPx)) {
         const am = (a0 + a1) / 2, rm = (r0 + r1) / 2, [cx, cy] = pt(rm, am);
         const l1 = firstName(p), l2 = shortSur(splitName(p.n).sur);
-        const lab = el("g", { "pointer-events": "none", opacity: dim ? 0.35 : 1 }, g);
+        const lab = el("g", { "pointer-events": "none", opacity: dim ? 0.35 : 1 }, lg);
         if (gn <= 3) {
           const fs = fanFs(gn) * labelScale;
+          if (gn === 2 && labelScale > 1) { /* grote letters: vanaf de rand van het midden naar buiten, zodat de naam de cirkel niet raakt */
+            const left = cx < 0; txt(lab, left ? -(R[1] + 8) : R[1] + 8, cy + fs / 3, l1, { "text-anchor": left ? "end" : "start", "font-size": fs, "font-weight": 600 });
+          } else
           txt(lab, cx, cy - 2, l1, { "text-anchor": "middle", "font-size": fs, "font-weight": 600 });
-          txt(lab, cx, cy + fs, trunc(l2, 14), { "text-anchor": "middle", "font-size": fs - 3, fill: "var(--muted)" });
+          if (labelScale === 1) txt(lab, cx, cy + fs, trunc(l2, 14), { "text-anchor": "middle", "font-size": fs - 3, fill: "var(--muted)" }); /* op het overzicht alleen voornamen (grotere letters, anders botst de achternaam met het midden) */
         } else {
           const fs = fanFs(gn) * labelScale, max = Math.floor((r1 - r0) * 0.92 / (fs * 0.56));
           const flip = am > 90 && am < 270, t = el("g", { transform: `translate(${cx} ${cy}) rotate(${flip ? am + 180 : am})` }, lab);
-          if (gn <= 6) {
+          if (gn <= 6 && labelScale === 1) { /* op het overzicht (labelScale > 1) vanaf generatie 4 alleen de voornaam: anders wordt alles afgekapt */
             txt(t, 0, -2, trunc(l1, max), { "text-anchor": "middle", "font-size": fs, "font-weight": 600 });
             txt(t, 0, fs, trunc(l2, max), { "text-anchor": "middle", "font-size": fs - 1, fill: "var(--muted)" });
           } else txt(t, 0, fs / 3, trunc(l1, max), { "text-anchor": "middle", "font-size": fs, "font-weight": 600 });
@@ -1012,15 +1016,18 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
   if (root > 1 && rp) { /* een voorouder in het midden: voornaam, achternaam en (bij overledenen) de jaren */
     const ls = [firstName(rp), trunc(shortSur(splitName(rp.n).sur), 16), rp.living ? "" : lifeYears(rp)].filter(Boolean);
     ls.forEach((s, i) => txt(ct, 0, 5 + (i - (ls.length - 1) / 2) * 15, s, { "text-anchor": "middle", "font-size": i === 2 ? 10.5 : Math.min(13.5, 104 / (s.length * 0.56)), "font-weight": i === 2 ? 400 : 600, fill: "var(--accent-ink)" }));
-  } else if (T.rootLines) T.rootLines.forEach((s, i, a) => { const f = Math.min(13.5 * labelScale, 104 / (s.length * 0.56)); txt(ct, 0, 5 + (i - (a.length - 1) / 2) * f * 1.1, s, { "text-anchor": "middle", "font-size": f, "font-weight": 600, fill: "var(--accent-ink)" }); });
-  else txt(ct, 0, -2, T.root, { "text-anchor": "middle", "font-size": Math.min(17 * labelScale, 108 / (T.root.length * 0.56)), "font-weight": 600, fill: "var(--accent-ink)" });
+  } else if (T.rootLines) { const f = Math.min(...T.rootLines.map(s => Math.min(13.5 * labelScale, 104 / (s.length * 0.56)))); /* te klein op het scherm: dan alleen de gekleurde stip */
+    if (!minPx || f * scale >= minPx) T.rootLines.forEach((s, i, a) => txt(ct, 0, 5 + (i - (a.length - 1) / 2) * f * 1.1, s, { "text-anchor": "middle", "font-size": f, "font-weight": 600, fill: "var(--accent-ink)" }));
+  } else { const f = Math.min(17 * labelScale, 108 / (T.root.length * 0.56)); if (!minPx || f * scale >= minPx) txt(ct, 0, -2, T.root, { "text-anchor": "middle", "font-size": f, "font-weight": 600, fill: "var(--accent-ink)" }); }
   const sub = root === 1 && T.sibs && T.sibs.length ? "met " + T.sibs.slice(0, -1).join(", ") + (T.sibs.length > 1 ? " en " : "") + T.sibs[T.sibs.length - 1] : "";
-  if (sub) txt(ct, 0, 16, sub, { "text-anchor": "middle", "font-size": Math.min(9.5, 104 / (sub.length * 0.55)), fill: "var(--accent-ink)" });
+  const subFs = Math.min(9.5, 104 / (sub.length * 0.55));
+  if (sub && leesbaar(subFs)) txt(ct, 0, 16, sub, { "text-anchor": "middle", "font-size": subFs, fill: "var(--accent-ink)" });
   if (interactive) { c.style.cursor = "pointer"; c.addEventListener("click", () => openProfile(root > 1 ? fanKw(root) : 1)); }
-  if (labelGen >= 4) {
+  const kantFs = 14 * labelScale;
+  if (labelGen >= 4 && leesbaar(kantFs)) {
     const who = root > 1 && rp ? " van " + firstName(rp) : "";
-    txt(g, -V + 20, -V + 30, root > 1 ? "vader" + who : "vaders kant", { "font-size": 14, fill: "var(--muted)", "font-family": "var(--mono)" });
-    txt(g, V - 20, -V + 30, root > 1 ? "moeder" + who : "moeders kant", { "font-size": 14, fill: "var(--muted)", "text-anchor": "end", "font-family": "var(--mono)" });
+    txt(g, -V + 20, -V + 16 + kantFs, root > 1 ? "vader" + who : "vaders kant", { "font-size": kantFs, fill: "var(--muted)", "font-family": "var(--mono)" });
+    txt(g, V - 20, -V + 16 + kantFs, root > 1 ? "moeder" + who : "moeders kant", { "font-size": kantFs, fill: "var(--muted)", "text-anchor": "end", "font-family": "var(--mono)" });
   }
   host.innerHTML = ""; host.appendChild(svg);
 }
@@ -1039,11 +1046,11 @@ function heroFan() {
   draw();
   if (note) {
     const touch = !matchMedia("(hover: hover)").matches;
-    note.innerHTML = `<p class="small">Elke kleur is een familie; hoe voller het vak, hoe sterker het bewijs. ${touch ? "Tik op een vak voor het profiel." : "Wijs een vak aan voor de naam, klik voor het profiel."}</p>
-      <div class="fan-cta"><button class="btn" id="heroFanOpen">Open de hele waaier</button><button class="btn" id="heroTreeOpen">Stap voor stap door de boom</button></div>
+    /* rustig onder de waaier: één regel uitleg met een link naar de hele waaier; de familiekleuren alleen op brede schermen
+       (op de telefoon staan de acht families vlak eronder als eigen blok) */
+    note.innerHTML = `<p class="small">Elke kleur is een familie; hoe voller het vak, hoe sterker het bewijs. ${touch ? "Tik op een vak voor het profiel." : "Wijs een vak aan voor de naam, klik voor het profiel."} <button class="link" id="heroFanOpen">Open de hele waaier →</button></p>
       <div class="fan-legend" aria-label="De families">${LINE_KEYS.filter(l => LINES[l]).map(l => `<button class="chip" style="--c:var(--l${l})" data-go="lijn-${l}"><i></i>${esc(LINES[l].name)}</button>`).join("")}</div>`;
     $("#heroFanOpen").onclick = () => { fanRoot = 1; setMode("fan"); go("stamboom"); };
-    $("#heroTreeOpen").onclick = () => { treeRoot = 1; setMode("tree"); go("stamboom"); };
   }
   /* opnieuw tekenen als de breedte flink verandert (draaien van de telefoon, venster groter of kleiner) */
   if (heroFanRO) heroFanRO.disconnect();
@@ -1236,7 +1243,7 @@ function renderOverzicht() {
     ${Object.keys(TREES).length > 1 ? `<div class="section-head" id="kiesboom"><h2>Kies een stamboom</h2><p>Drie stambomen op één site. Je wisselt ook altijd via de kop van de pagina.</p></div>
     <div class="bomen">${["h", "s", "a"].filter(k => TREES[k]).map(k => { const t = TREES[k], n = t.PEOPLE.filter(p => !p.alias && !p.living).length, nu = k === T.key; /* zelfde opbouw als de drie ingangen; het teken is het halve of hele rondje van de kant van Harrie, van Alies, of van beiden */
       const ico = `<svg viewBox="0 0 15 15" aria-hidden="true"><circle cx="7.5" cy="7.5" r="6"/>${k === "s" ? `<circle cx="7.5" cy="7.5" r="6" class="vol"/>` : `<path class="vol" d="${k === "h" ? "M7.5 1.5a6 6 0 0 0 0 12z" : "M7.5 1.5a6 6 0 0 1 0 12z"}"/>`}</svg>`;
-      return `<button type="button" class="ingang boom" data-tree="${k}" aria-pressed="${nu}">${ico}<span><b>${esc(k === "s" ? t.rootFull : t.root)}</b><small>${esc(TREE_INFO[k])}</small><small>${esc(t.brand)} · ${nl(n)} voorouders</small>${nu ? `<em>Je bekijkt deze stamboom</em>` : ""}</span></button>`; }).join("")}</div>` : ""}
+      return `<button type="button" class="ingang boom" data-tree="${k}" aria-pressed="${nu}">${ico}<span>${nu ? `<i class="nu">Je bekijkt deze stamboom</i>` : ""}<b>${esc(k === "s" ? t.rootFull : t.root)}</b><small>${esc(TREE_INFO[k])}</small><small>${esc(t.brand)} · ${nl(n)} voorouders</small>${nu ? "" : `<em>Open deze stamboom →</em>`}</span></button>`; }).join("")}</div>` : ""}
     <div class="section-head"><h2>De acht families</h2><p>Elke overgrootouder opent een eigen lijn.</p></div>
     <div class="grid-4 ov-swipe">${LINE_KEYS.map(famCard).join("")}</div>
     ${(() => { const fp = ancestors.filter(p => portraitOf(p.kw)); return fp.length ? `<div class="section-head"><h2>Gezichten uit de familie</h2><p>${fp.length === 1 ? "Eén voorouder" : fp.length + " voorouders"} van wie een foto bewaard is gebleven. Klik een gezicht voor het profiel. Foto's uit familiebezit van overleden voorouders kunnen er later bij. <button class="link" id="seePortraits">Alle portretten</button></p></div><div class="faces ov-swipe">${fp.map(faceCard).join("")}</div>` : ""; })()}
@@ -3391,7 +3398,8 @@ function vwProfielKnop(kw) {
    geschiedenisstap. menuSync() loopt na elke paginawissel (haak in go). De indeling staat alleen in MENU.
    Een groep met meer pagina's is een gesplitste knop: het label is een link naar de eerste pagina, het pijltje ernaast
    (aria-expanded) klapt de lijst uit; met een muis klapt hij ook uit bij aanwijzen (met een korte vertraging). Op de
-   pagina's van zo'n groep staat bovenaan in main een rij subtabs met de pagina's van die groep. */
+   pagina's van zo'n groep staat onder de kop een tweede balk met de groep en haar pagina's (op de desktop vast mee met
+   de kop, op de telefoon niet). Op de groepspagina zelf vervalt dan de eyebrow bovenaan, want de balk zegt al waar je bent. */
 const MENU = [
   ["Overzicht", [["Overzicht", "overzicht"]]],
   ["Stamboom", [["Waaier en boom", "stamboom", "Alle voorouders in één beeld"], ["De acht families", "families", "Elke familielijn met haar verhaal"], ["Kwartierstaat", "lijst", "Alles als lijst, ook om af te drukken"]]],
@@ -3454,15 +3462,23 @@ document.addEventListener("keydown", e => {
 document.addEventListener("focusin", e => { if (openDrop && !openDrop.contains(e.target) && !$("#" + openDrop.getAttribute("aria-controls")).contains(e.target)) dropClose(); });
 /* aanwijzen met een muis: na 150 ms open, 250 ms na het verlaten dicht; op aanraakschermen niet */
 const muis = matchMedia("(hover:hover) and (pointer:fine)");
-let hoverT = 0;
+let hoverT = 0, hoverRust = false; /* na een muisklik op een label niet meteen weer uitklappen */
 function hoverBind(li) {
   const chev = $(".mn-chev", li);
-  li.addEventListener("mouseenter", () => { if (!muis.matches) return; clearTimeout(hoverT); if (openDrop !== chev) hoverT = setTimeout(() => { dropOpen(chev, false); viaHover = true; }, 150); });
-  li.addEventListener("mouseleave", () => { if (!muis.matches) return; clearTimeout(hoverT); hoverT = setTimeout(() => { if (openDrop === chev && !li.contains(document.activeElement)) dropClose(); }, 250); });
+  $(".mn-lbl", li).addEventListener("click", e => { if (e.detail) { hoverRust = true; clearTimeout(hoverT); } });
+  li.addEventListener("mouseenter", () => { if (!muis.matches || hoverRust) return; clearTimeout(hoverT); if (openDrop !== chev) hoverT = setTimeout(() => { dropOpen(chev, false); viaHover = true; }, 150); });
+  li.addEventListener("mouseleave", () => { hoverRust = false; if (!muis.matches) return; clearTimeout(hoverT); hoverT = setTimeout(() => { if (openDrop === chev && !li.contains(document.activeElement)) dropClose(); }, 250); });
 }
-/* subtabs: de pagina's van de groep waar je bent, bovenaan in main */
-const subNav = document.createElement("nav"); subNav.className = "subtabs"; subNav.hidden = true;
-$("main").prepend(subNav);
+/* tweede balk van de kop: de pagina's van de groep waar je bent */
+const subBar = document.createElement("div"); subBar.className = "subbar"; subBar.hidden = true;
+subBar.innerHTML = `<nav class="wrap subtabs"></nav>`;
+const kop = $("header.top"); kop.insertAdjacentElement("afterend", subBar);
+const subNav = $("nav", subBar);
+/* --kop-h: hoogte van de kop; --vast: alles wat bovenaan vast blijft (kop plus, op de desktop, de tweede balk) */
+const kopH = () => { const r = document.documentElement.style, k = kop.offsetHeight;
+  r.setProperty("--kop-h", k + "px"); r.setProperty("--vast", k + (!subBar.hidden && getComputedStyle(subBar).position === "sticky" ? subBar.offsetHeight : 0) + "px"); };
+if (window.ResizeObserver) { const ro = new ResizeObserver(kopH); ro.observe(kop); ro.observe(subBar); } else addEventListener("resize", kopH);
+kopH();
 tpList.addEventListener("click", e => { const t = e.target.closest("[data-tree]"); if (t && t.dataset.tree === T.key) dropClose(true); });
 /* paneel */
 function panelOpen() {
@@ -3510,9 +3526,12 @@ function menuSync() {
   }).join("")}</ul>`;
   $$(".mn-li", tabsNav).forEach(hoverBind);
   const sg = menuGroups().find(([g]) => g === hg), sits = sg ? sg[1] : [];
-  subNav.hidden = sits.length < 2;
+  const sub = sits.length > 1, nu = sits.find(x => x[1] === hv);
+  subBar.hidden = !sub;
+  document.documentElement.classList.toggle("sub-op", sub && sits.some(x => x[1] === route.view)); /* groepspagina zelf: geen dubbele eyebrow */
   subNav.setAttribute("aria-label", hg ? `Pagina's onder ${hg}` : "Pagina's");
-  subNav.innerHTML = sits.length < 2 ? "" : `<ul>${sits.map(([l, v]) => `<li><a href="${mnHref(v)}" data-go="${v}"${v === hv ? ` aria-current="page"` : ""}>${esc(l)}</a></li>`).join("")}</ul>`;
+  subNav.innerHTML = !sub ? "" : `<span class="sb-g" aria-hidden="true">${esc(hg)}</span><ul>${sits.map(([l, v, u]) => `<li><a href="${mnHref(v)}" data-go="${v}"${u ? ` title="${esc(u)}"` : ""}${v === hv ? ` aria-current="page"` : ""}>${esc(l)}</a></li>`).join("")}</ul>${nu && nu[2] ? `<span class="sb-u">${esc(nu[2])}</span>` : ""}`;
+  kopH();
   $("#tpNaam").innerHTML = `<span class="tp-lang">${esc(T.root)}</span><span class="tp-kort">${esc(TREE_KORT[T.key] || T.root)}</span>`;
   tpBtn.setAttribute("aria-label", `Stamboom van ${T.rootFull || T.root}. Kies een andere stamboom`);
 }
