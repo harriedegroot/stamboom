@@ -14,7 +14,7 @@
    40..43-alies-*    de stamboom van Alies Hoekstra
    Tijdperken, begrippen, plaatsen en het wijzigingslog gelden voor alle drie de stambomen.
    ===================================================================== */
-const VERSION = "Versie 11 · 7 oktober 2026";
+const VERSION = "Versie 12 · 8 oktober 2026";
 const OA = "https://www.openarchieven.nl/";
 const RKF_SCAN = n => `https://archiefrkfriesland.nl/archiefdata/advertenties/${n}.jpg`;
 const PEOPLE = [];
@@ -114,5 +114,14 @@ const GLOSSARY = [
   ["Eigenerfde", "Boer die eigenaar was van zijn eigen boerderij en grond, in tegenstelling tot een pachter."],
   ["Huisman", "Oud woord voor boer."],
   ["Kadaster 1832", "Eerste landelijke registratie van alle percelen met hun eigenaar. Pachters staan er niet in."],
-  ["Nedergerecht", "Lagere rechtbank van een Friese grietenij, onder meer voor voogdij en boedels."]
+  ["Nedergerecht", "Lagere rechtbank van een Friese grietenij, onder meer voor voogdij en boedels."],
+  ["Gortmaker", "Zelfde als grutter: iemand die gort en grutten maakte.", ["Woordenboek der Nederlandsche Taal, GORT", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M021124"]],
+  ["Melktapper", "Verkoper van melk in het klein, melkslijter; het woord werd vooral in Friesland gebruikt.", ["Woordenboek der Nederlandsche Taal, TAPPER", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M067757"]],
+  ["Hospes", "Waard van een logement of herberg: herbergier.", ["Woordenboek der Nederlandsche Taal, HOSPES (betekenis 2)", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M026694"]],
+  ["Turfmaker", "Arbeider in het veen die turf maakte.", ["Woordenboek der Nederlandsche Taal, TURF", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M071281"]],
+  ["Watermolenaar", "Molenaar van een watermolen, die het water uit de polder maalde.", ["Woordenboek der Nederlandsche Taal, WATERMOLEN", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M084112"]],
+  ["Kofschipper", "Schipper van een kof: een zeilschip voor binnenvaart en kustvaart, van het type van de tjalk.", ["Woordenboek der Nederlandsche Taal, KOF", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M034542"]],
+  ["Vroedsman", "Lid van een vroedschap, een bestuurscollege; het woord werd vooral in Friesland gebruikt.", ["Woordenboek der Nederlandsche Taal, VROED", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M082914"]],
+  ["Kwartiernummer (kw)", "Het nummer van een voorouder in de kwartierstaat. De persoon van wie de stamboom uitgaat heeft nummer 1; de vader van nummer n heeft nummer 2n, de moeder 2n + 1. Behalve nummer 1 hebben mannen dus even en vrouwen oneven nummers.", ["Wikipedia, Kwartierstaat", "https://nl.wikipedia.org/wiki/Kwartierstaat"]],
+  ["Politiedienaar", "Politieman van lage rang.", ["Woordenboek der Nederlandsche Taal, POLITIE", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M055130"]]
 ];
