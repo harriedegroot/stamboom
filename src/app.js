@@ -76,6 +76,8 @@ function loadTree(k) {
 }
 const person = kw => BY.get(kw) || null;
 const twinKws = kw => { const t = ALIAS_OF[kw] || kw; return [t, ...(ALIASES[t] || [])].filter(k => k !== kw); }; /* alle andere nummers van dezelfde persoon */
+const implexStory = side => "verhaal-" + ((side || T.key) === "a" ? "dubbel" : "lijnen"); /* het verhaal over kwartierverlies in deze boom */
+const halfOf = kw => kw >> (gen(kw) - (T.key === "s" ? 3 : 2)); /* vader- of moederkant van de hoofdpersoon (bij de kinderen: een van de vier grootouders) */
 const gen = kw => Math.floor(Math.log2(kw)) + 1;
 const lineOf = kw => kw < 4 ? null : kw < 8 ? ({ 4: 8, 5: 10, 6: 12, 7: 14 })[kw] : kw >> (gen(kw) - 4);
 const lineColor = kw => { const l = lineOf(kw); return l ? `var(--l${l})` : "var(--faint)"; };
@@ -486,7 +488,7 @@ function openProfile(kw, opts = {}) {
     </div>`;
   let h = "";
   const tw = twinKws(kw);
-  if (tw.length) h += `<p class="stnote implex"><b>${["", "", "Twee", "Drie", "Vier", "Vijf"][tw.length + 1] || tw.length + 1} keer in de stamboom.</b> Deze persoon staat ook als kw ${tw.length > 1 ? tw.slice(0, -1).join(", ") + " en " + tw[tw.length - 1] : tw[0]}, via de ${[...new Set(tw.map(t => LINES[lineOf(t)] && LINES[lineOf(t)].name).filter(Boolean))].map(esc).join("- en ")}-lijn. ${esc(T.key === "s" ? TREES[p.side].parents : T.parents)} hebben hier gemeenschappelijke voorouders. ${tw.map(t => `<button class="link" data-open="${t}">Bekijk als kw ${t}</button>`).join(" · ")} · <button class="link" data-go="verhaal-lijnen">Lees het verhaal</button></p>`;
+  if (tw.length) h += `<p class="stnote implex"><b>${["", "", "Twee", "Drie", "Vier", "Vijf"][tw.length + 1] || tw.length + 1} keer in de stamboom.</b> Deze persoon staat ook als kw ${tw.length > 1 ? tw.slice(0, -1).join(", ") + " en " + tw[tw.length - 1] : tw[0]}, via de ${[...new Set(tw.map(t => LINES[lineOf(t)] && LINES[lineOf(t)].name).filter(Boolean))].map(esc).join("- en ")}-lijn. ${tw.some(t => halfOf(t) !== halfOf(kw)) ? esc(T.key === "s" ? TREES[p.side].parents : T.parents) + " hebben hier gemeenschappelijke voorouders." : "Beide lijnen lopen via " + esc((person(halfOf(kw)) || {}).roep || (person(halfOf(kw)) || {}).n || "") + "."} ${tw.map(t => `<button class="link" data-open="${t}">Bekijk als kw ${t}</button>`).join(" · ")} · <button class="link" data-go="${implexStory(p.side)}">Lees het verhaal</button></p>`;
   if (p.living) {
     h += `<p class="stnote">Van levende familieleden staan op deze site alleen de naam en de plaats in de stamboom.</p>`;
     if (kw === 1 && T.sibs && T.sibs.length) h += `<section><h5>Broers en zussen</h5><p style="margin:0">${esc(T.sibs.join(", "))}. Deze stamboom is ook die van hen.</p></section>`;
@@ -859,7 +861,7 @@ function renderStamboom() {
   $("#fanSide").innerHTML = `
     <div><h5>Familielijnen</h5><div class="legend" style="flex-direction:column;gap:6px">${LINE_KEYS.map(l => `<button class="chip" style="--c:var(--l${l});border:0;padding:0;background:none" data-go="lijn-${l}"><i></i>${esc(LINES[l].name)}</button>`).join("")}</div></div>
     <div><h5>Gevonden per generatie</h5>${comp}</div>
-    <div><h5>Zo lees je de vakken</h5><p style="margin:0">Hoe voller de kleur, hoe sterker het bewijs. Een gestippelde rand: alleen uit online stambomen (C). Een fijn gestippelde, bijna lege rand: een hypothese (D). Een gestippeld leeg vak: nog niet gevonden. Een gouden rand: dezelfde persoon staat twee keer in de stamboom (<button class="link" data-go="verhaal-lijnen">kwartierverlies</button>).</p><p style="margin:8px 0 0">De waaier toont negen generaties. Wie verder terug ligt, generatie X${Math.max(...ancestors.map(p => gen(p.kw))) > 10 ? " tot en met " + ROMAN[Math.max(...ancestors.map(p => gen(p.kw)))] : ""}, vind je bij <button class="link" data-go="personen">Personen</button>.</p></div>`;
+    <div><h5>Zo lees je de vakken</h5><p style="margin:0">Hoe voller de kleur, hoe sterker het bewijs. Een gestippelde rand: alleen uit online stambomen (C). Een fijn gestippelde, bijna lege rand: een hypothese (D). Een gestippeld leeg vak: nog niet gevonden. Een gouden rand: dezelfde persoon staat twee keer in de stamboom (<button class="link" data-go="${implexStory()}">kwartierverlies</button>).</p><p style="margin:8px 0 0">De waaier toont negen generaties. Wie verder terug ligt, generatie X${Math.max(...ancestors.map(p => gen(p.kw))) > 10 ? " tot en met " + ROMAN[Math.max(...ancestors.map(p => gen(p.kw)))] : ""}, vind je bij <button class="link" data-go="personen">Personen</button>.</p></div>`;
   $("#modeFan").onclick = () => setMode("fan");
   $("#modeTree").onclick = () => setMode("tree");
   setMode(mode);
@@ -1665,6 +1667,7 @@ function computeStats() {
   A.forEach(p => { st[p.st] = (st[p.st] || 0) + 1; (p.src || []).forEach(s => { srcN++; const t = srcType(s[1], s[0]); types[t] = (types[t] || 0) + 1; }); });
   S.st = st; S.srcN = srcN; S.srcTypes = SRC_ORDER.filter(t => types[t]).map(t => ({ l: t, v: types[t] }));
   S.implex = PEOPLE.filter(p => p.alias).length;
+  S.implexTop = PEOPLE.filter(p => p.alias && !ALIAS_OF[p.kw >> 1]).length; /* waar een lijn voor het eerst samenkomt */
   S.maxGen = Math.max(...A.map(p => gen(p.kw)));
   S.oldestYearAB = Math.min(...A.filter(p => p.st === "A" || p.st === "B").flatMap(p => [yr(p.b), yr(p.d), ...(p.res || []).map(r => r.y)]).filter(Boolean));
   S.oldestYear = Math.min(...A.flatMap(p => [yr(p.b), yr(p.d), ...(p.res || []).map(r => r.y)]).filter(Boolean));
@@ -1782,7 +1785,7 @@ function renderCijfers() {
         ${S.youngMother ? `<li>Jongste moeder: ${pb(S.youngMother.p)}, ${Math.floor(S.youngMother.v)} jaar bij de geboorte van ${pb(S.youngMother.c)}.</li>` : ""}
         ${S.oldFather ? `<li>Oudste vader: ${pb(S.oldFather.p)}, ${Math.floor(S.oldFather.v)} jaar bij de geboorte van ${pb(S.oldFather.c)}.</li>` : ""}
         <li>Generatie ${ROMAN[S.maxGen]} is de verste die nu bekend is. Op die hoogte heeft iedereen ${nl(2 ** (S.maxGen - 1))} voorouders, als er geen kwartierverlies is.</li>
-        <li>${S.implex} vakken in de stamboom zijn dubbel bezet: drie voorouderparen komen langs twee lijnen terug, en hun eigen voorouders dus ook. <button class="link" data-go="verhaal-lijnen">Over kwartierverlies</button></li>
+        <li>${S.implex} vakken in de stamboom zijn dubbel bezet: ${S.implexTop} voorouders komen langs twee lijnen terug, en hun eigen voorouders dus ook. <button class="link" data-go="${implexStory()}">Over kwartierverlies</button></li>
       </ul></div>
     </div>
 
@@ -1939,7 +1942,7 @@ function renderVerwanten() {
 
 const RENDER = { overzicht: renderOverzicht, stamboom: renderStamboom, families: renderFamilies, personen: renderPersonen, verhalen: renderVerhalen, tijdlijn: renderTijdlijn, kaart: renderKaart, plaats: renderPlaats, beeld: renderBeeld, cijfers: renderCijfers, verwanten: renderVerwanten, bronnen: renderBronnen, namen: renderNamen, lijst: renderLijst };
 /* ---------- twee bomen: wisselen ---------- */
-/* hash "#a-..." = de boom van Alies; zonder prefix = Harrie. Interne links (data-go, data-open) blijven in de huidige boom. */
+/* hash "#a-..." = de boom van Alies, "#s-..." of geen hash = Harrie + Alies (de kinderen); andere hash zonder prefix = Harrie. Interne links (data-go, data-open) blijven in de huidige boom. */
 function treeChrome() {
   const b = $("header.top .brand"); if (b) b.innerHTML = `${esc(T.brand)}<small>stamboom</small>`;
   const tb = $("#treebar"); if (tb) tb.hidden = !TREES.a;
@@ -1966,7 +1969,7 @@ function setTree(k) {
   treeChrome();
   return true;
 }
-const treeOfHash = h => TREES.a && /^a-/.test(h) ? "a" : TREES.s && /^s-/.test(h) ? "s" : "h";
+const treeOfHash = h => TREES.a && /^a-/.test(h) ? "a" : TREES.s && (/^s-/.test(h) || !h) ? "s" : "h"; /* zonder hash: de boom van de kinderen */
 const stripTree = h => h.replace(/^[as]-/, "");
 document.addEventListener("click", e => { const t = e.target.closest("[data-tree]"); if (!t) return; e.preventDefault(); if (setTree(t.dataset.tree)) go(currentToken()); });
 treeChrome();

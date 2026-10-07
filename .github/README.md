@@ -2,7 +2,7 @@
 
 Een familiewebsite met de voorouders van Harrie de Groot en Alies Hoekstra.
 
-**Bekijk de site: <https://harriedegroot.github.io/stamboom/>**
+**Bekijk de site: <https://stamboom.harriedegroot.com/>**
 
 ## Wat staat erin?
 

@@ -34,7 +34,8 @@ ALIES.STORIES.push(
       { t: "Grietjes overlijdensakte zegt dat ze in Follega geboren is; haar doop daar in 1760 noemt Sijbe Attes en Marike Harmens. Dat het om dezelfde Grietje gaat, is afgeleid (B).", k: "afgeleid" }
     ] },
     { h: "Was het gewoon?", st: "A", p: [
-      { t: "In de Friese dorpen trouwde men vaak binnen een kleine kring van families die elkaar kenden. Ook in de stamboom van Harrie staan drie voorouderparen twee keer.", k: "context" }
+      { t: "In de Friese dorpen trouwde men vaak binnen een kleine kring van families die elkaar kenden. Ook in de stamboom van Harrie staan voorouders twee keer: vier paren hebben Kees en Vronie gemeen.", k: "context" },
+      "Harrie en Alies zelf hebben, voor zover nu bekend, geen gemeenschappelijke voorouders. Hun families woonden wel vaak dicht bij elkaar: ruim 25 dorpen en steden komen in beide stambomen voor."
     ] }
   ] },
 { id: "veen", title: "Leven van het veen", art: "trades", line: 14,
