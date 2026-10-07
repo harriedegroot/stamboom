@@ -10,12 +10,27 @@
 <link rel="stylesheet" href="src/style.css">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#EEF1EC">
+<meta name="description" content="De voorouders van Marit, Tijmen en Jorn: de Friese families De Groot, Boersma, Hoekstra en Bakker, met bronnen terug tot 1616.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:site_name" content="Stamboom De Groot · Hoekstra">
+<meta property="og:title" content="Twee Friese families, één stamboom">
+<meta property="og:description" content="De voorouders van Marit, Tijmen en Jorn: de families De Groot, Boersma, Hoekstra en Bakker, met verhalen, kaarten, oude foto's en bronnen terug tot 1616.">
+<meta property="og:url" content="https://stamboom.harriedegroot.com/">
+<meta property="og:image" content="https://stamboom.harriedegroot.com/img/deel.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Waaier met de voorouders van Marit, Tijmen en Jorn">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icoon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icoon-180.png">
 <script>
 /* thema vóór de eerste weergave: "licht" of "donker" als de lezer dat koos, anders volgt de site de browser (automatisch) */
 (function () { try { var t = localStorage.getItem("stamboom-thema"); if (t === "licht" || t === "donker") document.documentElement.setAttribute("data-theme", t === "licht" ? "light" : "dark"); } catch (e) {} })();
 </script>
 </head>
 <body>
+<button type="button" class="skip" id="skipMain">Naar de inhoud</button>
 
 <div class="treebar" id="treebar"><div class="wrap">
   <span class="tb-lbl" id="tbLbl">Stamboom van</span>
@@ -29,17 +44,17 @@
 <header class="top">
   <div class="wrap">
     <button class="brand" data-go="overzicht">De Groot · Hoekstra<small>stamboom</small></button>
-    <nav class="tabs" role="tablist" aria-label="Onderdelen">
-      <button role="tab" data-view="overzicht">Overzicht</button>
-      <button role="tab" data-view="stamboom">Stamboom</button>
-      <button role="tab" data-view="families">Families</button>
-      <button role="tab" data-view="personen">Personen</button>
-      <button role="tab" data-view="verhalen">Verhalen</button>
-      <button role="tab" data-view="tijdlijn">Tijdlijn</button>
-      <button role="tab" data-view="kaart">Kaart</button>
-      <button role="tab" data-view="beeld">Beeld</button>
-      <button role="tab" data-view="cijfers">Cijfers</button>
-      <button role="tab" data-view="bronnen">Bronnen</button>
+    <nav class="tabs" aria-label="Onderdelen">
+      <button data-view="overzicht">Overzicht</button>
+      <button data-view="stamboom">Stamboom</button>
+      <button data-view="families">Families</button>
+      <button data-view="personen">Personen</button>
+      <button data-view="verhalen">Verhalen</button>
+      <button data-view="tijdlijn">Tijdlijn</button>
+      <button data-view="kaart">Kaart</button>
+      <button data-view="beeld">Beeld</button>
+      <button data-view="cijfers">Cijfers</button>
+      <button data-view="bronnen">Bronnen</button>
     </nav>
     <button class="searchbtn" id="openSearch" aria-label="Zoeken"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4" stroke-linecap="round"/></svg><span class="lbl">Zoeken</span><kbd>/</kbd></button>
     <div class="thm" id="thm">
@@ -75,7 +90,7 @@
   <section class="view" id="v-personen" hidden>
     <div class="eyebrow">Personen</div>
     <h1 class="page-title">Iedereen op een kaart</h1>
-    <p class="lede">Per generatie, met data, plaatsen, beroep en bewijsstatus. Klik een kaart voor het volledige profiel met broers en zussen, kinderen, levensloop, scans en bronnen. Liever op achternaam? <button class="link" data-go="namen">Naar het namenregister</button>. Of de hele <button class="link" data-go="lijst">kwartierstaat als lijst</button>, om te lezen of af te drukken.</p>
+    <p class="lede">Per generatie, met data, plaatsen, beroep en bewijsstatus. Klik een kaart voor het volledige profiel met broers en zussen, kinderen, levensloop, scans en bronnen. Liever op achternaam? <button class="link" data-go="namen">Naar het namenregister</button>. Of de hele <button class="link" data-go="lijst">kwartierstaat als lijst</button>, om te lezen of af te drukken. Zelf familie? <button class="link" data-go="verwant">Reken uit hoe je verwant bent</button>.</p>
     <div class="toolbar">
       <input type="search" id="q" placeholder="Filter op naam, plaats of beroep" aria-label="Filter personen">
       <select id="genSel" aria-label="Generatie"></select>
@@ -101,6 +116,7 @@
       <div class="chips" id="tlChips"></div>
     </div>
     <div class="pane tl" id="timeline"></div>
+    <div id="tlArch" hidden></div>
     <div class="section-head"><h2>Hun tijd</h2><p>De gebeurtenissen op de achtergrond van de tijdlijn.</p></div>
     <div class="grid-3" id="contextCards"></div>
   </section>
@@ -122,7 +138,9 @@
   <section class="view" id="v-beeld" hidden></section>
   <section class="view" id="v-cijfers" hidden></section>
   <section class="view" id="v-verwanten" hidden></section>
+  <section class="view" id="v-verwant" hidden></section>
   <section class="view" id="v-bronnen" hidden></section>
+  <section class="view" id="v-zoeken" hidden></section>
 </main>
 
 <footer><div class="wrap" id="foot"></div></footer>
@@ -136,7 +154,7 @@
 <div class="sdlg" id="sdlg" hidden role="dialog" aria-modal="true" aria-label="Zoeken">
   <div class="scrim" id="sScrim" style="z-index:0"></div>
   <div class="panel">
-    <input type="search" id="sInput" placeholder="Zoek een persoon, plaats, verhaal of begrip" autocomplete="off" aria-label="Zoekterm">
+    <input type="search" id="sInput" placeholder="Zoek een persoon, plaats, verhaal of begrip" autocomplete="off" aria-label="Zoekterm" role="combobox" aria-expanded="true" aria-controls="sRes" aria-autocomplete="list">
     <div class="sres" id="sRes" role="listbox"></div>
   </div>
 </div>
@@ -158,12 +176,18 @@
 <script src="data/13-people-gen7plus.js"></script>
 <script src="data/14-people-gen8plus.js"></script>
 <script src="data/20-stories.js"></script>
+<script src="data/21-story-cards.js"></script>
+<script src="data/22-percelen.js"></script>
+<script src="data/23-akteteksten.js"></script>
+<script src="data/24-kort.js"></script>
 <script src="data/25-media.js"></script>
 <script src="data/26-notables.js"></script>
 <script src="data/27-images.js"></script>
 <script src="data/28-packs.js"></script>
+<script src="data/29-omslag.js"></script>
 <script src="data/30-research.js"></script>
 <script src="data/31-changes.js"></script>
+<script src="data/32-zoeklijst.js"></script>
 <script src="data/40-alies-meta.js"></script>
 <script src="data/41-alies-people.js"></script>
 <script src="data/42-alies-stories.js"></script>
