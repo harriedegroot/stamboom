@@ -13,7 +13,7 @@ const IMAGES = [
 "thumb": "img/t/akte-frl-05feafc0.jpg",
 "w": 960,
 "h": 782,
-"t": "Overlijdensakte van Antje Galema, Dronrijp 1915 (akte 136), waarin zij zelf veehoudster heet.",
+"t": "Overlijdensakte van Anna (Antje) Galema, Dronrijp 1915 (akte 136), waarin zij zelf veehoudster heet.",
 "desc": "Overlijdensakte, Dronrijp, 1915-12-28. AlleFriezen, Overlijdensregister 1915, aktenummer 136. Genoemd: Anna Galema (overledene), Taeke Galema (vader), Marijke Terpstra (moeder), Jacobus Terwisscha van Scheltinga ().",
 "maker": "AlleFriezen",
 "datum": "1915-12-28",
@@ -104,6 +104,40 @@ const IMAGES = [
 ]
 },
 {
+"id": "akte-frl-5bbd0a36-1",
+"soort": "persoon",
+"key": "176",
+"src": "img/akte-frl-5bbd0a36-1.jpg",
+"thumb": "img/t/akte-frl-5bbd0a36-1.jpg",
+"w": 960,
+"h": 653,
+"t": "Akte van een verwant: tweede huwelijk dochter Anna 1824 (scan 1 van 2)",
+"desc": "Huwelijksakte, Weststellingwerf, 1824-01-21. AlleFriezen, Huwelijksregister 1824, aktenummer 1. Genoemd: Antonius de Belt (vader van de bruid), Willem Hanzes Blauhof (vader van de bruidegom), Tetjen Inses (moeder van de bruidegom), Johannes Willems Blauhof (bruidegom), Jakobje Harmens Blom (moeder van de bruid), Anna Antonius de Belt (bruid).",
+"maker": "AlleFriezen",
+"datum": "1824-01-21",
+"lic": "",
+"licUrl": "",
+"bron": "http://allefriezen.nl/zoeken/deeds/5bbd0a36-1a73-2e4f-753c-f34d5a16a559",
+"bronNaam": "AlleFriezen",
+"artikel": "",
+"file": "frl:5bbd0a36-1a73-2e4f-753c-f34d5a16a559",
+"ref": "AlleFriezen, Burgerlijke Stand Weststellingwerf - Tresoar, Huwelijksregister 1824, inv. 2006, akte 1, scan 1/2",
+"orig": "http://allefriezen.nl/zoeken/deeds/5bbd0a36-1a73-2e4f-753c-f34d5a16a559",
+"kws": [
+176,
+178,
+356,
+357
+],
+"groep": "akte",
+"vh": [
+[
+"netwerk",
+"Schoonvader en zwager tegelijk"
+]
+]
+},
+{
 "id": "akte-frl-63531128",
 "soort": "persoon",
 "key": "104",
@@ -132,6 +166,68 @@ const IMAGES = [
 [
 "lijnen",
 "Het raadsel van Apollonia"
+]
+]
+},
+{
+"id": "akte-frl-6f7104ef",
+"soort": "persoon",
+"key": "a-11",
+"src": "img/akte-frl-6f7104ef.jpg",
+"thumb": "img/t/akte-frl-6f7104ef.jpg",
+"w": 960,
+"h": 734,
+"t": "Geboorte Schoterland 1892",
+"desc": "Geboorteakte, Schoterland, 1892-12-15. AlleFriezen, Geboorteregister 1892, aktenummer 363. Genoemd: Jantje Jongbloed (moeder), Tjeerd Wietsma (vader), Janke Wietsma (kind).",
+"maker": "AlleFriezen",
+"datum": "1892-12-15",
+"lic": "",
+"licUrl": "",
+"bron": "http://allefriezen.nl/zoeken/deeds/6f7104ef-b965-f7b4-4724-0f758720a6e5",
+"bronNaam": "AlleFriezen",
+"artikel": "",
+"file": "frl:6f7104ef-b965-f7b4-4724-0f758720a6e5",
+"ref": "AlleFriezen, Burgerlijke Stand Schoterland - Tresoar, Geboorteregister 1892, inv. 1048, akte 363",
+"orig": "http://allefriezen.nl/zoeken/deeds/6f7104ef-b965-f7b4-4724-0f758720a6e5",
+"kws": [
+"a-11"
+],
+"groep": "akte",
+"vh": [
+[
+"buren",
+"Nieuweschoot, december 1892"
+]
+]
+},
+{
+"id": "akte-frl-815eee18",
+"soort": "persoon",
+"key": "9",
+"src": "img/akte-frl-815eee18.jpg",
+"thumb": "img/t/akte-frl-815eee18.jpg",
+"w": 960,
+"h": 732,
+"t": "Geboorteakte Schoterland 1892, akte 365",
+"desc": "Geboorteakte, Schoterland, 1892-12-17. AlleFriezen, Geboorteregister 1892, aktenummer 365. Genoemd: Alida Hendriks Meyners (moeder), Jan Gerrits Kingma (vader), Elisabeth Regina Kingma (kind).",
+"maker": "AlleFriezen",
+"datum": "1892-12-17",
+"lic": "",
+"licUrl": "",
+"bron": "http://allefriezen.nl/zoeken/deeds/815eee18-568a-aa0f-fb2d-518f30dab2ae",
+"bronNaam": "AlleFriezen",
+"artikel": "",
+"file": "frl:815eee18-568a-aa0f-fb2d-518f30dab2ae",
+"ref": "AlleFriezen, Burgerlijke Stand Schoterland - Tresoar, Geboorteregister 1892, inv. 1048, akte 365",
+"orig": "http://allefriezen.nl/zoeken/deeds/815eee18-568a-aa0f-fb2d-518f30dab2ae",
+"kws": [
+9
+],
+"groep": "akte",
+"vh": [
+[
+"buren",
+"Nieuweschoot, december 1892"
 ]
 ]
 },
@@ -210,7 +306,7 @@ const IMAGES = [
 "thumb": "img/t/akte-frl-d58c0c93.jpg",
 "w": 960,
 "h": 696,
-"t": "Het bevolkingsregister met Margaretha Niemann (Margretha Niemans): geboren 8 oktober 1812 in 'Hannover'.",
+"t": "Het bevolkingsregister met Hendrik Meiners en Margretha Niemans: zij is geboren op 8 oktober 1812; als plaats staat bij haar 'Id.', net als bij Hendrik: 'Hannover Zwaagster' (Schwagstorf).",
 "desc": "Bevolkingsregister, Hannover, 1812-10-08. AlleFriezen, Bevolkingsregister. Genoemd: Margretha Niemans (geregistreerde).",
 "maker": "AlleFriezen",
 "datum": "1812-10-08",
@@ -241,7 +337,7 @@ const IMAGES = [
 "thumb": "img/t/akte-frl-e59b0496.jpg",
 "w": 960,
 "h": 738,
-"t": "Overlijdensakte van Hendrik Meyners, Aengwirden 1884 (akte 40): hier staan zijn ouders in Duitsland, Jan Heinrich Meyners en Alida Oboer.",
+"t": "Overlijdensakte van Hendrik Meyners, Aengwirden 1884 (akte 40): 'geboren te Hollenstede Duitschland', zoon van Jan Heinrich Meyners en Alida Oboer.",
 "desc": "Overlijdensakte, Luinjeberd, 1884-05-24. AlleFriezen, Overlijdensregister 1884, aktenummer 40. Genoemd: Johann Heinrich Meyners (overledene), Jan Heinrich Meyners (vader), Alida Oboer (moeder), Margrietha Niemans ().",
 "maker": "AlleFriezen",
 "datum": "1884-05-24",
@@ -308,7 +404,7 @@ const IMAGES = [
 "thumb": "img/t/akte-frl-ef4ede07.jpg",
 "w": 960,
 "h": 669,
-"t": "In de overlijdensakte van Tjitske Widmers uit 1830 (Hennaarderadeel) heet haar moeder Baukjen Jantjes Langendijk: daar komt de achternaam van haar broer Jentje vandaan.",
+"t": "In de overlijdensakte van Tjitske Widmers uit 1830 (Hennaarderadeel) heet haar moeder Baukjen Jantjes Langedijk: precies de achternaam van haar broer Jentje.",
 "desc": "Overlijdensakte, Hennaarderadeel, 1830-01-28. AlleFriezen, Overlijdensregister 1830. Genoemd: Tjitske Widmers Widmers (overledene), Widmer Sipkes Widmers (vader), Baukjen Jantjes Langendijk (moeder).",
 "maker": "AlleFriezen",
 "datum": "1830-01-28",
@@ -330,6 +426,34 @@ const IMAGES = [
 [
 "lijnen",
 "Akke en Jentje, kinderen van een molenmaker"
+]
+]
+},
+{
+"id": "bank-rm-makkum-kogzg11058",
+"soort": "historisch",
+"key": "Makkum",
+"src": "img/bank-rm-makkum-kogzg11058.jpg",
+"thumb": "img/t/bank-rm-makkum-kogzg11058.jpg",
+"w": 760,
+"h": 496,
+"t": "Makkum: Gezicht op Makkum",
+"desc": "Onderwerpsrubrieken binnen de Atlas Zeden en Gewoonten: Vervoermiddelen te land en te water, Vervoermiddelen te land, Rijtuigen en Statiekarossen.",
+"maker": "Jan Bulthuis",
+"datum": "1786 - 1792",
+"lic": "Public Domain Mark 1.0",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://www.rijksmuseum.nl/nl/collectie/object/KOG-ZG-1-10-58--c2bbc5486df5f426c572d542687d13d7",
+"bronNaam": "Rijksmuseum",
+"artikel": "",
+"file": "https://id.rijksmuseum.nl/200715568",
+"ref": "Rijksmuseum, prent, objectnummer KOG-ZG-1-10-58",
+"orig": "https://www.rijksmuseum.nl/nl/collectie/object/KOG-ZG-1-10-58--c2bbc5486df5f426c572d542687d13d7",
+"groep": "foto",
+"vh": [
+[
+"terwisscha",
+"Scheltinga's in Makkum"
 ]
 ]
 },
@@ -550,7 +674,13 @@ const IMAGES = [
 "a-18",
 "a-19"
 ],
-"groep": "boerderij"
+"groep": "boerderij",
+"vh": [
+[
+"oranjewoud",
+"Van Doniaga en Oudeschoot naar Oranjewoud"
+]
+]
 },
 {
 "id": "boerderij-a72-hepkema-dijken",
@@ -628,7 +758,13 @@ const IMAGES = [
 "a-8",
 "a-9"
 ],
-"groep": "boerderij"
+"groep": "boerderij",
+"vh": [
+[
+"buren",
+"Dezelfde grondbezitters"
+]
+]
 },
 {
 "id": "commons-workum-ppob87472jpg",
@@ -1274,11 +1410,167 @@ const IMAGES = [
 "file": "https://www.europeana.eu/item/2058632/3c680e03_d18c_cbb1_22b7_d636524f3e3b_media_30ab0220_3b06_50c7_949e_71e140c4feec",
 "ref": "Cultural Heritage Agency of the Netherlands: R.K. kerk vanuit het noordoosten",
 "orig": "http://beeldbank.cultureelerfgoed.nl/alle-afbeeldingen/detail/3c680e03-d18c-cbb1-22b7-d636524f3e3b/media/30ab0220-3b06-50c7-949e-71e140c4feec",
+"kws": [
+58,
+59
+],
+"why": {
+"58": "De Sint-Vituskerk van Blauwhuis met het kerkhof ervoor; hier werd Klaas Flapper in 1893 begraven.",
+"59": "De Sint-Vituskerk van Blauwhuis met het kerkhof ervoor; hier werd Trijntje Jorna in 1900 vermoedelijk begraven."
+},
 "groep": "foto",
 "vh": [
 [
 "katholiek",
 "Schuilkerk boven een paardenstal"
+]
+]
+},
+{
+"id": "hist-haskerhorne-891318642v",
+"soort": "historisch",
+"key": "Haskerhorne",
+"src": "img/hist-haskerhorne-891318642v.jpg",
+"thumb": "img/t/hist-haskerhorne-891318642v.jpg",
+"w": 760,
+"h": 246,
+"t": "Gezicht op Haskerhorne met kerk",
+"desc": "Blad 42 verso en 43 recto uit een schetsboek met 51 bladen.",
+"maker": "Rijksmuseum",
+"datum": "1732-07-02",
+"lic": "HTTP:  CREATIVECOMMONS.ORG PUBLICDOMAIN MARK 1.0",
+"licUrl": "http://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "http://hdl.handle.net/10934/RM0001.COLLECT.444599",
+"bronNaam": "Rijksmuseum (via Europeana)",
+"artikel": "",
+"file": "https://www.europeana.eu/item/90402/BI_1891_3186_42_V_",
+"ref": "Rijksmuseum: Gezicht op Haskerhorne met kerk",
+"orig": "http://hdl.handle.net/10934/RM0001.COLLECT.444599",
+"groep": "foto",
+"vh": [
+[
+"buren",
+"Haskerhorne en Westermeer"
+]
+]
+},
+{
+"id": "hist-lemmer-bibfm11646",
+"soort": "historisch",
+"key": "Lemmer",
+"src": "img/hist-lemmer-bibfm11646.jpg",
+"thumb": "img/t/hist-lemmer-bibfm11646.jpg",
+"w": 760,
+"h": 490,
+"t": "Lemmer, ca. 1790",
+"desc": "Gezicht op de haven van Lemmer, ca. 1790. Onderdeel van een plaatwerk uit ca. 1824-1825 met 74 (ongenummerde) platen van de belangrijkste topografische gezichten en verschillende zeden en gewoonten in het Verenigd Koninkrijk der Nederlanden.",
+"maker": "Rijksmuseum",
+"datum": "1824-1825",
+"lic": "HTTP:  CREATIVECOMMONS.ORG PUBLICDOMAIN MARK 1.0",
+"licUrl": "http://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "http://hdl.handle.net/10934/RM0001.COLLECT.538965",
+"bronNaam": "Rijksmuseum (via Europeana)",
+"artikel": "",
+"file": "https://www.europeana.eu/item/90402/BI_B_FM_116_46",
+"ref": "Rijksmuseum: Lemmer, ca. 1790",
+"orig": "http://hdl.handle.net/10934/RM0001.COLLECT.538965",
+"groep": "foto",
+"vh": [
+[
+"koortsjaar",
+"De stormvloed"
+]
+]
+},
+{
+"id": "hist-oldeholtpade-bf99bd9023",
+"soort": "historisch",
+"key": "Oldeholtpade",
+"src": "img/hist-oldeholtpade-bf99bd9023.jpg",
+"thumb": "img/t/hist-oldeholtpade-bf99bd9023.jpg",
+"w": 760,
+"h": 765,
+"t": "Oldeholtpade: zuid-zijde toren",
+"desc": "zuid-zijde toren",
+"maker": "Wal, A.J. van der",
+"datum": "1981-02",
+"lic": "BY-SA 3.0",
+"licUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+"bron": "http://beeldbank.cultureelerfgoed.nl/alle-afbeeldingen/detail/408acec5-f2eb-b3ab-b349-21c2e3a58f81/media/0a7aa55d-a8f2-5168-a899-72bf99bd9023",
+"bronNaam": "Cultural Heritage Agency of the Netherlands (via Europeana)",
+"artikel": "",
+"file": "https://www.europeana.eu/item/2058632/408acec5_f2eb_b3ab_b349_21c2e3a58f81_media_0a7aa55d_a8f2_5168_a899_72bf99bd9023",
+"ref": "Cultural Heritage Agency of the Netherlands: zuid-zijde toren",
+"orig": "http://beeldbank.cultureelerfgoed.nl/alle-afbeeldingen/detail/408acec5-f2eb-b3ab-b349-21c2e3a58f81/media/0a7aa55d-a8f2-5168-a899-72bf99bd9023",
+"groep": "foto",
+"vh": [
+[
+"katholiek",
+"Twee registers voor één huwelijk"
+]
+]
+},
+{
+"id": "hist-steenwijkerwold-t1894a2911",
+"soort": "historisch",
+"key": "Steenwijkerwold",
+"src": "img/hist-steenwijkerwold-t1894a2911.jpg",
+"thumb": "img/t/hist-steenwijkerwold-t1894a2911.jpg",
+"w": 760,
+"h": 564,
+"t": "Gezicht op Steenwijkerwold",
+"desc": "",
+"maker": "Rijksmuseum",
+"datum": "1732",
+"lic": "HTTP:  CREATIVECOMMONS.ORG PUBLICDOMAIN MARK 1.0",
+"licUrl": "http://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "http://hdl.handle.net/10934/RM0001.COLLECT.236012",
+"bronNaam": "Rijksmuseum (via Europeana)",
+"artikel": "",
+"file": "https://www.europeana.eu/item/90402/RP_T_1894_A_2911",
+"ref": "Rijksmuseum: Gezicht op Steenwijkerwold",
+"orig": "http://hdl.handle.net/10934/RM0001.COLLECT.236012",
+"groep": "foto",
+"vh": [
+[
+"netwerk",
+"Zussen Langedijk"
+]
+]
+},
+{
+"id": "hist-wolvega-rppob87454",
+"soort": "historisch",
+"key": "Wolvega",
+"src": "img/hist-wolvega-rppob87454.jpg",
+"thumb": "img/t/hist-wolvega-rppob87454.jpg",
+"w": 760,
+"h": 500,
+"t": "Overstroomde land bij Wolvega, 1825",
+"desc": "Gezicht op het overstroomde land bij Wolvega. Een bootje met enkele personen vaart tussen de huizen.  4 en 5 februari 1825. Onderdeel van een groep illustraties uit een gedenkboek van de watersnood van 1825.",
+"maker": "Rijksmuseum",
+"datum": "1825-1826",
+"lic": "HTTP:  CREATIVECOMMONS.ORG PUBLICDOMAIN MARK 1.0",
+"licUrl": "http://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "http://hdl.handle.net/10934/RM0001.COLLECT.522078",
+"bronNaam": "Rijksmuseum (via Europeana)",
+"artikel": "",
+"file": "https://www.europeana.eu/item/90402/RP_P_OB_87_454",
+"ref": "Rijksmuseum: Overstroomde land bij Wolvega, 1825",
+"orig": "http://hdl.handle.net/10934/RM0001.COLLECT.522078",
+"kws": [
+190,
+178
+],
+"why": {
+"190": "Het overstroomde land bij Wolvega na de doorbraak van de Zuiderzeedijken op 4 en 5 februari 1825. Jentje Langedijk woonde toen als timmerman in Wolvega.",
+"178": "Het overstroomde land in de gemeente Wolvega (Weststellingwerf) in februari 1825. Hans Blauwhof was toen veehouder in het lage Spanga, in dezelfde gemeente; hij overleed eind dat jaar."
+},
+"groep": "foto",
+"vh": [
+[
+"rampen",
+"De watersnood van februari 1825"
 ]
 ]
 },
@@ -1682,6 +1974,100 @@ const IMAGES = [
 "file": "File:Kaart van de grietenij Wymbritseradeel De grietenye van Wymbritzeradeel (titel op object), RP-P-AO-2-21B-7.jpg"
 },
 {
+"id": "kadaster1832-rohel",
+"soort": "historisch",
+"key": "Rohel",
+"src": "img/kadaster1832-rohel.jpg",
+"thumb": "img/t/kadaster1832-rohel.jpg",
+"w": 800,
+"h": 600,
+"t": "Rohel op de kadasterkaart van 1832",
+"desc": "Uitsnede van het minuutplan (oorspronkelijke kadastrale kaart) van 1832 rond de kern van Rohel, met de perceelnummers. Ongeveer 1,2 km breed.",
+"maker": "Kadaster (minuutplan 1832), gegeorefereerd door HisGIS",
+"datum": "1832",
+"lic": "CC BY-NC-SA 3.0 NL",
+"licUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/nl/",
+"bron": "https://hisgis.nl/",
+"bronNaam": "HisGIS / Kadaster 1832",
+"artikel": "",
+"file": "https://hisgis.nl/",
+"ref": "Kadaster 1832, minuutplan rond Rohel (HisGIS)",
+"orig": "https://hisgis.nl/",
+"groep": "kadaster",
+"vh": [
+[
+"dubbel",
+"Jouke en Niesje, via Franke én via Aaltje"
+]
+]
+},
+{
+"id": "kadaster1832-ter-idzard",
+"soort": "historisch",
+"key": "Ter Idzard",
+"src": "img/kadaster1832-ter-idzard.jpg",
+"thumb": "img/t/kadaster1832-ter-idzard.jpg",
+"w": 800,
+"h": 600,
+"t": "Ter Idzard op de kadasterkaart van 1832",
+"desc": "Uitsnede van het minuutplan (oorspronkelijke kadastrale kaart) van 1832 rond de kern van Ter Idzard, met de perceelnummers. Ongeveer 1,2 km breed.",
+"maker": "Kadaster (minuutplan 1832), gegeorefereerd door HisGIS",
+"datum": "1832",
+"lic": "CC BY-NC-SA 3.0 NL",
+"licUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/nl/",
+"bron": "https://hisgis.nl/",
+"bronNaam": "HisGIS / Kadaster 1832",
+"artikel": "",
+"file": "https://hisgis.nl/",
+"ref": "Kadaster 1832, minuutplan rond Ter Idzard (HisGIS)",
+"orig": "https://hisgis.nl/",
+"kws": [
+70,
+82,
+104
+],
+"why": {
+"70": "Ter Idzard op de kadasterkaart van 1832. Willem Jans de Boer was toen landbouwer in Ter Idzard en eigenaar van 19 percelen, met een huis en erf: zijn boerderij kan op deze kaart staan.",
+"82": "Ter Idzard op de kadasterkaart van 1832. Wytze Jans de Boer was toen landbouwer in Ter Idzard en eigenaar van ruim 42 hectare land met een huis en erf.",
+"104": "Assuerus erfde in 1819 land in de Stellingwerven en verkocht in 1843 nog twee boerderijen in Ter Idzard; in 1832 kunnen die op deze kaart staan."
+},
+"groep": "kadaster",
+"vh": [
+[
+"lijnen",
+"Nog meer gedeelde voorouders?"
+]
+]
+},
+{
+"id": "kadaster1832-ugoklooster",
+"soort": "historisch",
+"key": "Ugoklooster",
+"src": "img/kadaster1832-ugoklooster.jpg",
+"thumb": "img/t/kadaster1832-ugoklooster.jpg",
+"w": 800,
+"h": 600,
+"t": "Ugoklooster (Oegeklooster) op de kadasterkaart van 1832",
+"desc": "Uitsnede van het minuutplan (oorspronkelijke kadastrale kaart) van 1832 rond de kern van Ugoklooster (Oegeklooster), met de perceelnummers. Ongeveer 1,2 km breed.",
+"maker": "Kadaster (minuutplan 1832), gegeorefereerd door HisGIS",
+"datum": "1832",
+"lic": "CC BY-NC-SA 3.0 NL",
+"licUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/nl/",
+"bron": "https://hisgis.nl/",
+"bronNaam": "HisGIS / Kadaster 1832",
+"artikel": "",
+"file": "https://hisgis.nl/",
+"ref": "Kadaster 1832, minuutplan rond Ugoklooster (HisGIS)",
+"orig": "https://hisgis.nl/",
+"groep": "kadaster",
+"vh": [
+[
+"brandsma",
+"Apollonia trouwt op Ugoklooster"
+]
+]
+},
+{
 "id": "krant-010581360-a0022",
 "soort": "persoon",
 "key": "248",
@@ -1695,12 +2081,12 @@ const IMAGES = [
 "datum": "1826-10-17",
 "lic": "",
 "licUrl": "",
-"bron": "https://www.delpher.nl/nl/kranten/view?identifier=ddd%3A010581360%3Ampeg21%3Aa0022&coll=ddd",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010581360:mpeg21:a0022",
 "bronNaam": "Delpher (KB)",
 "artikel": "",
 "file": "http://resolver.kb.nl/resolve?urn=ddd:010581360:mpeg21:a0022",
 "ref": "Leeuwarder courant, 1826-10-17, pagina 3 (Delpher)",
-"orig": "https://www.delpher.nl/nl/kranten/view?identifier=ddd%3A010581360%3Ampeg21%3Aa0022&coll=ddd",
+"orig": "https://resolver.kb.nl/resolve?urn=ddd:010581360:mpeg21:a0022",
 "kws": [
 248
 ],
@@ -1767,7 +2153,15 @@ const IMAGES = [
 "bron": "https://commons.wikimedia.org/wiki/File:Atlas_Schoemaker-FRIESLAND-DEEL3-3099-Friesland,_Bloemkamp.jpeg",
 "bronNaam": "Wikimedia Commons",
 "artikel": "https://en.wikipedia.org/wiki/Bloemkamp_Abbey",
-"file": "File:Atlas Schoemaker-FRIESLAND-DEEL3-3099-Friesland, Bloemkamp.jpeg"
+"file": "File:Atlas Schoemaker-FRIESLAND-DEEL3-3099-Friesland, Bloemkamp.jpeg",
+"kws": [
+50,
+25
+],
+"why": {
+"50": "Oldeklooster, de plek van de verdwenen abdij Bloemkamp, getekend rond 1720–1730; hier werd Frans Poelsma later boer.",
+"25": "Oldeklooster, de plek van de verdwenen abdij Bloemkamp, getekend rond 1720–1730; hier werd Baukje Poelsma in 1857 geboren."
+}
 },
 {
 "id": "media-dronrijp",
@@ -1977,6 +2371,858 @@ const IMAGES = [
 "bronNaam": "Wikimedia Commons",
 "artikel": "",
 "file": "File:Zorgvlied-RK kerk.JPG"
+},
+{
+"id": "nieuw-k6-krant-1817-liauckema-scheltinga-state",
+"soort": "persoon",
+"key": "104",
+"src": "img/nieuw-k6-krant-1817-liauckema-scheltinga-state.jpg",
+"thumb": "img/t/nieuw-k6-krant-1817-liauckema-scheltinga-state.jpg",
+"w": 960,
+"h": 314,
+"t": "Veiling van Liauckema State bij Makkum en Scheltinga State onder Arum, Leeuwarder Courant 12 augustus 1817",
+"desc": "Notaris T. J. Wiersma uit Sneek veilt op 28 augustus en 11 september 1817 in het Fortuin te Bolsward twee boerderijen: 'Liauckema State' te Makkum (lett. C, no. 159, 54 pondematen greidland, verhuurd aan Sjieuwke Sybes Huitema) en 'Scheltinga State' onder Arum (lett. A, no. 2, 100 pondematen bouw- en greidland, verhuurd aan Pieter Jans Blanksma).",
+"maker": "",
+"datum": "1817-08-12",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010580406:mpeg21:a0018",
+"bronNaam": "Delpher, Leeuwarder courant » 12 aug 1817 - Art. 18",
+"artikel": "",
+"file": "",
+"ref": "ddd:010580406:mpeg21:a0018",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010580406:mpeg21:p003:image (uitsnede)",
+"kws": [
+104,
+93,
+208,
+416,
+3334
+],
+"why": {
+"104": "De veilingadvertentie van de twee boerderijen bij Makkum en Arum die Assuerus, Akke Sybrigje en hun broers in 1817 lieten verkopen: Liauckema State en Scheltinga State.",
+"93": "De veilingadvertentie van de twee boerderijen bij Makkum en Arum die Assuerus, Akke Sybrigje en hun broers in 1817 lieten verkopen: Liauckema State en Scheltinga State.",
+"208": "Scheltinga State was het familiegoed van de Scheltinga's in Arum, Liauckema State dat van de Lieuwkema's bij Makkum; in 1817 verkochten de kinderen van Titus Bokkes ze.",
+"416": "Scheltinga State was het familiegoed van de Scheltinga's in Arum, Liauckema State dat van de Lieuwkema's bij Makkum; in 1817 verkochten de kinderen van Titus Bokkes ze.",
+"3334": "Scheltinga State was het familiegoed van de Scheltinga's in Arum, Liauckema State dat van de Lieuwkema's bij Makkum; in 1817 verkochten de kinderen van Titus Bokkes ze."
+},
+"vh": [
+[
+"terwisscha",
+"Het raadsel Terwisscha"
+]
+]
+},
+{
+"id": "nieuw-k6-krant-1821-zathe-stavoren-van-der-pol",
+"soort": "persoon",
+"key": "254",
+"src": "img/nieuw-k6-krant-1821-zathe-stavoren-van-der-pol.jpg",
+"thumb": "img/t/nieuw-k6-krant-1821-zathe-stavoren-van-der-pol.jpg",
+"w": 960,
+"h": 290,
+"t": "Veiling van de boerderij van de weduwe Van der Pol in Stavoren, Leeuwarder Courant 5 januari 1821",
+"desc": "Publieke verkoping van 'eene uitmuntende en zeer vruchtbare zathe en landen, met huizinge, schuur, poldermolen en daarbij behoorende visscherij', onder Stavoren, 'de huizinge aldaar gekwoteerd met no. 30, in wijk A', 23 bunder, 'laatst door de weduwe Durk Teekes van der Pol als eigenaarsche bewoond en in gebruik', met een huis en erf no. 29 erachter.",
+"maker": "",
+"datum": "1821-01-05",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010580762:mpeg21:a0023",
+"bronNaam": "Delpher, Leeuwarder courant » 05 jan 1821 - Art. 23",
+"artikel": "",
+"file": "",
+"ref": "ddd:010580762:mpeg21:a0023",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010580762:mpeg21:p004:image (uitsnede)",
+"kws": [
+254,
+255
+],
+"why": {
+"254": "Hun eigen boerderij bij Stavoren, met poldermolen en visserij: Dirk Teekes van der Pol overleed in 1813 in wijk A nummer 30, en zijn weduwe Gooike Tjeerds bewoonde de boerderij tot haar dood in 1820.",
+"255": "Hun eigen boerderij bij Stavoren, met poldermolen en visserij: Dirk Teekes van der Pol overleed in 1813 in wijk A nummer 30, en zijn weduwe Gooike Tjeerds bewoonde de boerderij tot haar dood in 1820."
+}
+},
+{
+"id": "nieuw-k6-krant-1827-grutterij-balk",
+"soort": "persoon",
+"key": "124",
+"src": "img/nieuw-k6-krant-1827-grutterij-balk.jpg",
+"thumb": "img/t/nieuw-k6-krant-1827-grutterij-balk.jpg",
+"w": 960,
+"h": 494,
+"t": "Veiling van de koopmanshuizing en grutterij in Balk, Leeuwarder Courant 27 juli 1827",
+"desc": "Notaris F. IJ. de Boer veilt op 8 augustus 1827 in de herberg de Roskam te Balk 'eene roijale koopmans huizing, en een zeer beklante en neringrijke grutterij, zijnde de eenigste in dat dorp', geq. no. 59, 'thans bij Gerrit J. Westendorp in gebruik', met nog twee huizen en greidland onder Ruigahuizen.",
+"maker": "",
+"datum": "1827-07-27",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010581439:mpeg21:a0024",
+"bronNaam": "Delpher, Leeuwarder courant » 27 jul 1827 - Art. 24",
+"artikel": "",
+"file": "",
+"ref": "ddd:010581439:mpeg21:a0024",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010581439:mpeg21:p004:image (uitsnede)",
+"kws": [
+124,
+248,
+249
+],
+"why": {
+"124": "De grutterij van Gerrit Westendorp in Balk, huis nummer 59, in 1827 te koop na de dood van zijn vader: de advertentie noemt hem als gebruiker.",
+"248": "Het huis en de grutterij van Johannes Westendorp en Neeltje Blom: Neeltje overleed in 1819 in huis nummer 59 in Balk, het huis dat hier na de dood van Johannes (1826) wordt geveild.",
+"249": "Het huis en de grutterij van Johannes Westendorp en Neeltje Blom: Neeltje overleed in 1819 in huis nummer 59 in Balk, het huis dat hier na de dood van Johannes (1826) wordt geveild."
+},
+"vh": [
+[
+"beroepen",
+"Ambacht en winkel"
+]
+]
+},
+{
+"id": "nieuw-k6-krant-1838-zathe-tirns-teppema",
+"soort": "persoon",
+"key": "98",
+"src": "img/nieuw-k6-krant-1838-zathe-tirns-teppema.jpg",
+"thumb": "img/t/nieuw-k6-krant-1838-zathe-tirns-teppema.jpg",
+"w": 960,
+"h": 751,
+"t": "Veiling van de boerderij met watermolen onder Tirns, Leeuwarder Courant 27 februari 1838",
+"desc": "Verkoop van 'eene bij uitnemendheid vruchtbare zathe en landen, met huizing, schuur, hoving, plantagie en watermolen' onder Tirns, 26 bunder, 'thans door T. G. Teppema en vrouw bewoond'; een derde van de erfgenamen van wijlen Reintje Thomas Wiersma, twee derde van 'Gerben Pieters Teppema en Kinderen'.",
+"maker": "",
+"datum": "1838-02-27",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010582552:mpeg21:a0003",
+"bronNaam": "Delpher, Leeuwarder courant » 27 feb 1838 - Art. 3",
+"artikel": "",
+"file": "",
+"ref": "ddd:010582552:mpeg21:a0003",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010582552:mpeg21:p004:image (uitsnede)",
+"kws": [
+98,
+99
+],
+"why": {
+"98": "De boerderij met watermolen onder Tirns, voor twee derde van Gerben Pieters Teppema en zijn kinderen, in 1838 bewoond door zijn zoon Thomas.",
+"99": "De andere derde was van de erfgenamen van Reintje Thomas Wiersma, de zus van Boukje Wiersma: de boerderij kwam vermoedelijk uit de familie Wiersma, waar Boukje vandaan kwam."
+}
+},
+{
+"id": "nieuw-k6-krant-1841-zathe-westermeer-bonthuis",
+"soort": "persoon",
+"key": "230",
+"src": "img/nieuw-k6-krant-1841-zathe-westermeer-bonthuis.jpg",
+"thumb": "img/t/nieuw-k6-krant-1841-zathe-westermeer-bonthuis.jpg",
+"w": 960,
+"h": 523,
+"t": "Veiling van wei- en hooiland van de boerderij van wijlen M. H. Bonthuis in Westermeer, Leeuwarder Courant 26 november 1841",
+"desc": "Notaris D. de Vries te Joure veilt op 29 november 1841 in het Tolhuis te Joure negen percelen wei- en hooiland, 'waarvan de 8 eerste zijn afkomstig van de Zathe en Landen, met Huis en Schuur no. 11, te Westermeer, in eigendom toebehoord hebbende aan wijlen M. H. Bonthuis, in leven Landbouwer aldaar'.",
+"maker": "",
+"datum": "1841-11-26",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010582936:mpeg21:a0009",
+"bronNaam": "Delpher, Leeuwarder courant » 26 nov 1841 - Art. 9",
+"artikel": "",
+"file": "",
+"ref": "ddd:010582936:mpeg21:a0009",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010582936:mpeg21:p005:image (uitsnede)",
+"kws": [
+230,
+231,
+115
+],
+"why": {
+"230": "De landerijen van zijn boerderij met huis en schuur nummer 11 in Westermeer, na zijn dood in 1841 geveild.",
+"231": "De boerderij in Westermeer waar Hylkjen Jonkman met Meinte Bonthuis woonde en in 1826 overleed, en waar hun dochter Vogeltje opgroeide.",
+"115": "De boerderij in Westermeer waar Hylkjen Jonkman met Meinte Bonthuis woonde en in 1826 overleed, en waar hun dochter Vogeltje opgroeide."
+},
+"vh": [
+[
+"buren",
+"Haskerhorne en Westermeer"
+],
+[
+"lijnen",
+"Popkjen en Hylkje, twee zussen uit Langezwaag"
+]
+]
+},
+{
+"id": "nieuw-k6-krant-1874-huizinge-irnsum-boersma",
+"soort": "persoon",
+"key": "97",
+"src": "img/nieuw-k6-krant-1874-huizinge-irnsum-boersma.jpg",
+"thumb": "img/t/nieuw-k6-krant-1874-huizinge-irnsum-boersma.jpg",
+"w": 918,
+"h": 1187,
+"t": "Verkoping te Irnsum van het bezit van de erven weduwe M. M. Boersma, Leeuwarder Courant 6 februari 1874",
+"desc": "Notaris P. Boltjes uit Grouw verkoopt op 21 februari 1874 bij kastelein Jan Tjallings Jorna te Irnsum 'eene hechte sterke huizinge en erf' aan de Straatweg te Irnsum (Rauwerd C 127), greidland op Flansum en hooiland met een molenpolle in de Irnsumer Buitenpolder, 'alles behoorende aan de Erven Wed. M. M. Boersma te Irnsum'.",
+"maker": "",
+"datum": "1874-02-06",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010586543:mpeg21:a0010",
+"bronNaam": "Delpher, Leeuwarder courant » 06 feb 1874 - Art. 10",
+"artikel": "",
+"file": "",
+"ref": "ddd:010586543:mpeg21:a0010",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=ddd:010586543:mpeg21:p004:image (uitsnede)",
+"kws": [
+97
+],
+"why": {
+"97": "Het huis aan de Straatweg in Irnsum en het land van Lijsbeth van Balen, weduwe van Minne Meintes Boersma, na haar dood in december 1873 door haar erven verkocht."
+}
+},
+{
+"id": "nieuw-k6-krant-1898-overlijden-kornelis-moezen",
+"soort": "persoon",
+"key": "34",
+"src": "img/nieuw-k6-krant-1898-overlijden-kornelis-moezen.jpg",
+"thumb": "img/t/nieuw-k6-krant-1898-overlijden-kornelis-moezen.jpg",
+"w": 820,
+"h": 595,
+"t": "Overlijdensadvertentie van Kornelis Johannes Moezen, Oldetrijne 1898",
+"desc": "'Heden morgen overleed na een langzaam verval van krachten, na voorzien van de H. Sacramenten der stervenden, onze waarde Vader, Behuwd- en Grootvader Kornelis Johannes Moezen, in den gezegenden ouderdom van 90 jaar en bijna 11 maanden. Oldetrijne, 21 October '98. J. K. Moezen. H. A. de Groot en Kinderen. W. J. Bos, Echtgenoote en Kinderen.'",
+"maker": "",
+"datum": "1898-10-24",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=MMGASL01:000366017:mpeg21:a00026",
+"bronNaam": "Delpher, Opregte Steenwijker courant » 24 okt 1898 - Art. 26",
+"artikel": "",
+"file": "",
+"ref": "MMGASL01:000366017:mpeg21:a00026",
+"orig": "https://www.delpher.nl/nl/api/downloadimage?id=MMGASL01:000366017:mpeg21:p00003:image (uitsnede)",
+"kws": [
+34,
+16
+],
+"why": {
+"34": "Zijn overlijdensadvertentie: Kornelis Moezen werd 90, en zijn schoonzoon Hermanus de Groot tekende mee met zijn kinderen.",
+"16": "'H. A. de Groot en Kinderen' onder de advertentie zijn Hermanus de Groot, weduwnaar van Johanna Moezen, en zijn kinderen, onder wie Kornelis de Groot, toen acht jaar."
+}
+},
+{
+"id": "nieuw-k7-broek-kerk-en-klokkenstoel",
+"soort": "historisch",
+"key": "Broek",
+"src": "img/nieuw-k7-broek-kerk-en-klokkenstoel.jpg",
+"thumb": "img/t/nieuw-k7-broek-kerk-en-klokkenstoel.jpg",
+"w": 700,
+"h": 466,
+"t": "Broek bij Joure: de hervormde kerk en de klokkenstoel op het kerkhof aan It Noard",
+"desc": "De Nederlands Hervormde kerk met klokkenstoel met een zogenaamd helmdak te Broek bij Joure. (It Noard 21)",
+"maker": "",
+"datum": "1900 - 1999",
+"lic": "geen rechtenvermelding in de bron (Tresoar, Ryksargyf Fotos)",
+"licUrl": "",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/64056",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, Ryksargyf Fotos, 00007742",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/64056/full/full/0/default.jpg",
+"kws": [
+"a-24",
+"a-25"
+],
+"why": {
+"a-24": "Het kerkhof van Broek-Noord met de klokkenstoel en de kerk, gezien over het water. Hier liggen Sjoerd Wouters Bakker en Trijntje Hotzes Brouwer begraven.",
+"a-25": "Het kerkhof van Broek-Noord met de klokkenstoel en de kerk, gezien over het water. Hier liggen Sjoerd Wouters Bakker en Trijntje Hotzes Brouwer begraven."
+}
+},
+{
+"id": "nieuw-k7-broek-klokkenstoel-1971",
+"soort": "historisch",
+"key": "Broek",
+"src": "img/nieuw-k7-broek-klokkenstoel-1971.jpg",
+"thumb": "img/t/nieuw-k7-broek-klokkenstoel-1971.jpg",
+"w": 351,
+"h": 500,
+"t": "Broek bij Joure: de klokkenstoel op het kerkhof, 1971",
+"desc": "Klokkenstoel met een zogenaamd helmdak te Broek bij Joure (It Noard).",
+"maker": "Frederik Stienstra (1914-1999)",
+"datum": "1971-06-05",
+"lic": "foto CC-BY-NC Tresoar",
+"licUrl": "https://creativecommons.org/licenses/by-nd/4.0/",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/65160",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, Collectie Stienstra, 00017215",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/65160/full/full/0/default.jpg",
+"kws": [
+"a-24",
+"a-25"
+],
+"why": {
+"a-24": "De klokkenstoel tussen de graven op het kerkhof van Broek-Noord, waar Sjoerd Wouters Bakker en Trijntje Hotzes Brouwer begraven liggen.",
+"a-25": "De klokkenstoel tussen de graven op het kerkhof van Broek-Noord, waar Sjoerd Wouters Bakker en Trijntje Hotzes Brouwer begraven liggen."
+}
+},
+{
+"id": "nieuw-k7-delfstrahuizen-kerkhof-marwei-1990",
+"soort": "historisch",
+"key": "Delfstrahuizen",
+"src": "img/nieuw-k7-delfstrahuizen-kerkhof-marwei-1990.jpg",
+"thumb": "img/t/nieuw-k7-delfstrahuizen-kerkhof-marwei-1990.jpg",
+"w": 700,
+"h": 462,
+"t": "Delfstrahuizen: het kerkhof aan de Marwei, 1990",
+"desc": "Delfstrahuizen; Marwei tegenover 94; Grafmonument; volledig (exterieur); Overzichtsfoto van kerkhof / begraafplaats met grafzerken.",
+"maker": "Provincie Fryslân (Monumenten Inventarisatie Project)",
+"datum": "1990-09-22",
+"lic": "foto CC0 Tresoar",
+"licUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/88650",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, MIP, 00056935",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/88650/full/full/0/default.jpg",
+"kws": [
+"a-20",
+"a-21"
+],
+"why": {
+"a-20": "Het kerkhof van Delfstrahuizen aan de Marwei, in 1990. Hier liggen Johannes Akkerman en Niesje Akkerman samen begraven.",
+"a-21": "Het kerkhof van Delfstrahuizen aan de Marwei, in 1990. Hier liggen Johannes Akkerman en Niesje Akkerman samen begraven."
+}
+},
+{
+"id": "nieuw-k7-doniaga-klassenfoto-1870",
+"soort": "historisch",
+"key": "Doniaga",
+"src": "img/nieuw-k7-doniaga-klassenfoto-1870.jpg",
+"thumb": "img/t/nieuw-k7-doniaga-klassenfoto-1870.jpg",
+"w": 389,
+"h": 500,
+"t": "Doniaga: leerlingen van onderwijzer Jacob Hepkema, rond 1870, met onder hen Jelte Hepkema",
+"desc": "Jacob Hepkema was van mei 1870 tot ten minste 4 juli 1872 onderwijzer aan de openbare lagere school te Doniaga. Afgebeelde leerlingen o.a.: Anne Sijbesma (1856-1946), Jelte Hepkema (Doniaga 30 apr 1857 - St. Nicolaasga 23 dec 1937), Ulbe Koopman (1856-1925), Aant Visser (1861-1903, identificatie onzeker).",
+"maker": "",
+"datum": "1870, ca.",
+"lic": "geen rechtenvermelding in de bron (Tresoar, Familie- en bedrijfsarchief Hepkema)",
+"licUrl": "",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/52027",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, Familie- en bedrijfsarchief Hepkema, 00018976",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/52027/full/full/0/default.jpg",
+"kws": [
+"a-36",
+"a-37"
+],
+"why": {
+"a-36": "Leerlingen van de school in Doniaga rond 1870, bij onderwijzer Jacob Hepkema, een neef van Hepke. Een van de jongens is hun zoon Jelte; welke, is niet bekend.",
+"a-37": "Leerlingen van de school in Doniaga rond 1870, bij onderwijzer Jacob Hepkema, een neef van Hepke. Een van de jongens is hun zoon Jelte; welke, is niet bekend."
+}
+},
+{
+"id": "nieuw-k7-krant-1858-kastelein-wiebe-hoekstra-mildam",
+"soort": "historisch",
+"key": "Mildam",
+"src": "img/nieuw-k7-krant-1858-kastelein-wiebe-hoekstra-mildam.jpg",
+"thumb": "img/t/nieuw-k7-krant-1858-kastelein-wiebe-hoekstra-mildam.jpg",
+"w": 960,
+"h": 522,
+"t": "Veiling in de herberg van kastelein Wiebe Hanzes Hoekstra te Mildam, Leeuwarder Courant 3 december 1858",
+"desc": "Advertentie 'Zathe te Mildam enz.': notaris W. A. Evertsz uit Oldeboorn verkoopt op 15 december 1858 'ten huize van den Kastelein Wijbe Hanzes Hoekstra te Mildam' een boerderij met huizinge en schuur (plaatselijk no. 39) in de Gebuurte te Mildam, van Oene Annes Veenbaas.",
+"maker": "Leeuwarder courant",
+"datum": "1858-12-03",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010584731:mpeg21:a0053",
+"bronNaam": "Delpher, Leeuwarder courant, 1858-12-03",
+"artikel": "",
+"file": "",
+"ref": "ddd:010584731:mpeg21:a0053",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010584731:mpeg21:p012:image&x=1480&y=2724&w=1593&h=867 (uitsnede)",
+"kws": [
+"a-32"
+],
+"why": {
+"a-32": "In 1858 werd een boerderij in Mildam geveild in de herberg van Wiebe Hanzes Hoekstra; de advertentie noemt hem kastelein te Mildam."
+}
+},
+{
+"id": "nieuw-k7-krant-1881-weduwe-hoekstra-mildam",
+"soort": "historisch",
+"key": "Mildam",
+"src": "img/nieuw-k7-krant-1881-weduwe-hoekstra-mildam.jpg",
+"thumb": "img/t/nieuw-k7-krant-1881-weduwe-hoekstra-mildam.jpg",
+"w": 921,
+"h": 1215,
+"t": "Veiling ten huize van de weduwe W. H. Hoekstra te Mildam, Leeuwarder Courant 4 november 1881",
+"desc": "Advertentie 'Zathe en landen te Mildam enz.': notaris G. Boschloo uit Heerenveen verkoopt op 22 november 1881 'ten huize van de Weduwe W. H. Hoekstra te Mildam' de boerderij en landen van de erven R. T. Nijenhuis onder Mildam en Katlijk.",
+"maker": "Leeuwarder courant",
+"datum": "1881-11-04",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010588062:mpeg21:a0065",
+"bronNaam": "Delpher, Leeuwarder courant, 1881-11-04",
+"artikel": "",
+"file": "",
+"ref": "ddd:010588062:mpeg21:a0065",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010588062:mpeg21:p010:image&x=935&y=93&w=921&h=1215 (uitsnede)",
+"kws": [
+"a-33"
+],
+"why": {
+"a-33": "Na de dood van haar man hield Tjitske Annes Bosma de herberg in Mildam aan; in 1881 werd er een boerderij geveild ten huize van de weduwe W. H. Hoekstra."
+}
+},
+{
+"id": "nieuw-k7-krant-1902-boelgoed-lucas-van-der-molen-rohel",
+"soort": "historisch",
+"key": "Rohel",
+"src": "img/nieuw-k7-krant-1902-boelgoed-lucas-van-der-molen-rohel.jpg",
+"thumb": "img/t/nieuw-k7-krant-1902-boelgoed-lucas-van-der-molen-rohel.jpg",
+"w": 585,
+"h": 1342,
+"t": "Boelgoed ten sterfhuize van Lucas Jans van der Molen te Rohel, 1902",
+"desc": "Advertentie 'Boelgoed-Rohel': deurwaarder Wierda uit Heerenveen verkoopt op dinsdag 1 april 1902 ten sterfhuize van Lucas Jans van der Molen te Rohel: zes kalfkoeien, een mot, een schaap en zes eenden; klein gereedschap, karnen en tonnen; meubelen en huisraad (twee kasten, twee veren bedden, een Friese klok); de mesthoop, ongeveer 5000 kg hooi, turf, twee schouwen en een houten hok met koestallen.",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1902-03-29",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010762458:mpeg21:a0111",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1902-03-29",
+"artikel": "",
+"file": "",
+"ref": "ddd:010762458:mpeg21:a0111",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010762458:mpeg21:p011:image&x=2288&y=3248&w=585&h=1342 (uitsnede)",
+"kws": [
+"a-28"
+],
+"why": {
+"a-28": "Na de dood van Lucas van der Molen in maart 1902 werd zijn inboedel in Rohel geveild: zes koeien, een schaap, eenden, een Friese klok, hooi, turf en twee schouwen."
+}
+},
+{
+"id": "nieuw-k7-krant-1904-overlijden-jan-joukes-akkerman",
+"soort": "historisch",
+"key": "Rotsterhaule",
+"src": "img/nieuw-k7-krant-1904-overlijden-jan-joukes-akkerman.jpg",
+"thumb": "img/t/nieuw-k7-krant-1904-overlijden-jan-joukes-akkerman.jpg",
+"w": 577,
+"h": 456,
+"t": "Overlijdensbericht van Jan Joukes Akkerman, Rotsterhaule 1904",
+"desc": "Familiebericht: 'Heden overleed, na een langdurig lijden, onze dierbare Echtgenoot en Vader JAN JOUKES AKKERMAN, in den gezegenden ouderdom van bijna 78 jaar. Rotsterhaule, 16 Febr. 1904. A. J. KOOPMANS, wed. J. Akkerman. Mede namens kinderen, behuwd- en kleinkinderen.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1904-02-20",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010735754:mpeg21:a0066",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1904-02-20",
+"artikel": "",
+"file": "",
+"ref": "ddd:010735754:mpeg21:a0066",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010735754:mpeg21:p003:image&x=1196&y=4290&w=577&h=456 (uitsnede)",
+"kws": [
+"a-42",
+"a-43"
+],
+"why": {
+"a-42": "Het overlijdensbericht van Jan Joukes Akkerman, die in februari 1904 in Rotsterhaule overleed, bijna 78 jaar oud.",
+"a-43": "Annigje Jans Koopmans plaatste in 1904 het overlijdensbericht van haar man Jan Joukes Akkerman."
+}
+},
+{
+"id": "nieuw-k7-krant-1907-overlijden-tietje-bosma",
+"soort": "historisch",
+"key": "Mildam",
+"src": "img/nieuw-k7-krant-1907-overlijden-tietje-bosma.jpg",
+"thumb": "img/t/nieuw-k7-krant-1907-overlijden-tietje-bosma.jpg",
+"w": 614,
+"h": 536,
+"t": "Overlijdensbericht van Tietje Annes Bosma, weduwe van Wiebe H. Hoekstra, Mildam 1907",
+"desc": "Familiebericht: 'Hedenavond overleed zacht en kalm onze dierbare moeder behuwd- groot- en overgrootmoeder TIETJE ANNES BOSMA, Wed. WIEBE H. HOEKSTRA op den hoogen leeftijd van 89 jaar en 8 mnd. ... Uit naam der familie. HANS W. HOEKSTRA. Mildam, 5 Aug. 1907.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1907-08-10",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010760089:mpeg21:a0054",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1907-08-10",
+"artikel": "",
+"file": "",
+"ref": "ddd:010760089:mpeg21:a0054",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010760089:mpeg21:p003:image&x=1138&y=44&w=614&h=536 (uitsnede)",
+"kws": [
+"a-33",
+"a-32",
+"a-16"
+],
+"why": {
+"a-33": "Het overlijdensbericht van Tjitske (Tietje) Annes Bosma, die in augustus 1907 in Mildam overleed, 89 jaar oud.",
+"a-32": "Het overlijdensbericht van zijn weduwe Tietje Annes Bosma (1907), waarin hij genoemd wordt als Wiebe H. Hoekstra.",
+"a-16": "Hans W. Hoekstra plaatste in 1907 het overlijdensbericht van zijn moeder Tietje Annes Bosma, uit naam van de familie."
+}
+},
+{
+"id": "nieuw-k7-krant-1907-verkoop-herbergen-mildam",
+"soort": "historisch",
+"key": "Mildam",
+"src": "img/nieuw-k7-krant-1907-verkoop-herbergen-mildam.jpg",
+"thumb": "img/t/nieuw-k7-krant-1907-verkoop-herbergen-mildam.jpg",
+"w": 560,
+"h": 1420,
+"t": "Verkoop van de boerderij en twee herbergen van de erven Wiebe H. Hoekstra in Mildam, november 1907",
+"desc": "Advertentie 'Verkoop te Mildam': notaris Van Beijma thoe Kingma uit Heerenveen verkoopt op 28 november 1907 bij de wed. Roel Heida te Mildam voor de erven Wiebe H. Hoekstra een boerderij met landen te Mildam en hooilanden onder Nijeholtwolde, samen 32.74.00 hectare, 'benevens twee herbergen met erven te Mildam, in 22 perc.' De koper van de herberg die door de wed. R. Heida bewoond wordt, kan er een of twee vergunningen bij overnemen. Met de geboden bedragen per perceel.",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1907-11-16",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010760117:mpeg21:a0058",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1907-11-16",
+"artikel": "",
+"file": "",
+"ref": "ddd:010760117:mpeg21:a0058",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010760117:mpeg21:p006:image&x=62&y=3321&w=560&h=1420 (uitsnede)",
+"kws": [
+"a-16",
+"a-32",
+"a-33"
+],
+"why": {
+"a-16": "In november 1907 werden de boerderij en de twee herbergen van zijn ouders in Mildam geveild voor de erven Wiebe H. Hoekstra; Hans was een van die erven.",
+"a-32": "Na de dood van Tjitske werden in 1907 hun boerderij en de twee herbergen in Mildam verkocht; de advertentie noemt de erven Wiebe H. Hoekstra.",
+"a-33": "Na de dood van Tjitske werden in 1907 hun boerderij en de twee herbergen in Mildam verkocht; de advertentie noemt de erven Wiebe H. Hoekstra."
+}
+},
+{
+"id": "nieuw-k7-krant-1908-overlijden-minne-jongbloed",
+"soort": "historisch",
+"key": "Nieuweschoot",
+"src": "img/nieuw-k7-krant-1908-overlijden-minne-jongbloed.jpg",
+"thumb": "img/t/nieuw-k7-krant-1908-overlijden-minne-jongbloed.jpg",
+"w": 563,
+"h": 571,
+"t": "Overlijdensbericht van Minne Uilkes Jongbloed, Nieuweschoot 1908",
+"desc": "Familiebericht: 'Heden overleed onze geliefde vader MINNE ULKES JONGBLOED, wedn. van JANKE HENDRIKS KERKSTRA, in den ouderdom van 78 jaren. Nieuweschoot, 7 Nov. 1908. U. M. JONGBLOED. J. WIETSMA—JONGBLOED. T. K. WIETSMA. H. M. JONGBLOED. E. JONGBLOED—HIJLKEMA.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1908-11-14",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010760625:mpeg21:a0068",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1908-11-14",
+"artikel": "",
+"file": "",
+"ref": "ddd:010760625:mpeg21:a0068",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010760625:mpeg21:p003:image&x=1710&y=595&w=563&h=571 (uitsnede)",
+"kws": [
+"a-46",
+"a-47",
+"a-22",
+"a-23"
+],
+"why": {
+"a-46": "Het overlijdensbericht van Minne Uilkes Jongbloed, die in november 1908 in Nieuweschoot overleed, 78 jaar oud.",
+"a-47": "Het overlijdensbericht van haar man Minne Uilkes Jongbloed (1908), waarin zij genoemd wordt: hij was weduwnaar van Janke Hendriks Kerkstra.",
+"a-22": "Jantje Wietsma-Jongbloed en Tjeerd K. Wietsma ondertekenden in 1908 het overlijdensbericht van haar vader Minne Uilkes Jongbloed.",
+"a-23": "Jantje Wietsma-Jongbloed en Tjeerd K. Wietsma ondertekenden in 1908 het overlijdensbericht van haar vader Minne Uilkes Jongbloed."
+}
+},
+{
+"id": "nieuw-k7-krant-1911-overlijden-antje-bokma",
+"soort": "historisch",
+"key": "Oranjewoud",
+"src": "img/nieuw-k7-krant-1911-overlijden-antje-bokma.jpg",
+"thumb": "img/t/nieuw-k7-krant-1911-overlijden-antje-bokma.jpg",
+"w": 564,
+"h": 729,
+"t": "Overlijdensbericht van Antje A. Bokma, weduwe van Hepke J. Hepkema, Oranjewoud 1911",
+"desc": "Familiebericht: 'Hedenmorgen half vier overleed zacht en kalm, na een kortstondige ziekte onze lieve Moeder, Behuwd-, Groot- en Overgrootmoeder ANTJE A. BOKMA, in den ouderdom van 92 jaren en 4 maanden; sedert 18 Augustus 1888 weduwe van Hepke J. Hepkema. Oranjewoud, 19 Febr. 1911. J. Hepkema, Sneek. G. Hepkema—Bosma, W. Hepkema, Oranjewoud. A. Hepkema—Dijkstra, J. Hepkema, Doniaga. P. Hepkema—Hoekstra, klein- en achterkleinkinderen.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1911-02-22",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010727485:mpeg21:a0062",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1911-02-22",
+"artikel": "",
+"file": "",
+"ref": "ddd:010727485:mpeg21:a0062",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010727485:mpeg21:p003:image&x=597&y=756&w=564&h=729 (uitsnede)",
+"kws": [
+"a-37",
+"a-36",
+"a-18",
+"a-19"
+],
+"why": {
+"a-37": "Het overlijdensbericht van Antje Annes Bokma, die in februari 1911 in Oranjewoud overleed, 92 jaar oud.",
+"a-36": "Het overlijdensbericht van zijn weduwe Antje A. Bokma (1911) noemt hem: zij was sinds 18 augustus 1888 weduwe van Hepke J. Hepkema.",
+"a-18": "W. Hepkema en A. Hepkema-Dijkstra uit Oranjewoud ondertekenden in 1911 het overlijdensbericht van zijn moeder Antje A. Bokma.",
+"a-19": "W. Hepkema en A. Hepkema-Dijkstra uit Oranjewoud ondertekenden in 1911 het overlijdensbericht van zijn moeder Antje A. Bokma."
+}
+},
+{
+"id": "nieuw-k7-krant-1913-overlijden-trijntje-brouwer",
+"soort": "historisch",
+"key": "Terkaple",
+"src": "img/nieuw-k7-krant-1913-overlijden-trijntje-brouwer.jpg",
+"thumb": "img/t/nieuw-k7-krant-1913-overlijden-trijntje-brouwer.jpg",
+"w": 571,
+"h": 445,
+"t": "Overlijdensbericht van Trijntje H. Brouwer, weduwe van Sjoerd W. Bakker, Terkaple 1913",
+"desc": "Familiebericht: 'Heden overleed zacht en kalm onze geliefde moeder, behuwd- en grootmoeder TRIJNTJE H. BROUWER, weduwe van Sjoerd W. Bakker, in den ouderdom van 76 jaar en ruim 4 maanden. Terkaple, 2 Febr. 1913. Uit aller naam. H. S. BAKKER.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1913-02-05",
+"lic": "Publiek domein (Delpher, KB)",
+"licUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010762652:mpeg21:a0057",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1913-02-05",
+"artikel": "",
+"file": "",
+"ref": "ddd:010762652:mpeg21:a0057",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010762652:mpeg21:p003:image&x=615&y=3079&w=571&h=445 (uitsnede)",
+"kws": [
+"a-25",
+"a-24"
+],
+"why": {
+"a-25": "Het overlijdensbericht van Trijntje Hotzes Brouwer, die in februari 1913 in Terkaple overleed, 76 jaar oud.",
+"a-24": "Het overlijdensbericht van zijn weduwe Trijntje H. Brouwer (1913) noemt hem als Sjoerd W. Bakker."
+}
+},
+{
+"id": "nieuw-k7-krant-1927-overlijden-hans-hoekstra",
+"soort": "historisch",
+"key": "Oudeschoot",
+"src": "img/nieuw-k7-krant-1927-overlijden-hans-hoekstra.jpg",
+"thumb": "img/t/nieuw-k7-krant-1927-overlijden-hans-hoekstra.jpg",
+"w": 513,
+"h": 521,
+"t": "Overlijdensbericht van Hans W. Hoekstra, Oudeschoot 1927",
+"desc": "Familiebericht: 'Heden overleed zacht en kalm, onze innig geliefde echtgenoot, vader, behuwd- en grootvader HANS W. HOEKSTRA, in den ouderdom van bijna 73 jaren. Oudeschoot, 24 Nov. 1927. De diepbedroefden: H. HOEKSTRA—BOSMA. Kinderen, behuwd- en kleinkinderen en verloofde.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1927-11-25",
+"lic": "Delpher (KB): geen rechtenvermelding bij het artikel",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010735195:mpeg21:a0074",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1927-11-25",
+"artikel": "",
+"file": "",
+"ref": "ddd:010735195:mpeg21:a0074",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010735195:mpeg21:p003:image&x=596&y=5298&w=513&h=521 (uitsnede)",
+"kws": [
+"a-16",
+"a-17"
+],
+"why": {
+"a-16": "Het overlijdensbericht van Hans W. Hoekstra, die op 24 november 1927 in Oudeschoot overleed, bijna 73 jaar oud.",
+"a-17": "Hiltje Bosma plaatste in 1927 het overlijdensbericht van haar man Hans W. Hoekstra."
+}
+},
+{
+"id": "nieuw-k7-krant-1930-overlijden-johannes-akkerman",
+"soort": "historisch",
+"key": "Delfstrahuizen",
+"src": "img/nieuw-k7-krant-1930-overlijden-johannes-akkerman.jpg",
+"thumb": "img/t/nieuw-k7-krant-1930-overlijden-johannes-akkerman.jpg",
+"w": 489,
+"h": 1210,
+"t": "Overlijdensbericht van Johannes F. Akkerman, en bericht van het bestuur van de Veenpolder Delfstrahuizen, 1930",
+"desc": "Twee familieberichten: 'Hedenmiddag is zacht en kalm van ons heengegaan, onze beste Man, Vader, Behuwd- en Grootvader JOHANNES F. AKKERMAN, in den ouderdom van 71 jaar en 6 maanden; na een genoegelijke echtvereen. van bijna 43 jaar. Delfstrahuizen, 31 Jan. '30. De diepbedroefden: Wed. N. J. Akkerman—Akkerman. F. Akkerman. J. Akkerman—Wietsma. J. Akkerman en Kleinkinderen.' En: 'Het bestuur van den Veenpolder Delfstrahuizen vernam met leedwezen het overlijden van den heer Johs. Fr. Akkerman, in leven mede-bestuurslid van genoemden polder. Ruim 9 jaren mocht hij de belangen van den polder mede behartigen. Namens 't bestuur: H. Pollema, voorz. E. Muurling, secr.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1930-02-04",
+"lic": "Delpher (KB): geen rechtenvermelding bij het artikel",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010734930:mpeg21:a0070",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1930-02-04",
+"artikel": "",
+"file": "",
+"ref": "ddd:010734930:mpeg21:a0070",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010734930:mpeg21:p003:image&x=1097&y=1227&w=489&h=1210 (uitsnede)",
+"kws": [
+"a-20",
+"a-21",
+"a-10",
+"a-11"
+],
+"why": {
+"a-20": "Het overlijdensbericht van Johannes Akkerman (januari 1930), met eronder het bericht van de Veenpolder Delfstrahuizen: hij was ruim negen jaar bestuurslid van de polder.",
+"a-21": "Niesje Akkerman ondertekende in 1930 als weduwe het overlijdensbericht van haar man Johannes Akkerman, met wie zij bijna 43 jaar getrouwd was.",
+"a-10": "Franke Akkerman en Janke Akkerman-Wietsma staan onder het overlijdensbericht van zijn vader Johannes Akkerman (1930).",
+"a-11": "Franke Akkerman en Janke Akkerman-Wietsma staan onder het overlijdensbericht van zijn vader Johannes Akkerman (1930)."
+}
+},
+{
+"id": "nieuw-k7-krant-1933-dankbetuiging-jacob-gaastra",
+"soort": "historisch",
+"key": "Akkrum",
+"src": "img/nieuw-k7-krant-1933-dankbetuiging-jacob-gaastra.jpg",
+"thumb": "img/t/nieuw-k7-krant-1933-dankbetuiging-jacob-gaastra.jpg",
+"w": 511,
+"h": 466,
+"t": "Dankbetuiging van de familie Gaastra na het overlijden van Jacob Gaastra, Akkrum 1933",
+"desc": "Familiebericht: 'Voor de vele bewijzen van deelneming, ontvangen bij de ziekte en het overlijden van onzen geliefden Vader en Grootvader JACOB GAASTRA, betuigen wij onzen innigen dank. In 't bijzonder aan Dr. Leeuwenburg en Zuster De Vos. Akkrum, 21 Dec. '33. Uit aller naam. De Familie GAASTRA.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1933-12-22",
+"lic": "Delpher (KB): geen rechtenvermelding bij het artikel",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010735428:mpeg21:a0082",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1933-12-22",
+"artikel": "",
+"file": "",
+"ref": "ddd:010735428:mpeg21:a0082",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010735428:mpeg21:p003:image&x=1085&y=1301&w=511&h=466 (uitsnede)",
+"kws": [
+"a-30"
+],
+"why": {
+"a-30": "Na de dood van Jacob Jelles Gaastra in december 1933 bedankte de familie in de krant voor het medeleven, in het bijzonder de dokter en de wijkzuster."
+}
+},
+{
+"id": "nieuw-k7-krant-1937-nieuwjaarswens-van-der-molen-terhorne",
+"soort": "historisch",
+"key": "Terhorne",
+"src": "img/nieuw-k7-krant-1937-nieuwjaarswens-van-der-molen-terhorne.jpg",
+"thumb": "img/t/nieuw-k7-krant-1937-nieuwjaarswens-van-der-molen-terhorne.jpg",
+"w": 520,
+"h": 281,
+"t": "Nieuwjaarswens van Jan L. van der Molen en P. van der Molen-Gaastra, Terhorne 1938",
+"desc": "Advertentie: 'JAN L. v. d. MOLEN, P. v. d. MOLEN—GAASTRA, wenschen aan familie, vrienden en bekenden een gezegend Nieuwjaar. TERHORNE, 1 Jan. 1938.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1937-12-31",
+"lic": "Delpher (KB): geen rechtenvermelding bij het artikel",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010762201:mpeg21:a0214",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1937-12-31",
+"artikel": "",
+"file": "",
+"ref": "ddd:010762201:mpeg21:a0214",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010762201:mpeg21:p015:image&x=54&y=2972&w=520&h=281 (uitsnede)",
+"kws": [
+"a-14",
+"a-15"
+],
+"why": {
+"a-14": "Op oudejaarsdag 1937 wensten Jan L. van der Molen en Pietje van der Molen-Gaastra uit Terhorne familie, vrienden en bekenden in de krant een gezegend nieuwjaar.",
+"a-15": "Op oudejaarsdag 1937 wensten Jan L. van der Molen en Pietje van der Molen-Gaastra uit Terhorne familie, vrienden en bekenden in de krant een gezegend nieuwjaar."
+}
+},
+{
+"id": "nieuw-k7-krant-1939-overlijden-hiltje-bosma",
+"soort": "historisch",
+"key": "Oranjewoud",
+"src": "img/nieuw-k7-krant-1939-overlijden-hiltje-bosma.jpg",
+"thumb": "img/t/nieuw-k7-krant-1939-overlijden-hiltje-bosma.jpg",
+"w": 511,
+"h": 627,
+"t": "Overlijdensbericht van Hiltje IJ. Bosma, weduwe van Hans W. Hoekstra, Oranjewoud 1939",
+"desc": "Familiebericht: 'Heden overleed, zacht en kalm, onze innig geliefde Moeder, Behuwd-, Groot- en Overgrootmoeder HILTJE IJ. BOSMA, sedert 24 Nov. 1927 wed. van Hans W. Hoekstra; eerder wed. van L. L. Brouwer; in den ouderdom van ruim 78 jaar. Oranjewoud, 22 Juni 1939. Namens de Kinderen, Behuwd- en Kleinkinderen, W. H. HOEKSTRA.'",
+"maker": "Nieuwsblad van Friesland: Hepkema’s courant",
+"datum": "1939-06-23",
+"lic": "Delpher (KB): geen rechtenvermelding bij het artikel",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010761468:mpeg21:a0085",
+"bronNaam": "Delpher, Nieuwsblad van Friesland: Hepkema’s courant, 1939-06-23",
+"artikel": "",
+"file": "",
+"ref": "ddd:010761468:mpeg21:a0085",
+"orig": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd:010761468:mpeg21:p003:image&x=578&y=1587&w=511&h=627 (uitsnede)",
+"kws": [
+"a-17",
+"a-16",
+"a-8"
+],
+"why": {
+"a-17": "Het overlijdensbericht van Hiltje Bosma, die in juni 1939 in Oranjewoud overleed, ruim 78 jaar oud; zij was eerder weduwe van L. L. Brouwer en sinds 1927 van Hans W. Hoekstra.",
+"a-16": "Het overlijdensbericht van zijn weduwe Hiltje Bosma (1939) noemt hem: zij was sinds 24 november 1927 weduwe van Hans W. Hoekstra.",
+"a-8": "Wiebe H. Hoekstra plaatste in 1939 het overlijdensbericht van zijn moeder Hiltje Bosma, namens de kinderen en kleinkinderen."
+}
+},
+{
+"id": "nieuw-k7-mildam-dorpscafe-schoterlandseweg-1920",
+"soort": "historisch",
+"key": "Mildam",
+"src": "img/nieuw-k7-mildam-dorpscafe-schoterlandseweg-1920.jpg",
+"thumb": "img/t/nieuw-k7-mildam-dorpscafe-schoterlandseweg-1920.jpg",
+"w": 700,
+"h": 435,
+"t": "Mildam: de Schoterlandseweg met rechts, aan de zuidkant, het dorpscafé (nu Hof van Schoterland), rond 1920",
+"desc": "Hearrenfean, Heerenveen, Mildaam, Mildam; horecagebouwen, cafés. De Schoterlandseweg te Mildam met rechts aan de zuidzijde op Nr. 50 het tegenwoordige Restaurant en Partycentrum \"Hof van Schoterland\". Ansichtkaart, opschrift 'Mildam.'",
+"maker": "VAKA (foto)",
+"datum": "1920, ca.",
+"lic": "foto CC-BY-NC-SA Tresoar",
+"licUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/18090",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, PBF Prentbriefkaarten, Q0000380",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/18090/full/full/0/default.jpg",
+"kws": [
+"a-32",
+"a-33",
+"a-16"
+],
+"why": {
+"a-32": "Het dorpscafé aan de zuidkant van de Schoterlandseweg in Mildam, rond 1920. De herberg van Wiebe Hanzes Hoekstra en Tjitske Bosma lag ook aan de zuidkant van deze weg; of dit hetzelfde huis is, is niet zeker.",
+"a-33": "Het dorpscafé aan de zuidkant van de Schoterlandseweg in Mildam, rond 1920. De herberg van Wiebe Hanzes Hoekstra en Tjitske Bosma lag ook aan de zuidkant van deze weg; of dit hetzelfde huis is, is niet zeker.",
+"a-16": "Het dorpscafé aan de zuidkant van de Schoterlandseweg in Mildam, rond 1920. De herberg van Wiebe Hanzes Hoekstra en Tjitske Bosma lag ook aan de zuidkant van deze weg; of dit hetzelfde huis is, is niet zeker."
+}
+},
+{
+"id": "nieuw-k7-oldeboorn-doelhofkerk-met-kerkhof",
+"soort": "historisch",
+"key": "Oldeboorn",
+"src": "img/nieuw-k7-oldeboorn-doelhofkerk-met-kerkhof.jpg",
+"thumb": "img/t/nieuw-k7-oldeboorn-doelhofkerk-met-kerkhof.jpg",
+"w": 330,
+"h": 500,
+"t": "Oldeboorn: de hervormde Doelhofkerk met het kerkhof, vóór 2000",
+"desc": "Oldeboorn; Tsjerkebuorren 4; Religieus erfgoed; volledig (exterieur); Nederlands Hervormde Doelhofkerk met kerkhof / begraafplaats.",
+"maker": "Provincie Fryslân (Monumenten Inventarisatie Project)",
+"datum": "2000, voor",
+"lic": "foto CC0 Tresoar",
+"licUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/102138",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, MIP, 00068065",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/102138/full/full/0/default.jpg",
+"kws": [
+"a-30",
+"a-31"
+],
+"why": {
+"a-30": "De Doelhofkerk in Oldeboorn met het kerkhof eromheen. Hier liggen Jacob Jelles Gaastra en Sjieuke Ruurds Brandsma begraven.",
+"a-31": "De Doelhofkerk in Oldeboorn met het kerkhof eromheen. Hier liggen Jacob Jelles Gaastra en Sjieuke Ruurds Brandsma begraven."
+}
+},
+{
+"id": "nieuw-k7-wolvega-nieuw-lindenoord",
+"soort": "historisch",
+"key": "Wolvega",
+"src": "img/nieuw-k7-wolvega-nieuw-lindenoord.jpg",
+"thumb": "img/t/nieuw-k7-wolvega-nieuw-lindenoord.jpg",
+"w": 700,
+"h": 485,
+"t": "Wolvega: verpleeghuis Nieuw Lindenoord",
+"desc": "Verpleeghuis \"Nieuw Lindenoord\" te Wolvega.",
+"maker": "",
+"datum": "1950 - 1999",
+"lic": "geen rechtenvermelding in de bron (Tresoar Fotos)",
+"licUrl": "",
+"bron": "https://collections.tresoar.nl/digital/collection/TRLffa/id/2007",
+"bronNaam": "Tresoar, Fries Fotoarchief",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, Tresoar Fotos, 00040333",
+"orig": "https://collections.tresoar.nl/digital/iiif/TRLffa/2007/full/full/0/default.jpg",
+"kws": [
+"a-8"
+],
+"why": {
+"a-8": "Het verpleeghuis Nieuw Lindenoord in Wolvega, waar Wiebe Hoekstra in april 1986 overleed."
+}
 },
 {
 "id": "persoon-brandsma",
@@ -5657,6 +6903,12 @@ const IMAGES = [
 "artikel": "",
 "file": "",
 "ref": "Tresoar, Register van familienamen (toegang 29), inv. 87, scan 38",
+"kws": [
+96
+],
+"why": {
+"96": "Op dit formulier van 31 december 1811 neemt Minne Meintes, schipper in Irnsum, de familienaam Boesma aan; onderaan staat zijn eigen handtekening."
+},
 "vh": [
 [
 "naam",
@@ -5753,7 +7005,7 @@ const IMAGES = [
 "thumb": "img/t/verhaal-namen-register-akkrum-1811-vanderveer.jpg",
 "w": 960,
 "h": 1038,
-"t": "Op 11 december 1811 liet Jacobus Willems in Akkrum de naam Van der Veer noteren, met zijn dochtertje Elisabeth van een half jaar. Hij tekende 'Jacobus Willems van der Veer'.",
+"t": "Op 11 december 1811 liet Jacobus Willems in Akkrum de naam Van der Veer noteren, met zijn dochtertje Elisabeth. Hij tekende zelf: 'Jacobus willems van den veer'.",
 "desc": "",
 "maker": "Gemeentebestuur van Utingeradeel (Hoytema); ondertekend door Jacobus Willems van der Veer",
 "datum": "1811-12-11",
@@ -5838,7 +7090,7 @@ const IMAGES = [
 "datum": "1866-12-04",
 "lic": "Geen rechtenvermelding bij het krantenbeeld op Delpher (KB; toegang 'accessible'). Krant van vóór 1900; geen auteursrecht.",
 "licUrl": "",
-"bron": "https://www.delpher.nl/nl/kranten/view?coll=ddd&identifier=ddd:010585565:mpeg21:a0025",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010585565:mpeg21:a0025",
 "bronNaam": "Delpher (KB)",
 "artikel": "",
 "file": "",
@@ -5859,7 +7111,7 @@ const IMAGES = [
 "thumb": "img/t/verhaal-terwisscha-kohier-ter-idzard-1698-1728.jpg",
 "w": 960,
 "h": 351,
-"t": "Ter Idzard, stem 22: in 1698 'Geertie Spanga voor ½, d'laaste papist'; in 1728 staat die helft op naam van Dr. Sloterdyk en Johannes Reins.",
+"t": "Ter Idzard, stem 22: in 1698 'Geertie Spanga voor ½, d'laaste papist'; in 1728 staat de hele stem op naam van Dr. Sloterdyk en Johannes Reins.",
 "desc": "Uitsnede (bovenste deel, volle breedte) van scan NL-0400410000_5_3610_000164, pagina 328–329. Gelezen: 'Idsart. Eigenaars Ao 1640 | Eigenaars 1698 || Idsardt: Eigenaars 1728 | Bruikers. No. 22 [1640] Jacob Luities(?) [1698] De Heeren Matthijs en Harmanus van Idsinga 1/2, Geertie Spanga voor 1/2, de laaste papist [1728] Dr. Sloterdyk noe. lib. 1/2, Johannes Reins noe uxoris 1/2 [bruiker] Roelof Reins. No. 23 [1640] Anna Frankena [1698] Deselve als No. 22 [1728] Deselve [bruiker] Deselve.'",
 "maker": "Gewestelijke bestuursinstellingen van Friesland (klerk van het kohier)",
 "datum": "1728",
@@ -5871,6 +7123,12 @@ const IMAGES = [
 "file": "",
 "ref": "Tresoar, toegang 5, inv. 3610 (Floreenkohieren 1728, Weststellingwerf), pagina 328–329, scan 000164; Ter Idzard stem 22–23",
 "orig": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_5%2FNL-0400410000_5_3610%2FNL-0400410000_5_3610_000164.jp2",
+"kws": [
+833
+],
+"why": {
+"833": "In het kohier van Ter Idzard staat in 1698 'Geertie Spanga' als eigenaar van de helft van stem 22 en 23; in 1728 is die helft van anderen."
+},
 "vh": [
 [
 "terwisscha",
@@ -5898,6 +7156,14 @@ const IMAGES = [
 "file": "",
 "ref": "Tresoar, toegang 5 (Gewestelijke bestuursinstellingen van Friesland 1580-1795), inv. 3624 (Stem- en floreenkohieren 1728, Wonseradeel), folio 13, scan 000015; Arum stem 34–35",
 "orig": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_5%2FNL-0400410000_5_3624%2FNL-0400410000_5_3624_000015.jp2",
+"kws": [
+416,
+832
+],
+"why": {
+"416": "In dit stemkohier van Arum staat Bocke Bockes in 1728 als eigenaar voor een derde én gebruiker van stem 35, de boerderij die later Scheltinga State heette.",
+"832": "In de kolom van 1698 staat 'het weeskind van Bocke en Sas Seerps' als eigenaar van twee derde van stem 35 in Arum: Bocco zelf was toen al overleden."
+},
 "vh": [
 [
 "terwisscha",
@@ -5924,6 +7190,16 @@ const IMAGES = [
 "artikel": "",
 "file": "",
 "ref": "Tresoar, Notarieel archief (toegang 26), inv. 120010, notaris J.J. Wiersma (Sneek), akte 140, scan 356",
+"kws": [
+104,
+3334,
+208
+],
+"why": {
+"104": "De veilingakte van 1817 beschrijft Liauckema State bij Makkum, 54 pondematen greidland met huis en schuur; Assuerus was er voor een vierde eigenaar van, met zijn broers en zus.",
+"3334": "De veilingakte van 1817 beschrijft Liauckema State bij Makkum, de oude state van de familie Lieuwkema, die toen werd verkocht om af te breken.",
+"208": "De veilingakte van 1817 van Liauckema State bij Makkum: zijn vier kinderen verkochten de state, die vermoedelijk via Titus in de familie was gekomen."
+},
 "vh": [
 [
 "terwisscha",
@@ -5976,6 +7252,30 @@ const IMAGES = [
 "artikel": "",
 "file": "",
 "ref": "Tresoar, fotoarchief, archiefnr 119, inv.nr. 51591",
+"kws": [
+62,
+63,
+60,
+61,
+30,
+31,
+124,
+125,
+120,
+121
+],
+"why": {
+"62": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Johannes Westendorp en Riemke Hylkema op 9 februari 1857.",
+"63": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Johannes Westendorp en Riemke Hylkema op 9 februari 1857.",
+"60": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Rein de Jong en Marijke Asma in 1855.",
+"61": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Rein de Jong en Marijke Asma in 1855.",
+"30": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Lammert de Jong en Elisabeth Westendorp in 1884.",
+"31": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Lammert de Jong en Elisabeth Westendorp in 1884.",
+"124": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden de grutter Gerrit Westendorp en Aath van der Hoff in 1828.",
+"125": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden de grutter Gerrit Westendorp en Aath van der Hoff in 1828.",
+"120": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Lammert Johannes de Jong en Johanneske Bouma in 1816.",
+"121": "Het raadhuis van Balk, toen het gemeentehuis van Gaasterland; hier trouwden Lammert Johannes de Jong en Johanneske Bouma in 1816."
+},
 "vh": [
 [
 "trouwdagen",
@@ -6027,7 +7327,7 @@ const IMAGES = [
 "datum": "1858-12-10",
 "lic": "Geen rechtenvermelding bij het krantenbeeld op Delpher (KB; toegang 'accessible'). Krant van vóór 1900; geen auteursrecht.",
 "licUrl": "",
-"bron": "https://www.delpher.nl/nl/kranten/view?coll=ddd&identifier=ddd:010584733:mpeg21:a0044",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010584733:mpeg21:a0044",
 "bronNaam": "Delpher (KB)",
 "artikel": "",
 "file": "",
