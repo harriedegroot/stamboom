@@ -169,13 +169,21 @@ const PLACES = {
   "Bozum": P_(53.089, 5.696, "Baarderadeel", FR),
   "Winsum": P_(53.153, 5.632, "Baarderadeel", FR, { name: "Winsum (Friesland)" }),
   "Follega": P_(52.889, 5.736, "Lemsterland", FR),
-  "Ugoklooster": P_(53.076, 5.553, "Wonseradeel", FR, { name: "Ugoklooster (Oegeklooster)", info: "Boerderij bij Bolsward. Hier woonden vanaf 1832 Hendrik Mevis Brandsma en Apollonia Terwisscha van Scheltinga, en hier werd in 1881 hun kleinzoon Titus Brandsma geboren, de latere heilige." })
+  "Ugoklooster": P_(53.076, 5.553, "Wonseradeel", FR, { name: "Ugoklooster (Oegeklooster)", info: "Boerderij bij Bolsward. Hier woonden vanaf 1832 Hendrik Mevis Brandsma en Apollonia Terwisscha van Scheltinga, en hier werd in 1881 hun kleinzoon Titus Brandsma geboren, de latere heilige." }),
+  "Paaslo": P_(52.813, 6.014, "Steenwijkerwold", OV, { name: "Paaslo (Paasloo)" }),
+  "De Haare": P_(52.814, 5.977, "Oldemarkt", OV, { name: "De Haare (Oldemarkt)", info: "Buurtschap bij Oldemarkt, ook de Hare of de Haere. Hier woonden in de achttiende eeuw de katholieke families Fleer en Groenewoud; ze lieten hun kinderen dopen in Steggerda, net over de grens in Friesland." }),
+  "Vinkega": P_(52.874, 6.116, "Weststellingwerf", FR),
+  "IJsselham": P_(52.809, 5.958, "Oldemarkt", OV),
+  "Oosterwolde": P_(52.990, 6.291, "Ooststellingwerf", FR),
+  "Beers": P_(53.156, 5.734, "Baarderadeel", FR),
+  "Hichtum": P_(53.082, 5.525, "Wonseradeel", FR),
+  "Dijken": P_(52.954, 5.711, "Doniawerstal", FR)
 };
 /* Plaatsen buiten het kaartbeeld */
 const OFFMAP = {
   "Amsterdam": "Amsterdam", "Oudenbosch": "Oudenbosch (Noord-Brabant)", "Duitsland": "Duitsland",
   "Woerden": "Woerden (Utrecht)", "Calgary": "Calgary (Canada)",
-  "Schwagstorf": "Schwagstorf bij Fürstenau (Duitsland)", "Oldenstee": "'Oldenstee, Pruissen' (Duitsland, nog niet thuisgebracht)",
+  "Schwagstorf": "Schwagstorf bij Fürstenau (Duitsland)", "Oldenstee": "'Oldenstee, Pruissen': Hollenstede bij Fürstenau (Duitsland)",
   "Moergestel": "Moergestel (Noord-Brabant)", "Waukegan": "Waukegan (Verenigde Staten)",
-  "Op de Heide": "Op de Heide (RK statie bij Sint Nicolaasga)", "Nijega": "Nijega", "Sumatra": "Sumatra (Nederlands-Indië)", "Dachau": "Dachau (Duitsland)", "Mettingen": "Mettingen (Westfalen, Duitsland)", "Hollenstede": "Hollenstede bij Fürstenau (Duitsland)", "Overpelt": "Overpelt (Belgisch-Limburg)"
+  "Op de Heide": "Op de Heide (RK statie bij Sint Nicolaasga)", "Nijega": "Nijega", "Sumatra": "Sumatra (Nederlands-Indië)", "Dachau": "Dachau (Duitsland)", "Mettingen": "Mettingen (Westfalen, Duitsland)", "Hollenstede": "Hollenstede bij Fürstenau (Duitsland)", "Overpelt": "Overpelt (Belgisch-Limburg)", "Witen": "Witen onder Zwolle (Overijssel)", "Jongeburen": "Jongeburen (buurtschap in de RK-statie Op de Heide; ligging niet bekend)"
 };
