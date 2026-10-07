@@ -100,8 +100,8 @@ Object.assign(PLACES, {
   "Nijeberkoop": P_(52.959, 6.191, "Ooststellingwerf", FR),
   "Doniawerstal": P_(52.957, 5.723, "Doniawerstal", FR, { kind: "gemeente", seat: "Langweer" }),
   "Utingeradeel": P_(53.049, 5.840, "Utingeradeel", FR, { kind: "gemeente", seat: "Akkrum" }),
-  "Het Meer": P_(52.9645, 5.946, "Schoterland", FR, { infoA: "Een buurtschap in Schoterland, tussen Heerenveen en De Knipe, vlak boven het huidige Skoatterwâld (volgens Harrie). De stip staat waar het label op de topografische kaarten van 1865–1950 ligt. Hier overleed in 1842 Hylke Bintses Wijnsma, 85 jaar oud." }),
+  "Het Meer": P_(52.9645, 5.946, "Schoterland", FR, { infoA: "Een buurtschap in Schoterland, tussen Heerenveen en De Knipe, vlak boven het huidige Skoatterwâld. De stip staat waar het label op de topografische kaarten van 1865–1950 ligt. Hier overleed in 1842 Hylke Bintses Wijnsma, 85 jaar oud." }),
   "Lemsterland": P_(52.845, 5.712, "Lemsterland", FR, { kind: "gemeente", seat: "Lemmer" })
 });
 /* buurtschappen zonder betrouwbare coördinaten: wel als naam, niet op de kaart */
-Object.assign(OFFMAP, { "Zandgaast": "Zandgaast (buurtschap bij Langweer)", "Echtenerkooi": "Echtenerkooi (buurtschap bij Echten)", "Oudelamer": "Oudelamer (Weststellingwerf)", "Hemrik": "Hemrik (Opsterland)" });
+Object.assign(OFFMAP, { "Zandgaast": "Zandgaast (buurtschap bij Langweer)", "Echtenerkooi": "Echtenerkooi (buurtschap bij Echten)", "Oudelamer": "Oudelamer (Weststellingwerf)", "Hemrik": "Hemrik (Opsterland)", "Indijken": "Indijken (bij Dijken, Doniawerstal)", "Scharren": "Scharren (Doniawerstal)", "Ameland": "Ameland (Waddeneiland)" });

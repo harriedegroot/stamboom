@@ -22,7 +22,8 @@ ALIES.CONFLICTS.push(
   { kw: 10, topic: "Geboorteplaats van Franke Akkerman", a: "Huwelijksakte 1920: Gaast", b: "Geboorteakte 1894: burgerlijke stand Schoterland", now: "Niet Gaast aan het IJsselmeer, maar een plek in Schoterland." },
   { kw: 249, topic: "De vrouw van de zeekapitein Ysbrand Thomas", a: "Doop zoon Thomas 1807 en overlijden dochter 1826: Jeltje Klazes", b: "Overlijden zoon Thomas 1859: Trijntje Klazes", now: "We volgen Jeltje: twee bronnen tegen één." },
   { kw: 13, topic: "Geboortejaar van Antje de Vries", a: "Geboorteakte (index) en huwelijk 1903: 15-04-1873", b: "Grafsteen Terkaple (graftombe.nl): 15-04-1872", now: "We volgen de geboorteakte (1873); de steen is later gemaakt." },
-  { kw: 56, topic: "Geboorteplaats van Jan Gosses van der Molen", a: "Huwelijksakte 1838: Rottum", b: "Geboorteregister 1813: Sintjohannesga", now: "Opgelost: het register van Sintjohannesga omvatte Rottum, waar zijn vader in 1811 woonde." }
+  { kw: 56, topic: "Geboorteplaats van Jan Gosses van der Molen", a: "Huwelijksakte 1838: Rottum", b: "Geboorteregister 1813: Sintjohannesga", now: "Opgelost: het register van Sintjohannesga omvatte Rottum, waar zijn vader in 1811 woonde." },
+  { kw: 156, topic: "Datum van de naamsaanneming Woudstra", a: "Index van het register van familienamen: 1811", b: "De akte zelf: 20 februari 1812 ('December' doorgehaald)", now: "De akte gaat voor: 20 februari 1812. Zijn kleinzoon Hans, geboren na het huwelijk van Sipke in mei 1811, was toen 20 weken." }
 );
 ALIES.SOURCE_GROUPS.push(
   ["Gebruikt voor de stamboom van Alies", [["Hessel de Walle, grafschriften en aantekeningen (via AlleFriezen)", "https://www.allefriezen.nl/"], ["Open Archieven: burgerlijke stand, DTB, naamsaanneming 1811, kadaster 1832", "https://www.openarchieven.nl/"]]]
