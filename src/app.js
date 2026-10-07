@@ -440,6 +440,13 @@ function showLb() {
   const vs = (im.vh || []).map(v => STORIES.find(x => x.id === v[0])).filter(x => x && !(route.view === "verhalen" && route.sub === x.id));
   const go3 = vs.map(x => `<button class="btn" data-go="verhaal-${x.id}">Verhaal: ${esc(x.title)}</button>`).join("");
   $("#lbCap").innerHTML = `<div class="lbt"><b>${esc(im.t)}</b>${lbList.length > 1 ? `<span class="mono small">${lbI + 1} / ${lbList.length}</span>` : ""}</div>${im.desc && norm(im.desc) !== norm(im.t) ? `<p>${esc(im.desc)}</p>` : ""}<p class="credit">${beeldDatum(im.datum) ? esc(beeldDatum(im.datum)) + " · " : ""}${credit(im)}${refLine(im) ? `<br>Bron: ${refLine(im)}` : ""}</p>${go2 || go3 ? `<div class="lbacts">${go2}${go3}</div>` : ""}`;
+  /* lange titels: drie regels, tik of Enter klapt uit (anders wordt de foto op de telefoon te klein) */
+  const tb = $("#lbCap .lbt b");
+  if (tb && tb.scrollHeight > tb.clientHeight + 2) {
+    tb.classList.add("more"); tb.tabIndex = 0; tb.setAttribute("role", "button"); tb.setAttribute("aria-expanded", "false"); tb.title = "Toon de hele titel";
+    const tog = () => { const o = tb.classList.toggle("open"); tb.setAttribute("aria-expanded", o); tb.title = o ? "Titel inklappen" : "Toon de hele titel"; };
+    tb.onclick = tog; tb.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } };
+  }
   $("#lbPrev").hidden = $("#lbNext").hidden = lbList.length < 2;
 }
 function stepLb(d) { if (lbList.length < 2) return; lbI = (lbI + d + lbList.length) % lbList.length; showLb(); }
@@ -641,6 +648,45 @@ sInput.addEventListener("keydown", e => {
   } else if (e.key === "Enter") { e.preventDefault(); pick(sSel); }
 });
 $("#openSearch").onclick = openSearch;
+/* thema: "auto" volgt het apparaat (prefers-color-scheme), "licht" en "donker" kiest de lezer zelf; bewaard in localStorage.
+   Het script in <head> zet data-theme al vóór de eerste weergave. Hier de knop met keuzemenu (menuitemradio), de
+   theme-color en wisselingen van het apparaat of uit een ander tabblad. */
+const THEMES = ["auto", "licht", "donker"], THEME_KEY = "stamboom-thema", darkMQ = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+function themeNow() { try { const t = localStorage.getItem(THEME_KEY); return THEMES.includes(t) ? t : "auto"; } catch (e) { return "auto"; } }
+function themeDark(t) { return t === "donker" || (t === "auto" && !!(darkMQ && darkMQ.matches)); }
+function applyTheme(t, save) {
+  const r = document.documentElement;
+  if (t === "auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme", t === "licht" ? "light" : "dark");
+  if (save) { try { if (t === "auto") localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, t); } catch (e) { } }
+  const nu = themeDark(t) ? "donker" : "licht", naam = { auto: `automatisch (nu ${nu})`, licht: "licht", donker: "donker" }[t];
+  const b = $("#themeBtn"); if (b) { b.dataset.mode = t; b.setAttribute("aria-label", `Weergave: ${naam}`); b.title = `Weergave: ${naam}`; }
+  $$("#themeMenu [data-t]").forEach(x => x.setAttribute("aria-checked", String(x.dataset.t === t)));
+  const n = $("#thmNote"); if (n) n.textContent = `zoals je apparaat · nu ${nu}`;
+  let m = document.querySelector('meta[name="theme-color"]');
+  if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); }
+  m.content = getComputedStyle(r).getPropertyValue("--bg").trim() || (themeDark(t) ? "#0F1513" : "#EEF1EC");
+}
+let themeCur = themeNow(); /* ook in het geheugen: werkt zonder localStorage (privévenster) */
+applyTheme(themeCur);
+{
+  const btn = $("#themeBtn"), menu = $("#themeMenu"), items = () => $$("#themeMenu [data-t]"), isOpen = () => !menu.hidden;
+  const close = focusBtn => { if (!isOpen()) return; menu.hidden = true; btn.setAttribute("aria-expanded", "false"); if (focusBtn) btn.focus(); };
+  const open = () => { menu.hidden = false; btn.setAttribute("aria-expanded", "true"); (items().find(x => x.dataset.t === themeCur) || items()[0]).focus(); };
+  btn.onclick = () => isOpen() ? close(false) : open();
+  btn.addEventListener("keydown", e => { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); open(); } });
+  menu.addEventListener("click", e => { const x = e.target.closest("[data-t]"); if (!x) return; themeCur = x.dataset.t; applyTheme(themeCur, true); close(true); });
+  menu.addEventListener("keydown", e => {
+    const list = items(), i = list.indexOf(document.activeElement);
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); list[(i + (e.key === "ArrowDown" ? 1 : list.length - 1)) % list.length].focus(); }
+    else if (e.key === "Home" || e.key === "End") { e.preventDefault(); list[e.key === "Home" ? 0 : list.length - 1].focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+    else if (e.key === "Tab") close(false);
+  });
+  document.addEventListener("pointerdown", e => { if (isOpen() && !e.target.closest("#thm")) close(false); });
+  window.addEventListener("hashchange", () => close(false));
+}
+if (darkMQ) { const f = () => { if (themeCur === "auto") applyTheme("auto"); }; darkMQ.addEventListener ? darkMQ.addEventListener("change", f) : darkMQ.addListener(f); }
+window.addEventListener("storage", e => { if (e.key === THEME_KEY) applyTheme(themeCur = themeNow()); }); /* andere tabbladen volgen mee */
 $("#sScrim").onclick = closeSearch;
 document.addEventListener("keydown", e => {
   if (!lb.hidden) { if (e.key === "Escape") closeLb(); else if (e.key === "ArrowLeft") stepLb(-1); else if (e.key === "ArrowRight") stepLb(1); return; }

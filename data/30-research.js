@@ -239,6 +239,7 @@ const CHANGELOG = [
     "Tijdlijn: zes nieuwe tijdvakken en gebeurtenissen: de veepest van 1744–1745, de koortsjaren 1826–1827, de eerste coöperatieve zuivelfabriek in Warga (1886), de verkiezing van Domela Nieuwenhuis in Schoterland (1888), de leerplicht (1901) en bij de Noordoostpolder (1942) het 'Nederlands Onderduikers Paradijs'.",
     "Kaart: met de nieuwe knop 'Alleen wie in dit jaar leeft' zie je per jaar alleen de voorouders die toen leefden. Het IJsselmeer staat weer helemaal in beeld.",
     "Nieuw: met de knop rechts in de kop kies je de weergave: automatisch (zoals je apparaat), licht of donker. De keuze wordt onthouden. Op een gewoon scherm passen nu alle tabbladen in de kop.",
+    "In de grote fotoweergave wordt een lange titel na drie regels afgekapt; tik erop (of druk op Enter) om de hele titel te lezen. Zo houdt de foto op de telefoon zijn ruimte.",
     "Leesbaarder en handiger: lichtgrijze teksten hebben meer contrast, links zijn op een telefoon makkelijker aan te tikken, er staan geen dubbele schuifbalken meer, en op de pagina Personen zijn generatie VI en ouder ingeklapt (klik om te openen; met een filter of zoekterm staat alles open)."] },
   { v: "Versie 10", d: "7 oktober 2026", items: [
     "Foto's en oude kaarten: 135 dorpen en steden hebben nu een foto, en er zijn 21 grietenijkaarten van Schotanus uit 1664, 9 oude stadsplattegronden, 14 foto's van kerken en plekken en een portret van Titus Brandsma. Ze komen van Wikimedia Commons; maker en licentie staan bij elk beeld en onder Bronnen › Beeldverantwoording.",
