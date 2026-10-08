@@ -3,7 +3,7 @@
 ALIES.STORIES.push(
 { id: "dubbel", title: "Twee keer Akkerman, twee keer Bakker", art: "branch", line: null,
   lede: "Net als bij Harrie staan er in de stamboom van Alies voorouders twee keer in. Franke en Aaltje, de ouders van Alies, hebben gemeenschappelijke voorouders: Jouke Akkerman en Niesje Wind uit Rohel. En Aaltjes grootouders Kornelis Bakker en Antje de Vries waren volle neef en nicht.",
-  people: [84, 85, 160, 161, 80, 42, 21, 20, 10, 5, 59, 29, 14, 7, 12, 13, 24, 27, 48, 49, 208, 209, 104, 147, 316, 317, 158, 243, 79, 121, 374, 185, 187, 92, 93],
+  people: [84, 85, 160, 161, 80, 42, 21, 20, 10, 5, 59, 29, 14, 7, 12, 13, 24, 27, 48, 49, 208, 209, 104, 147, 316, 317, 582, 583, 291, 305, 145, 152, 18, 19, 158, 243, 79, 121, 374, 185, 187, 92, 93],
   parts: [
     { h: "Jouke en Niesje, via Franke én via Aaltje", st: "A", p: [
       "Jouke Johannes Akkerman en Niesje Hendriks Wind trouwden in 1817 in Schoterland en woonden in Rohel. Ze hadden onder meer een zoon Jan Joukes (1826) en een dochter Saakjen (1818).",
@@ -32,6 +32,12 @@ ALIES.STORIES.push(
       "Sybe Attes uit Follega trouwde twee keer: in 1749 met Marike Harmens en in 1765 met Tjitske Idzes. Uit het eerste huwelijk kwam Grietje (1760), uit het tweede Janke (1767). Beide dochters droegen later de naam Visser.",
       "In 1825 trouwden Grietjes zoon Uilke Aukes Jongbloed en Jankes dochter Jantje Minnes Frankema: een halfneef en een halfnicht. Zo staat Sybe Attes twee keer in de stamboom, als kw 370 en kw 374.",
       { t: "Grietjes overlijdensakte zegt dat ze in Follega geboren is; haar doop daar in 1760 noemt Sijbe Attes en Marike Harmens. Dat het om dezelfde Grietje gaat, is afgeleid (B).", k: "afgeleid" }
+    ] },
+    { h: "Twee zussen Samplonius uit een domineesfamilie", st: "B", p: [
+      "Ook binnen de familie van Afke Hepkema komen twee lijnen samen. Haar vader Watze Hepkema en haar moeder Antje Dijkstra, die in 1879 trouwden, stammen allebei af van Bouwe Samplonius en Fem Hessels uit Tjerkgaast: Watze via hun dochter Angeniet, Antje via hun dochter Foekje.",
+      "Bouwe was een zoon van ds. Gerhardus Samplonius, predikant van Tjerkgaast, en een kleinzoon van ds. Johannes Samplonius, predikant van Heerenveen. Zelf werd hij boer: in 1749 heet hij 'eigenerfde huysman', een boer op eigen land.",
+      "Toen Foekjes dochtertje Fem in juli 1749 werd gedoopt, kort na de dood van haar eerste man, hield haar vader Bouwe Samplonius het kind ten doop. Op 24 juni 1763 werden Foekje, Angeniet en hun zus Fokeltje Bouwes op dezelfde dag lidmaat van de kerk in Langweer, elk met haar man.",
+      { t: "Dat Foekje en Angeniet zussen waren, volgt uit die doop en de lidmatenboeken samen; geen akte zegt het rechtstreeks. Zo waren Femmigjen Jacobs Haagsma, de overgrootmoeder van Watze, en Bouwe Siebolts Dijkstra, de overgrootvader van Antje, volle neef en nicht.", k: "afgeleid" }
     ] },
     { h: "Was het gewoon?", st: "A", p: [
       { t: "In de Friese dorpen trouwde men vaak binnen een kleine kring van families die elkaar kenden. Ook in de stamboom van Harrie staan voorouders twee keer: vier paren hebben Kees en Vronie gemeen.", k: "context" },
@@ -222,10 +228,15 @@ ALIES.FACTS.push(
   { kw: 2348, y: "1679", t: "Een brouwerij in het sterfhuis", x: "Jan Tiebbes was 'burger en coopman op de Flecke Jouwer'. Bij de inventaris van zijn sterfhuis in februari 1679 stonden er een brouwerij, een mouterij met ketel, een winkel met talk en kaarsen, en bijna 3900 gulden aan contant geld. Hij en zijn vrouw lieten zes minderjarige kinderen na.", st: "B" },
   { kw: 774, y: "1699", t: "Drie keer Reinsck", x: "Age Jottis liet in de parochie Mirdum tussen 1676 en 1679 drie dochters Reinsck dopen: de eerste twee stierven vermoedelijk jong. In 1699 was alleen Wypck van ongeveer 13 nog over als wees van Age en Berns Foddes.", st: "B" },
   { kw: 756, y: "1758", t: "Zes weken na elkaar", x: "Janke Klaases stierf op 30 november 1757 in Nieuweschoot, haar man Evert Klaases op 12 januari 1758, 56 jaar oud. Zes dagen later kregen hun zoons Klaas, Rouke en Jacob curatoren.", st: "A" },
-  { kw: 270, y: "1801", t: "Gedoopt op zijn 63e", x: "Wieger Andries uit Brongerga, sinds 1763 wees en later De Boer, werd in 1801 doopsgezind gedoopt op belijdenis, 63 jaar oud. Hij werd 84.", st: "B", story: "geloof-alies" }
+  { kw: 270, y: "1801", t: "Gedoopt op zijn 63e", x: "Wieger Andries uit Brongerga, sinds 1763 wees en later De Boer, werd in 1801 doopsgezind gedoopt op belijdenis, 63 jaar oud. Hij werd 84.", st: "B", story: "geloof-alies" },
+  { kw: 133, y: "1848", t: "De buren wisten het niet", x: "Toen Martje Jans in 1848 in Oudehorne stierf, 94 jaar oud, gaven twee buren de verkeerde ouders op, en ook de naam van haar man klopte niet. Uit haar doop van 1753 en de memorie van haar broer Yntze blijkt dat haar ouders Jan Yntses en Antje Roels heetten.", st: "B" },
+  { kw: 1165, y: "1687", t: "Op haar zeventiende een domineesvrouw", x: "Foekjen Seerps Swerms uit Harlingen deed in april 1687 belijdenis, 'jongedochter, wonend aan de Westerhaven'. Vier maanden later trouwde ze in Tjerkgaast met ds. Gerhardus Samplonius; ze was zeventien.", st: "B", story: "dubbel" },
+  { kw: 2328, y: "1658", t: "Naar de synode in Amsterdam", x: "De Staten van Friesland betaalden ds. Johannes Samplonius in 1658 en 1674 telkens 50 pond voor zijn reis als correspondent naar de synode van Noord-Holland. Zijn grafsteen in Heerenveen geeft zijn geboortedag in het Latijn: 16 november 1621.", st: "B", story: "dubbel" },
+  { kw: 170, y: "1779", t: "Ook uit Giethoorn", x: "Hendrik Jans Wind, later veenbaas in Sintjohannesga, kwam in 1779 'met attestatie van Giethoorn' om te trouwen. Hij en zijn vrouw Lijsbeth stierven in 1826 ruim twee weken na elkaar.", st: "A" }
 );
 /* Raakvlakken met de grote geschiedenis in de stamboom van Alies (vorm: zie HISTORY_TOUCH in 26-notables.js). */
 ALIES.HISTORY_TOUCH.push(
+  { y: "1658", kw: 2328, t: "Naar de synode", d: "In 1658 en 1674 reisde ds. Johannes Samplonius, predikant van Heerenveen, als correspondent naar de synode van Noord-Holland, in 1658 in Amsterdam. De Staten van Friesland betaalden hem er telkens 50 pond voor." },
   { y: "1765", kw: 160, t: "Turfmakers uit Giethoorn", d: "Eind achttiende eeuw groeven turfmakers uit Giethoorn het lage veen rond de Tjeukemeer af, tot er alleen water over was. In 1765 kwam een familie Ackerman uit Giethoorn naar Sintjohannesga; Johannes Jans Akkerman was vermoedelijk een zoon." },
   { y: "1771", kw: 196, t: "Een nieuwe kerk in Goingarijp", d: "Op 24 april 1771 werd de eerste steen gelegd van de nieuwe kerk van Goingarijp. Gerke Idses was een van de twee kerkvoogden." },
   { y: "1811", kw: 90, t: "Loten voor Napoleon", d: "Tjeerd Roels Heida werd in 1811 ingeloot en stuurde een plaatsvervanger. Wiebe Hessels Meibos, een broer van voorvader Jan Hessels Meibos, werd fuselier, deserteerde in 1813 en werd eind 1814 als vermist opgegeven." },
