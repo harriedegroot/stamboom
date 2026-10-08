@@ -83,6 +83,8 @@ const gen = kw => Math.floor(Math.log2(kw)) + 1;
 const lineOf = kw => kw < 4 ? null : kw < 8 ? ({ 4: 8, 5: 10, 6: 12, 7: 14 })[kw] : kw >> (gen(kw) - 4);
 const lineColor = kw => { const l = lineOf(kw); return l ? `var(--l${l})` : "var(--faint)"; };
 const isMale = kw => kw === 1 ? T.rootMale : kw % 2 === 0;
+/* "zijn" of "haar" voor één persoon; kw 1 in de samengestelde boom (de kinderen) is "hun" */
+const zijnHaar = (kw, hoofd) => { const w = kw === 1 && T.rootMale == null ? "hun" : isMale(kw) ? "zijn" : "haar"; return hoofd ? w[0].toUpperCase() + w.slice(1) : w; };
 /* klein teken man of vrouw, alleen uit het kw (even = man); voor lijsten met losse voornamen. kw 1 is een groep: geen teken */
 const SEX_PATH = { m: '<circle cx="10" cy="14" r="5.5"/><path d="M14 10l6-6M15 4h5v5"/>', v: '<circle cx="12" cy="9" r="5.5"/><path d="M12 14.5V21M9 18h6"/>' };
 const sexIco = kw => { if (!(kw > 1)) return ""; const m = kw % 2 === 0, w = m ? "man" : "vrouw";
@@ -296,6 +298,7 @@ VIEWS.forEach(x => { if (!$("#v-" + x)) { const sec = document.createElement("se
 const route = { view: "overzicht", sub: null };
 const rendered = {};
 function go(token, opts = {}) {
+  if (!archTekstOk && /^beeld(-|$)/.test(token)) { archTekst().then(() => go(token, opts)); return; } /* Beeld heeft de tekst van de archiefbeelden nodig */
   let view = token, sub = null;
   if (/^lijn-\d+$/.test(token)) { view = "families"; sub = +token.slice(5); }
   else if (/^verhaal-/.test(token)) { view = "verhalen"; sub = token.slice(8); }
@@ -418,6 +421,22 @@ const PACK_CACHE = {};
    persoonsbeelden alleen als die persoon in de huidige boom staat (via imgKey, dus ook in de samengestelde boom). */
 const ARCH_ALL = (PACK_IDX.items || []).map(a => ({ id: a[0], pack: a[1], soort: a[2], key: String(a[3]), kws: a[4] ? a[4].map(String) : null, t: a[5] || "", datum: a[6] || "", bron: a[7] || "", desc: a[8] || "", p: a[9] || null }));
 const ARCH_TREE = {};
+/* de tekst van de zoeklijst (titel, bron, beschrijving) staat apart in PACKS.tekst en laadt pas bij Beeld of de zoekfunctie;
+   daarna worden de afgeleide lijsten opnieuw opgebouwd. Zonder PACKS.tekst (oude vorm) staat de tekst al in items. */
+let archTekstP = PACK_IDX.tekst ? null : Promise.resolve(), archTekstOk = !PACK_IDX.tekst;
+function archTekst() {
+  if (archTekstP) return archTekstP;
+  return archTekstP = new Promise(res => {
+    window.PACK_TEKST = list => {
+      (list || []).forEach((x, i) => { const a = ARCH_ALL[i]; if (a && x) { a.t = x[0] || ""; a.bron = x[1] || ""; a.desc = x[2] || ""; } });
+      archTekstOk = true; Object.keys(ARCH_TREE).forEach(k => delete ARCH_TREE[k]); Object.keys(ARV_CACHE).forEach(k => delete ARV_CACHE[k]); ARCH_PLACE = null;
+      res();
+    };
+    const sc = document.createElement("script"); sc.src = PACK_IDX.tekst; sc.async = true;
+    sc.onerror = () => { archTekstOk = true; res(); }; sc.onload = () => { sc.remove(); res(); };
+    document.head.appendChild(sc);
+  });
+}
 function archList() {
   if (ARCH_TREE[T.key]) return ARCH_TREE[T.key];
   const who = {}; all.forEach(p => { const k = imgKey(p.kw); if (!who[k]) who[k] = p; });
@@ -492,7 +511,7 @@ function percelenHtml(kw) {
 /* ---------- beelden in hun tijd ---------- */
 /* jaren van een beeld uit de ruwe datum ("1904", "poststempel 03-08-1921", "1923, ca.", "1901-1925", "1880s"); null = onbekend */
 function imgYears(raw) {
-  const s = String(raw || ""), ys = (s.match(/(?<!\d)(1[5-9]\d\d|20[0-2]\d)(?!\d)/g) || []).map(Number);
+  const s = String(raw || "").replace(/\s*date QS:[\s\S]*$/, ""), /* Wikidata-datums: "between 1777 and 1820 date QS:P,+1500-…" (het +1500 is alleen de precisie) */ ys = (s.match(/(?<!\d)(1[5-9]\d\d|20[0-2]\d)(?!\d)/g) || []).map(Number);
   return ys.length ? [Math.min(...ys), Math.max(...ys) + (/\d{4}s\b/.test(s) ? 9 : 0)] : null;
 }
 const yearLabel = ys => !ys ? "" : ys[0] === ys[1] ? String(ys[0]) : `${ys[0]}–${ys[1]}`;
@@ -569,9 +588,30 @@ function lifeArch(p) {
 }
 /* leesbare titel: bij Nationaal Archief/Anefo-foto's is de titel alleen een nummer ("Bestanddeelnr 903-7400");
    dan de beschrijving of serie uit de bronbeschrijving */
+/* Rijksmuseum-metadata zoals Commons die overneemt: "Identificatie Titel(s): … Objecttype: prent Objectnummer: RP-P-… Vervaardiger: …
+   Datering: …" → losse velden; rmTitel = de eerste titel zonder "(titel op object)", rmDesc = een korte, leesbare beschrijving */
+const RM_VELD = ["Titel(s)", "Objecttype", "Objectnummer", "Catalogusreferentie", "Opmerking", "Opschriften / Merken", "Omschrijving", "Vervaardiging", "Vervaardiger", "Datering", "Fysieke kenmerken", "Materiaal", "Techniek", "Afmetingen", "Onderwerp", "Wat", "Waar", "Wie", "Wanneer", "Verwerving en rechten", "Verwerving", "Copyright", "Credit"];
+function rmMeta(d) {
+  d = String(d || ""); if (!/^Identificatie Titel\(s\):/.test(d)) return null;
+  const rx = new RegExp("(" + RM_VELD.map(v => v.replace(/[()/]/g, "\\$&")).join("|") + "):\\s*", "g"), o = {}; let m, last = null, at = 0;
+  while ((m = rx.exec(d))) { if (last) o[last] = (o[last] ? o[last] + " " : "") + d.slice(at, m.index).trim(); last = m[1]; at = rx.lastIndex; }
+  if (last) o[last] = d.slice(at).trim();
+  return o;
+}
+const rmTitel = o => o && o["Titel(s)"] ? o["Titel(s)"].split(/\.\s+|\s+\/\s+/)[0].replace(/\s*\(titel op object\)/, "").replace(/[.\s…]+$/, "") : "";
+function rmDesc(o) {
+  if (!o) return "";
+  const wie = (o.Vervaardiger || "").replace(/…$/, "").split(/,\s*(?=[a-z]+:)/).map(x => x.replace(/^[a-z ]+:\s*/, "").trim()).filter(x => x && !/anoniem/i.test(x));
+  const soort = (o.Objecttype || "").replace(/…$/, "").trim(), dat = (o.Datering || "").replace(/…$/, "").trim();
+  const zin = [soort ? soort[0].toUpperCase() + soort.slice(1) : "", wie.length ? "door " + wie.join(" en ") : "", dat ? "(" + dat + ")" : ""].filter(Boolean).join(" ");
+  const oms = (o.Omschrijving || "").replace(/…$/, "").trim();
+  return [oms, zin ? zin + "." : "", o.Objectnummer ? "Rijksmuseum, " + o.Objectnummer.replace(/…$/, "").trim() + "." : ""].filter(Boolean).join(" ");
+}
+const descOf = im => { const o = rmMeta(im.desc); return o ? rmDesc(o) : im.desc || ""; };
 function niceTitle(im) {
-  /* RCE-titels: "Voor- en zijgevel nr. L 3012 - Oldeholtwolde - 20488737 - RCE" → "Voor- en zijgevel" */
-  const t = String(im.t || "").replace(/(?:\s+nr\.\s*[A-Z]?\s*\d+)?\s+-\s+[^-]+\s+-\s+\d{6,}\s+-\s+RCE\s*$/, "").replace(/^(.+?)\s*-\s*\d{6,}\s*-\s*RCE\s*$/, "$1");
+  const rm = rmTitel(rmMeta(im.desc)); if (rm) return rm;
+  /* RCE-titels: "Voor- en zijgevel nr. L 3012 - Oldeholtwolde - 20488737 - RCE" → "Voor- en zijgevel"; objectnummers van het Rijksmuseum eraf */
+  const t = String(im.t || "").replace(/,\s*(?:RP|SK|BK|NG|KOG)-[A-Z0-9][\w.-]*$/, "").replace(/(?:\s+nr\.\s*[A-Z]?\s*\d+)?\s+-\s+[^-]+\s+-\s+\d{6,}\s+-\s+RCE\s*$/, "").replace(/^(.+?)\s*-\s*\d{6,}\s*-\s*RCE\s*$/, "$1");
   if (!/bestanddeelnr|archiefnr/i.test(t)) return t;
   const d = String(im.desc || ""), m = /Beschrijving\s*:\s*(.+?)(?:\s+(?:Datum|Locatie|Trefwoorden|Fotograaf)\s*:|…|$)/.exec(d) || /Serie\s*:\s*(.+?)(?:\s+(?:Annotatie|Beschrijving|Datum)\s*:|…|$)/.exec(d);
   return m ? m[1].trim() : t;
@@ -733,8 +773,41 @@ function openLb(id, list) {
 /* kw (in de huidige boom) van de eerste voorouder op een archiefbeeld; kws zijn sleutels als "42" of "a-42" */
 const archKw = im => { const ks = (im.kws || []).map(String); const p = ks.length ? all.find(q => ks.includes(imgKey(q.kw))) : null; return p ? p.kw : null; };
 const persKw = im => { const p = all.find(q => imgKey(q.kw) === String(im.key)); return p ? p.kw : null; };
+/* verkleinde archiefbeelden (besluit B2): een regel met de getoonde en de originele maat, een link naar het origineel, en als er een
+   directe beeld-url is (oi) de knop "Toon origineel": pas bij een klik wordt het externe beeld geladen, in dezelfde lichtbak
+   (nooit vanzelf: zo maakt een bezoeker pas contact met de bron als hij erom vraagt). Mislukt het, dan blijft de eigen versie staan.
+   In de artifact-variant mag de pagina geen externe beelden laden: daar alleen de link. */
+const EXTERN_BEELD = !/usercontent\./.test(location.hostname); /* de artifact-variant draait op een usercontent-domein met een strikte CSP */
+const px = (w, h) => `${Number(w).toLocaleString("nl-NL")} × ${Number(h).toLocaleString("nl-NL")} px`;
+const verkleind = im => im.ow && im.oh && im.w && Math.max(im.ow, im.oh) > Math.max(im.w, im.h) + 8;
+function lbOrig(im) {
+  if (!verkleind(im)) return "";
+  const toon = im.oi && EXTERN_BEELD ? `<button class="link" id="lbToon" type="button">Toon origineel (${px(im.ow, im.oh)})</button>` : "";
+  const link = im.ou ? `<a href="${esc(im.ou)}" target="_blank" rel="noopener">Origineel bij ${esc(bronNaamKort(im))} ↗</a>` : "";
+  return `<p class="lbverkl" id="lbVerkl"><span>Verkleind: getoond ${px(im.w, im.h)}, origineel ${px(im.ow, im.oh)}.</span> ${[toon, link].filter(Boolean).join(" · ")}</p>`;
+}
+const bronNaamKort = im => (nlNaam(im.bronNaam || "").split(/[,(»:]/)[0] || "de bron").trim();
+function lbToonOrigineel(im) {
+  const img = $("#lbImg"), b = $("#lbToon"), r = $("#lbVerkl"); if (!img || !b) return;
+  if (img.dataset.orig === im.id) { /* terug naar de eigen versie */
+    img.src = im.src; img.width = im.w; img.height = im.h; delete img.dataset.orig; lb.classList.remove("lbvol");
+    b.textContent = `Toon origineel (${px(im.ow, im.oh)})`; const v = $("#lbVol"); if (v) v.remove(); return;
+  }
+  b.disabled = true; b.textContent = "Origineel laden…"; lb.classList.add("lblaad");
+  const pre = new Image(); pre.decoding = "async";
+  pre.onload = () => {
+    lb.classList.remove("lblaad"); if (lb.hidden || IMG_ID[lbList[lbI]] !== im) return;
+    img.src = im.oi; img.width = pre.naturalWidth; img.height = pre.naturalHeight; img.dataset.orig = im.id;
+    b.disabled = false; b.textContent = "Toon de verkleinde versie";
+    if (!$("#lbVol")) b.insertAdjacentHTML("afterend", ` · <button class="link" id="lbVol" type="button" aria-pressed="false">Volle grootte</button>`);
+    $("#lbVol").onclick = e => { const on = lb.classList.toggle("lbvol"); e.currentTarget.setAttribute("aria-pressed", on); e.currentTarget.textContent = on ? "Passend maken" : "Volle grootte"; };
+  };
+  pre.onerror = () => { lb.classList.remove("lblaad"); b.disabled = false; b.textContent = "Toon origineel"; if (r) { const oud = $(".lbfout", r); if (oud) oud.remove(); } if (r) r.insertAdjacentHTML("beforeend", ` <span class="lbfout">Het origineel kon niet worden geladen; de verkleinde versie blijft staan.</span>`); };
+  pre.src = im.oi;
+}
 function showLb() {
   const im = IMG_ID[lbList[lbI]], img = $("#lbImg");
+  lb.classList.remove("lbvol", "lblaad"); delete img.dataset.orig;
   if (!im) { const id = lbList[lbI], a = ARCH_ID[id]; if (a) loadPack(a.pack).then(() => { if (!lb.hidden && lbList[lbI] === id && IMG_ID[id]) showLb(); }); $("#lbCap").innerHTML = `<p class="small">Laden…</p>`; return; }
   lb.classList.remove("lbfail"); img.src = im.src; img.alt = im.t; img.width = im.w; img.height = im.h; img.style.width = isTiny(im) ? im.w * 2 + "px" : "";
   const go2 = (im.soort === "plaats" || im.soort === "stadsplan") && PLACES[im.key] && !PLACES[im.key].seat ?`<button class="btn" data-go="${slug(im.key)}">Over ${esc(placeName(im.key))}</button>`
@@ -747,7 +820,7 @@ function showLb() {
   const vs = (im.vh || []).map(v => STORIES.find(x => x.id === v[0])).filter(x => x && !(route.view === "verhalen" && route.sub === x.id));
   const go3 = vs.map(x => `<button class="btn" data-go="verhaal-${x.id}">Verhaal: ${esc(x.title)}</button>`).join("");
   const lbT = im.arch ? niceTitle(im) : im.t, same = d => [lbT, archTitle(lbT, im.p || im.key)].some(x => norm(x).replace(/[.\s]+$/, "") === norm(d).replace(/[.\s]+$/, ""));
-  $("#lbCap").innerHTML = `<div class="lbt"><b>${esc(lbT)}</b>${lbList.length > 1 ? `<span class="mono small">${lbI + 1} / ${lbList.length}</span>` : ""}</div>${im.desc && !same(im.desc) ? `<p>${esc(im.desc)}</p>` : ""}<p class="credit">${beeldDatum(im.datum) ? esc(beeldDatum(im.datum)) + " · " : ""}${credit(im)}${refLine(im) ? `<br>Bron: ${refLine(im)}` : ""}</p>${typeof lbAkte === "function" ? lbAkte(im) : "" /* akte-tekst */}${lbPeople(im)}${go2 || go3 ? `<div class="lbacts">${go2}${go3}</div>` : ""}`;
+  $("#lbCap").innerHTML = `<div class="lbt"><b>${esc(lbT)}</b>${lbList.length > 1 ? `<span class="mono small">${lbI + 1} / ${lbList.length}</span>` : ""}</div>${descOf(im) && !same(descOf(im)) ? `<p>${esc(descOf(im))}</p>` : ""}<p class="credit">${beeldDatum(im.datum) ? esc(beeldDatum(im.datum)) + " · " : ""}${credit(im)}${refLine(im) ? `<br>Bron: ${refLine(im)}` : ""}</p>${lbOrig(im)}${typeof lbAkte === "function" ? lbAkte(im) : "" /* akte-tekst */}${lbPeople(im)}${go2 || go3 ? `<div class="lbacts">${go2}${go3}</div>` : ""}`;
   /* lange titels: drie regels, tik of Enter klapt uit (anders wordt de foto op de telefoon te klein) */
   const tb = $("#lbCap .lbt b");
   if (tb && tb.scrollHeight > tb.clientHeight + 2) {
@@ -755,6 +828,7 @@ function showLb() {
     const tog = () => { const o = tb.classList.toggle("open"); tb.setAttribute("aria-expanded", o); tb.title = o ? "Titel inklappen" : "Toon de hele titel"; };
     tb.onclick = tog; tb.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } };
   }
+  const tn = $("#lbToon"); if (tn) tn.onclick = () => lbToonOrigineel(im);
   $("#lbPrev").hidden = $("#lbNext").hidden = lbList.length < 2;
 }
 function stepLb(d) { if (lbList.length < 2) return; lbI = (lbI + d + lbList.length) % lbList.length; showLb(); }
@@ -830,11 +904,11 @@ function openProfile(kw, opts = {}) {
       ${ln ? `<button class="chip" style="--c:var(--l${ln})" data-go="lijn-${ln}"><i></i>${p.aliasOf ? "via de lijn" : "familie"} ${esc(LINES[ln].name)}</button>` : ""}
       ${p.living ? `<span class="tag" style="color:var(--muted)">levend</span>` : p.st ? `<span class="tag st-${p.st}" title="Bewijs ${p.st}: ${BEWIJS_KORT[p.st]}. ${esc(STATUS[p.st].long)}" aria-label="Bewijs ${p.st}: ${BEWIJS_KORT[p.st]}">${p.st} · ${STATUS[p.st].label.toLowerCase()}</span>` : ""}
       ${p.living ? "" : chgTag(kw)}
-      ${p.link ? `<span class="tag st-${p.link}" title="Status van de koppeling aan het kind in de lijn: ${BEWIJS_KORT[p.link]}" aria-label="Koppeling ${p.link}: ${BEWIJS_KORT[p.link]}">koppeling ${p.link}</span>` : ""}
+      ${p.link && kw > 1 && person(kw >> 1) ? (() => { const kn = firstName(person(kw >> 1)), rol = isMale(kw) ? "vader" : "moeder"; return `<span class="tag st-${p.link}" title="Dat ${esc(firstName(p))} de ${rol} is van ${esc(kn)}: ${BEWIJS_KORT[p.link]} (${p.link})" aria-label="${rol} van ${esc(kn)}: ${BEWIJS_KORT[p.link]}">${rol} van ${esc(kn)} · ${p.link}</span>`; })() : ""}
       ${p.living ? "" : `<button type="button" class="qhelp" id="dHelpBtn" aria-label="Zo lees je dit profiel" title="Zo lees je dit profiel" aria-expanded="false" aria-controls="dHelp">?</button>`}
     </div>
-    ${p.living ? "" : `<div class="dhelp" id="dHelp" role="note" hidden><b>Zo lees je dit profiel.</b> <b>kw</b> is het nummer in de stamboom: de vader van nummer n heeft 2n, de moeder 2n + 1. De letter A tot D zegt hoe sterk het bewijs is, van A (akte) tot D (hypothese). <button type="button" class="link" data-go="bronnen">Meer uitleg</button></div>`}`;
-  let h = `<div class="dacts"><button class="btn" id="dTree">Toon in de boom</button><button class="btn" data-go="${kw > 1 ? "stamboom-" + kw : "stamboom"}">Toon in de waaier</button>${vwProfielKnop(kw) ? `<button class="btn" data-go="verwant-${kw}" title="${esc(`Hoe is ${firstName(p)} familie van mij?`)}">Hoe ben ik familie?</button>` : "" /* verwantschap: de haak beslist of de knop er komt */}</div>`;
+    ${p.living ? "" : `<div class="dhelp" id="dHelp" role="note" hidden><b>Zo lees je dit profiel.</b> <b>kw</b> is het nummer in de stamboom: de vader van nummer n heeft 2n, de moeder 2n + 1. De letter A tot D zegt hoe sterk het bewijs is, van A (akte) tot D (hypothese). Het tweede label zegt hoe zeker het is dat deze persoon de vader of moeder is van het kind in de lijn. <button type="button" class="link" data-go="bronnen">Meer uitleg</button></div>`}`;
+  let h = `<div class="dacts"><button class="btn" id="dTree">Toon in de boom</button><button class="btn" data-go="${kw > 1 ? "stamboom-" + kw : "stamboom"}">Toon in de waaier</button>${vwProfielKnop(kw) ? `<button class="btn" data-go="verwant-${kw}" title="${esc(`Hoe is ${firstName(p)} familie van mij?`)}">Hoe ben ik familie?</button>` : "" /* verwantschap: de haak beslist of de knop er komt */}<button class="btn" id="dShare" type="button" title="Deel een link naar dit profiel">Delen</button><span class="small dshare-ok" id="dShareOk" role="status" aria-live="polite"></span></div>`;
   const tw = twinKws(kw);
   if (tw.length) h += `<p class="stnote implex"><b>${["", "", "Twee", "Drie", "Vier", "Vijf"][tw.length + 1] || tw.length + 1} keer in de stamboom.</b> Deze persoon staat ook als kw ${tw.length > 1 ? tw.slice(0, -1).join(", ") + " en " + tw[tw.length - 1] : tw[0]}, via de ${[...new Set(tw.map(t => LINES[lineOf(t)] && LINES[lineOf(t)].name).filter(Boolean))].map(esc).join("- en ")}-lijn. ${tw.some(t => halfOf(t) !== halfOf(kw)) ? esc(T.key === "s" ? TREES[p.side].parents : T.parents) + " hebben hier gemeenschappelijke voorouders." : "Beide lijnen lopen via " + esc((person(halfOf(kw)) || {}).roep || (person(halfOf(kw)) || {}).n || "") + "."} ${tw.map(t => `<button class="link" data-open="${t}">Bekijk als kw ${t}</button>`).join(" · ")} · <button class="link" data-go="${implexStory(p.side)}">Lees het verhaal</button></p>`;
   if (p.living) {
@@ -902,6 +976,15 @@ function openProfile(kw, opts = {}) {
   const hb = $("#dHelpBtn"); if (hb) hb.onclick = () => profHelp($("#dHelp").hidden);
   const kt = $("#dBody .kp-tog"); if (kt) kt.onclick = () => { $$("#dBody .kpath li[hidden]").forEach(li => { li.hidden = false; }); kt.closest("li").remove(); };
   $("#dTree").onclick = () => { closeProfile(true); go(kw > 1 ? "boom-" + kw : "boom"); };
+  /* delen: het systeemmenu van de telefoon als dat er is, anders de link kopiëren (de link is alleen het kw-nummer) */
+  $("#dShare").onclick = async () => {
+    const url = location.href.split("#")[0] + "#" + T.prefix + "kw" + kw, ok = $("#dShareOk");
+    const meld = t => { ok.textContent = t; clearTimeout(ok._t); ok._t = setTimeout(() => { ok.textContent = ""; }, 2500); };
+    if (navigator.share) { try { await navigator.share({ title: p.n, url }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    try { await navigator.clipboard.writeText(url); meld("Link gekopieerd"); }
+    catch (e) { const t = document.createElement("textarea"); t.value = url; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select();
+      let gelukt = false; try { gelukt = document.execCommand("copy"); } catch (x) {} t.remove(); meld(gelukt ? "Link gekopieerd" : "Kopiëren lukte niet: " + url); }
+  };
   const lm = $("#dLifeMap"); if (lm) lm.appendChild(lifeMap(p));
   const ks = [kw, ...twinKws(kw)], pe = ks.map(k => PACK_IDX.kw[imgKey(k)]).filter(Boolean), iks = ks.map(imgKey);
   if (!p.living && pe.length) { const shown = new Set(ks.flatMap(persImgs).map(i => i.id)); /* niet dubbel: wat al onder "Uit het archief" staat */
@@ -913,8 +996,8 @@ function openProfile(kw, opts = {}) {
     const wa = workArch(p, new Set(la.map(a => a.id)));
     if (wa && wa.list.length) archStrip($("#dWerk"), wa.list, () => curKw === kw, { n: 4,
       cap: (im, a) => `${a.d ? placeName(a.key) + ` (${Math.round(a.d)} km)` : placeName(a.key)}${a.ys ? ", " + yearLabel(a.ys) : ""}: ${archTitle(niceTitle(im), a.key)}`,
-      head: `<h5>Het werk in hun tijd</h5><p class="small" style="margin:0 0 10px">${esc((p.occ || "").split(";")[0])}: oude beelden van ${wa.w[2]} uit de jaren dat ${fn} werkte, uit de eigen woonplaatsen of de omgeving (tot 30 km).</p>` });
-    archStrip($("#dTijd"), la, () => curKw === kw, { n: innerWidth < 560 ? 4 : 8, head: `<h5>Hun plaatsen in hun tijd</h5><p class="small" style="margin:0 0 10px">Oude foto's, prenten en kaarten van ${np === 1 ? esc(placeName(la[0].key)) : np + " plaatsen uit dit leven"}, uit de jaren dat ${fn} er was.</p>` });
+      head: `<h5>Het werk in ${zijnHaar(kw)} tijd</h5><p class="small" style="margin:0 0 10px">${esc((p.occ || "").split(";")[0])}: oude beelden van ${wa.w[2]} uit de jaren dat ${fn} werkte, uit de eigen woonplaatsen of de omgeving (tot 30 km).</p>` });
+    archStrip($("#dTijd"), la, () => curKw === kw, { n: innerWidth < 560 ? 4 : 8, head: `<h5>${zijnHaar(kw, true)} plaatsen in ${zijnHaar(kw)} tijd</h5><p class="small" style="margin:0 0 10px">Oude foto's, prenten en kaarten van ${np === 1 ? esc(placeName(la[0].key)) : np + " plaatsen uit dit leven"}, uit de jaren dat ${fn} er was.</p>` });
   }
   const dm = $("#dMap"); if (dm) dm.onclick = () => { closeProfile(true); mapFocusPerson = kw; mapState.place = null; go("kaart"); renderMap(); };
   if (!opts.fromHistory) setHash(T.prefix + "kw" + kw, "push", { profiel: 1, onder: currentToken() });
@@ -1002,9 +1085,17 @@ function closeSearch() { sdlg.hidden = true; if (sFrom && sFrom.focus && documen
 const syncLock = () => document.documentElement.classList.toggle("lock", !drawer.hidden || !sdlg.hidden || !lb.hidden);
 [drawer, sdlg, lb].forEach(n => new MutationObserver(syncLock).observe(n, { attributes: true, attributeFilter: ["hidden"] }));
 syncLock();
-function hl(s, toks) { let h = esc(s); toks.forEach(t => { if (t.length < 2) return; const re = new RegExp("(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig"); h = h.replace(re, "<mark>$1</mark>"); }); return h; }
+/* alle zoekwoorden in één keer markeren (anders raakt een tweede woord de <mark> van het eerste); korte woorden als "de" alleen aan het begin van een woord */
+function hl(s, toks) {
+  const ts = toks.filter(t => t.length >= 2).sort((a, b) => b.length - a.length).map(t => (t.length <= 3 ? "(?<!\\p{L})" : "") + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (!ts.length) return esc(s);
+  const re = new RegExp(ts.join("|"), "giu"); let h = "", i = 0;
+  for (const m of s.matchAll(re)) { h += esc(s.slice(i, m.index)) + "<mark>" + esc(m[0]) + "</mark>"; i = m.index + m[0].length; }
+  return h + esc(s.slice(i));
+}
 function runSearch() {
   const q = norm(sInput.value).trim(), toks = q.split(/\s+/).filter(Boolean);
+  if (toks.length && !archTekstOk) archTekst().then(() => { if (sInput.value.trim()) runSearch(); }); /* archiefbeelden komen erbij zodra hun tekst er is */
   let res;
   if (!toks.length) res = [...INDEX.filter(i => i.type === "Families"), ...INDEX.filter(i => i.type === "Verhalen")];
   else res = INDEX.map(i => { if (!toks.every(t => i.nt.includes(t))) return null; let s = 0; toks.forEach(t => { if (i.ntitle.startsWith(t)) s += 4; else if (i.ntitle.includes(t)) s += 2; }); return [s, i]; }).filter(Boolean).sort((a, b) => b[0] - a[0]).map(x => x[1]).slice(0, 40);
@@ -1546,14 +1637,14 @@ function renderOverzicht() {
         <h1>${T.TXT.heroTitle || "Boeren, veehouders en grutters uit <em>Friesland</em> en de Kop van Overijssel"}</h1>
         <p class="lede">${T.TXT.heroLede ? esc(T.TXT.heroLede.replace("{oldest}", oldest)) : `De voorouders van Harrie de Groot en zijn broers en zussen, met bronnen terug tot ${oldest}. Acht families, bijna allemaal katholiek, die grotendeels binnen een straal van enkele tientallen kilometers bleven wonen. In de familie: een heilige, een kanunnik en een doopsgezinde tak.`}</p>
         <div class="stats">${[[H.n, "voorouders", H.weak ? `waarvan ${H.weak} onzeker gekoppeld (C of D)` : "allemaal bewezen gekoppeld"], [H.genProven, "generaties bewezen", H.genAll > H.genProven ? `met aanwijzingen tot ${H.genAll}` : ""], [S.nPlaces, "plaatsen", ""], [H.oldProven || "–", "oudste bewezen jaar", H.oldAll !== null && H.oldAll <= H.oldProven - 10 ? `met aanwijzingen: ${H.oldAll}` : ""]].map(s => `<div class="stat"><b>${s[0]}</b><span>${s[1]}</span>${s[2] ? `<small>${s[2]}</small>` : ""}</div>`).join("")}</div>
-        <div class="cta"><button class="btn primary" data-go="stamboom">Bekijk de stamboom</button>${T.key === "s" && typeof renderVerbanden === "function" ? `<button class="btn" data-go="verbanden">Waar de families elkaar kruisten</button>` : ""}</div>
+        <div class="cta"><button class="btn primary" data-go="stamboom">Bekijk de stamboom</button>${T.key === "s" && typeof renderVerbanden === "function" ? `<button class="btn" data-go="verbanden">Waar de families elkaar kruisten</button>` : ""}${RENDER.zoeken && typeof zoekItems === "function" && zoekItems().length ? `<button type="button" class="ov-link cta-zoek" data-go="zoeken">${zoekItems().length} open vragen: help mee zoeken →</button>` : ""}</div>
       </div>
-      <div class="hero-fan"><div id="heroFan"></div><div class="fan-note" id="heroFanNote"></div></div>
     ${(() => { const st = STORIES.length ? pickStories(1)[0] : null; return `<div class="ingangen">
       <button class="ingang" id="heroSearch">${navIco("zoek")}<span><b>Zoek je opa, oma of overgrootouder</b><small>Typ een naam, een dorp of een jaartal</small></span></button>
       ${RENDER.verwant ? `<button class="ingang" data-go="verwant">${navIco("verwant")}<span><b>Hoe zijn we familie?</b><small>Kies twee mensen en zie langs welke voorouders</small></span></button>` : ""}
       ${st ? `<button class="ingang" data-go="verhaal-${st.id}">${navIco("verhalen")}<span><b>Lees een verhaal</b><small>Vandaag: ${esc(st.title)}</small></span></button>` : ""}
     </div>`; })()}
+      <div class="hero-fan"><div id="heroFan"></div><div class="fan-note" id="heroFanNote"></div></div>
 
     </div>
     ${Object.keys(TREES).length > 1 ? `<div class="section-head" id="kiesboom"><h2>${navIco("stamboom")} Kies een stamboom</h2><p>Drie stambomen op één site.</p></div>
@@ -3849,15 +3940,24 @@ function vwFind(q, onlyAnc) {
   return VW_CAND.list.filter(c => (!onlyAnc || !c.p.living || c.kw === 1) && toks.every(t => /^\d+$/.test(t) ? c.ks.includes(t) || c.s.includes(t) : c.s.includes(t)))
     .map(c => [toks.some(t => c.ks.includes(t)) ? 0 : norm(c.p.n).startsWith(toks[0]) ? 1 : 2, c]).sort((a, b) => a[0] - b[0] || a[1].kw - b[1].kw).slice(0, 8).map(x => x[1]);
 }
-function vwBind(id, onlyAnc, set) {
+/* na een keuze met de hand: de uitkomst in beeld als die onder de rand valt; op een aanraakscherm het toetsenbord dicht */
+function vwShow(outId) {
+  const o = $("#" + outId); if (!o || !o.querySelector(".vw-card")) return;
+  const r = o.getBoundingClientRect(), vast = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--vast")) || 0;
+  if (r.top > innerHeight - 140) scrollTo({ top: scrollY + r.top - vast - 12, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+function vwBind(id, onlyAnc, set, outId) {
   const inp = $("#" + id), ul = $("#" + id + "L"); let items = [], sel = 0;
+  /* telefoon: bij het intikken het veld bovenaan, zodat de suggesties boven het toetsenbord blijven */
+  inp.onfocus = () => { if (innerWidth > 700) return; setTimeout(() => { const vast = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--vast")) || 0, t = inp.getBoundingClientRect().top;
+    if (t > innerHeight * 0.35 || t < vast) scrollTo({ top: scrollY + t - vast - 40 }); }, 250); };
   const close = () => { ul.hidden = true; inp.setAttribute("aria-expanded", "false"); inp.removeAttribute("aria-activedescendant"); };
   const draw = () => {
     ul.innerHTML = items.length ? items.map((c, i) => `<li role="option" id="${id}o${i}" aria-selected="${i === sel}" data-i="${i}"><b>${esc(vwNm(c.kw))}</b><span>${c.p.living ? "" : esc(lifeYears(c.p)) + " · "}kw ${c.kw}</span></li>`).join("") : `<li class="none" role="option" aria-disabled="true">Niemand gevonden${onlyAnc ? " (van levenden staat alleen de naam in de stamboom; zij zijn hier geen keuze)" : ""}</li>`;
     ul.hidden = false; inp.setAttribute("aria-expanded", "true");
     if (items.length) inp.setAttribute("aria-activedescendant", id + "o" + sel); else inp.removeAttribute("aria-activedescendant");
   };
-  const pickI = i => { const c = items[i]; if (!c) return; inp.value = vwLabel(c.kw); close(); set(c.kw); };
+  const pickI = i => { const c = items[i]; if (!c) return; inp.value = vwLabel(c.kw); close(); set(c.kw); if (matchMedia("(pointer:coarse)").matches) inp.blur(); if (outId) requestAnimationFrame(() => vwShow(outId)); };
   inp.oninput = () => { if (!inp.value.trim()) { items = []; close(); set(null); return; } items = vwFind(inp.value, onlyAnc); sel = 0; draw(); };
   inp.onkeydown = e => {
     if (ul.hidden) { if (e.key === "ArrowDown" && inp.value.trim()) { e.preventDefault(); inp.oninput(); } return; }
@@ -3872,11 +3972,11 @@ const vwPick = (id, label, kw, ph) => `<div class="vw-field"><label for="${id}">
 
 function renderVerwant() {
   if (vwState.tree !== T.key) Object.assign(vwState, { tree: T.key, anc: null, d: 3, dSet: false, x: null, y: null });
-  const host = $("#v-verwant"), wie = T.key === "s" ? `${T.rootFull}, en van Harrie of Alies` : T.root;
+  const host = $("#v-verwant"), wie = T.key === "s" ? `${T.rootFull} (en van Harrie of Alies)` : T.root;
   host.innerHTML = `
     <div class="eyebrow"><button class="link" data-go="personen">Personen</button> › Verwantschap</div>
     <h1 class="page-title">Hoe zijn we familie?</h1>
-    <p class="lede">Stam je zelf af van iemand uit deze stamboom? Kies die voorouder en hoeveel generaties jij eronder staat. Dan zie je hoe je familie bent van ${esc(wie)}: de gewone benaming (neef, achternicht, oudoom) en de graad van bloedverwantschap. Daaronder kies je twee personen uit de stamboom en zie je hoe zij verbonden zijn.</p>
+    <p class="lede">Hoe je familie bent van ${esc(wie)}, of hoe twee mensen uit de stamboom verbonden zijn: neef, achternicht of oudoom, en in welke graad.</p>
     <div class="section-head"><h2>Hoe ben ik familie?</h2><p>Kies een overleden voorouder van wie je zelf afstamt.</p></div>
     <div class="vw-form box">
       ${vwPick("vwAnc", "Ik stam af van", vwState.anc, "Naam, jaartal of kw-nummer")}
@@ -3897,16 +3997,16 @@ function renderVerwant() {
       <p><b>Graad van bloedverwantschap</b>: tel de geboorten tussen jullie twee, via de gedeelde voorouder. Ouder en kind zijn bloedverwant in de eerste graad, broers en zussen in de tweede, neven en nichten in de vierde. Zo staat het in het <a href="https://wetten.overheid.nl/BWBR0002656/" target="_blank" rel="noopener">Burgerlijk Wetboek, Boek 1, artikel 3</a>. Halfverwanten (via een ander huwelijk) hebben dezelfde graad.</p>
       <p><b>Bewijs</b>: elke stap tussen ouder en kind heeft een label: ${["A", "B", "C", "D"].map(s => stTag(s, true)).join(" ")}. Een pad is zo sterk als de zwakste stap. Kwartierverlies: wie langs twee lijnen in de stamboom staat, maakt dat mensen langs twee wegen verwant zijn.</p>
     </div>`;
-  vwBind("vwAnc", true, kw => { vwState.anc = kw; if (kw && !vwState.dSet) { vwState.d = vwDefD(kw); $("#vwD").value = vwState.d; } vwMine(); vwSync(); });
-  $("#vwD").onchange = e => { vwState.d = +e.target.value; vwState.dSet = true; vwMine(); vwSync(); };
-  vwBind("vwX", false, kw => { vwState.x = kw; vwPair(); vwSync(); });
-  vwBind("vwY", false, kw => { vwState.y = kw; vwPair(); vwSync(); });
+  vwBind("vwAnc", true, kw => { vwState.anc = kw; if (kw && !vwState.dSet) { vwState.d = vwDefD(kw); $("#vwD").value = vwState.d; } vwMine(); vwSync(); }, "vwOut1");
+  $("#vwD").onchange = e => { vwState.d = +e.target.value; vwState.dSet = true; vwMine(); vwSync(); requestAnimationFrame(() => vwShow("vwOut1")); };
+  vwBind("vwX", false, kw => { vwState.x = kw; vwPair(); vwSync(); }, "vwOut2");
+  vwBind("vwY", false, kw => { vwState.y = kw; vwPair(); vwSync(); }, "vwOut2");
   $("#vwSwap").onclick = () => { [vwState.x, vwState.y] = [vwState.y, vwState.x]; $("#vwX").value = vwState.x ? vwLabel(vwState.x) : ""; $("#vwY").value = vwState.y ? vwLabel(vwState.y) : ""; vwPair(); vwSync(); };
   host.onclick = e => {
     const a = e.target.closest("[data-vwanc]");
-    if (a) { vwState.anc = +a.dataset.vwanc; if (!vwState.dSet) vwState.d = vwDefD(vwState.anc); $("#vwAnc").value = vwLabel(vwState.anc); $("#vwD").value = vwState.d; vwMine(); vwSync(); return; }
+    if (a) { vwState.anc = +a.dataset.vwanc; if (!vwState.dSet) vwState.d = vwDefD(vwState.anc); $("#vwAnc").value = vwLabel(vwState.anc); $("#vwD").value = vwState.d; vwMine(); vwSync(); requestAnimationFrame(() => vwShow("vwOut1")); return; }
     const p = e.target.closest("[data-vwpair]");
-    if (p) { [vwState.x, vwState.y] = p.dataset.vwpair.split(",").map(Number); $("#vwX").value = vwLabel(vwState.x); $("#vwY").value = vwLabel(vwState.y); vwPair(); vwSync(); }
+    if (p) { [vwState.x, vwState.y] = p.dataset.vwpair.split(",").map(Number); $("#vwX").value = vwLabel(vwState.x); $("#vwY").value = vwLabel(vwState.y); vwPair(); vwSync(); requestAnimationFrame(() => vwShow("vwOut2")); }
   };
   vwMine(); vwPair();
 }
@@ -4079,7 +4179,7 @@ const MENU = [
   ["Bronnen", [["Bronnen en betrouwbaarheid", "bronnen", "Hoe zeker alles is, en waar je zelf zoekt"], ["Help mee zoeken", "zoeken", "Open vragen waar je kunt helpen"], ["Tegenstrijdigheden", "bronnen-tegenstrijdig", "Waar bronnen elkaar tegenspreken"], ["Alle bronnen", "bronnen-lijst", "Elke gebruikte akte en genealogie"], ["Over deze site", "bronnen-over", "Begrippen, wijzigingen en beeldverantwoording"]]]
 ];
 const TREE_INFO = { h: "De voorouders van Harrie de Groot", s: "Harrie en Alies samen: de voorouders van hun kinderen", a: "De voorouders van Alies Hoekstra" };
-const TREE_KORT = { h: "Harrie", s: "Kinderen", a: "Alies" };
+const TREE_KORT = { h: "Harrie", s: "de kinderen", a: "Alies" };
 const menuGroups = () => MENU.map(([g, its]) => [g, its.filter(([, v, , boom]) => VIEWS.includes(v) && (!boom || T.key === boom))]).filter(([, its]) => its.length);
 const hereView = () => { const all = menuGroups().flatMap(([, its]) => its.map(x => x[1])); return all.includes(route.view) ? route.view : NAV_OF[route.view] || route.view; };
 const groupOf = v => (menuGroups().find(([, its]) => its.some(x => x[1] === v)) || [null])[0];

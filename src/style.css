@@ -1,9 +1,9 @@
 /* Layout: een archiefkast met laden. Smalle kop met tabbladen en zoekveld; elk tabblad een werkblad.
    Kleur: kleigrond en slootwater van het Friese land; per familielijn een eigen gedempte tint. */
 :root{
-  --bg:#EEF1EC; --surface:#F9FAF7; --sunk:#E3E8E2; --ink:#17211E; --muted:#56635E; --faint:#647069; --rule:#CCD5CF;
-  --accent:#1E4F74; --accent-ink:#F4F8FB; --gold:#926310; --water:#D6E3E8; --land:#F4F5EF;
-  --good:#2D7A4D; --warn:#995F18; --weak:#647069; --hyp:#8A4FA0;
+  --bg:#EEF1EC; --surface:#F9FAF7; --sunk:#E3E8E2; --ink:#17211E; --muted:#56635E; --faint:#5E6963; --rule:#CCD5CF;
+  --accent:#1E4F74; --accent-ink:#F4F8FB; --gold:#8A5C0E; --water:#D6E3E8; --land:#F4F5EF;
+  --good:#2A7349; --warn:#915915; --weak:#5E6963; --hyp:#8A4FA0; /* alle tekstkleuren ≥ 4,5:1, ook op --sunk */
   --l8:#2D6D8C; --l9:#4F7631; --l10:#87569B; --l11:#9F5B26; --l12:#2A7968; --l13:#A23C55; --l14:#5F64AE; --l15:#7F6A1A;
   --display:"Libre Caslon Display", "Libre Caslon Text", Georgia, "Times New Roman", serif;
   --body:"Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -18,13 +18,13 @@
   --lb-bg:rgba(6,10,9,.95); --lb-ink:#E6ECE9; --lb-muted:#BAC5C0; --lb-faint:#9AA7A1; --lb-line:rgba(255,255,255,.3); --lb-btn:rgba(20,28,25,.6); --lb-btn-hover:rgba(40,52,48,.85); --lb-img:#222;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1513; --surface:#161E1B; --sunk:#1D2723; --ink:#E5ECE8; --muted:#A1AEA8; --faint:#7E8A84; --rule:#2B3833;
+  --bg:#0F1513; --surface:#161E1B; --sunk:#1D2723; --ink:#E5ECE8; --muted:#A1AEA8; --faint:#848F89; --rule:#2B3833;
   --accent:#8CBFE3; --accent-ink:#0D1A24; --gold:#E0B25C; --water:#15262E; --land:#18211D;
   --good:#6CC08E; --warn:#E3A55A; --weak:#8E9893; --hyp:#C79BDA;
   --l8:#6EB2D3; --l9:#9CCB74; --l10:#C79BDA; --l11:#E6A06A; --l12:#6CC6B1; --l13:#E5899E; --l14:#A6AAEB; --l15:#D9C266;
   --shadow:0 18px 50px rgba(0,0,0,.5); --img-tone:sepia(.2) saturate(.85) brightness(.86) contrast(1.05); --card-tone:grayscale(1) sepia(.38) contrast(.88) brightness(.8); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0F1513; --surface:#161E1B; --sunk:#1D2723; --ink:#E5ECE8; --muted:#A1AEA8; --faint:#7E8A84; --rule:#2B3833;
+  --bg:#0F1513; --surface:#161E1B; --sunk:#1D2723; --ink:#E5ECE8; --muted:#A1AEA8; --faint:#848F89; --rule:#2B3833;
   --accent:#8CBFE3; --accent-ink:#0D1A24; --gold:#E0B25C; --water:#15262E; --land:#18211D;
   --good:#6CC08E; --warn:#E3A55A; --weak:#8E9893; --hyp:#C79BDA;
   --l8:#6EB2D3; --l9:#9CCB74; --l10:#C79BDA; --l11:#E6A06A; --l12:#6CC6B1; --l13:#E5899E; --l14:#A6AAEB; --l15:#D9C266;
@@ -983,6 +983,7 @@ details.mcredit[open]{overflow-wrap:anywhere}
 .vw-list li b{font-weight:500}
 .vw-list li span{font-size:12px;color:var(--muted);font-family:var(--mono)}
 .vw-list li[aria-selected="true"],.vw-list li:hover{background:var(--sunk)}
+.vw-list li[aria-selected="true"]{box-shadow:inset 3px 0 0 var(--accent)} /* zichtbaar welke suggestie Enter kiest */
 .vw-list li.none{cursor:default;color:var(--muted);font-size:13px;background:none}
 .vw-swap{flex:none;padding:8px 12px;font-size:16px;line-height:1.2}
 .vw-out{margin-top:16px}
@@ -1079,6 +1080,8 @@ main .view:focus{outline:none}
 /* ---- voorpagina: drie grote ingangen en uitleg in het profiel ---- */
 .ingangen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0 8px}
 .hero>.ingangen{grid-column:1/-1}
+/* de ingangen staan in de HTML vóór de waaier (Tab-volgorde en schermlezer: eerst de hoofdtaken); op brede schermen blijft de waaier rechts naast de tekst */
+@media (min-width:861px){.hero>.hero-fan{grid-column:2;grid-row:1}.hero>.ingangen{grid-row:2}}
 @media (max-width:860px){.hero>.ingangen{order:1}.hero>.hero-fan{order:2}}
 .ingang{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;cursor:pointer;color:var(--ink);font:inherit}
 .ingang:hover,.ingang:focus-visible{border-color:var(--accent)}
@@ -1092,6 +1095,7 @@ main .view:focus{outline:none}
 .dhelp{position:absolute;left:22px;right:22px;top:calc(100% - 6px);z-index:3;background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow);border-radius:8px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:var(--ink);max-width:440px}
 .dacts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .dacts .btn{padding:5px 10px;font-size:13px}
+.dshare-ok{color:var(--good)}
 .dfam h6{margin:14px 0 4px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
 abbr[title]{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
 
@@ -1525,3 +1529,16 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
 
 /* ---------- voorpagina: tegels en ingangen met dezelfde iconen als het menu; op 28–44 px een dunnere lijn ---------- */
 .layer .nico,.ingang .nico{stroke-width:1;flex:none}
+
+/* ---------- voorpagina: Help mee zoeken naast "Bekijk de stamboom" ---------- */
+.hero .cta{align-items:center}
+.hero .cta .cta-zoek{padding:8px 2px}
+
+/* ---------- lichtbak: verkleinde beelden en het origineel (B2) ---------- */
+.lbcap .lbverkl{color:var(--lb-faint);font-size:12.5px;max-height:none}
+.lbcap .lbverkl .link{color:var(--lb-ink);font-size:inherit;padding:0;text-decoration:underline;text-underline-offset:2px}
+.lbcap .lbverkl .link:disabled{opacity:.7;cursor:progress}
+.lbcap .lbfout{display:block;color:var(--lb-muted)}
+.lb.lblaad .lbstage img{opacity:.55;transition:opacity .2s}
+.lb.lbvol .lbstage{overflow:auto;overscroll-behavior:contain;align-items:flex-start;justify-content:flex-start}
+.lb.lbvol .lbstage img{max-width:none;max-height:none;border-radius:0}
