@@ -92,6 +92,10 @@ function fanBranchColors(root) {
   return { color, branch, legend };
 }
 const isMale = kw => kw === 1 ? T.rootMale : kw % 2 === 0;
+/* ♂ or ♀ next to a name (muted, aria-label and title "man" or "vrouw"). A person with a kw: from the kw (kw 1 is a group: none);
+   a person without a kw: pass "m" or "v" only when the data says so (zoon, dochter, broer, zus, a role word); otherwise "" */
+const sexMark = p => { const s = typeof p === "string" ? p : p && p.kw > 1 ? (isMale(p.kw) ? "m" : "v") : null; if (s !== "m" && s !== "v") return "";
+  const w = s === "m" ? "man" : "vrouw"; return `<span class="sexmark" role="img" aria-label="${w}" title="${w}">${s === "m" ? "♂" : "♀"}</span>`; };
 /* "zijn" of "haar" voor één persoon; kw 1 in de samengestelde boom (de kinderen) is "hun" */
 const zijnHaar = (kw, hoofd) => { const w = kw === 1 && T.rootMale == null ? "hun" : isMale(kw) ? "zijn" : "haar"; return hoofd ? w[0].toUpperCase() + w.slice(1) : w; };
 /* klein teken man of vrouw, alleen uit het kw (even = man); voor lijsten met losse voornamen. kw 1 is een groep: geen teken */
@@ -234,6 +238,8 @@ const NAV_PATH = {
   "bronnen-lijst": '<path d="M8 3h8l4 4v13H8z"/><path d="M16 3v4h4M5 6v15h11M11 11h6M11 14h6M11 17h4"/>',
   "bronnen-over": '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
   vandaag: '<rect x="3" y="5" width="18" height="16" rx="1.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  maken: '<rect x="4" y="10.5" width="16" height="9.5" rx="1.5"/><rect x="3" y="7" width="18" height="3.5" rx="1"/><path d="M12 7v13"/><path d="M12 7C10.6 4.2 7.2 3.7 7.2 5.6 7.2 7 10.2 7 12 7zM12 7c1.4-2.8 4.8-3.3 4.8-1.4C16.8 7 13.8 7 12 7z"/>',
+  poster: '<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 15.5a4 4 0 0 1 8 0M10.2 15.5a1.8 1.8 0 0 1 3.6 0M8 18.5h8"/>',
   print: '<path d="M7 9V3.5h10V9"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><path d="M7 14h10v6.5H7z"/><path d="M17.5 12h.01"/>',
   meer: '<rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/>'
 };
@@ -275,9 +281,16 @@ const ICON = {
 const tip = $("#tip");
 function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; moveTip(e); }
 function moveTip(e) { tip.style.left = Math.min(e.clientX + 14, innerWidth - 290) + "px"; tip.style.top = (e.clientY + 16) + "px"; }
-function hideTip() { tip.hidden = true; }
+function hideTip() { if (tip) tip.hidden = true; }
 const tipFor = p => `${avatar(p.kw, "tipava")}<b>${esc(p.n)}</b><br><span style="opacity:.8">${esc(lifeYears(p))} · kw ${p.kw}${p.st && !p.living ? " · status " + p.st : ""}</span>`;
-function bindTip(node, html) { node.addEventListener("mouseenter", e => showTip(e, html)); node.addEventListener("mousemove", moveTip); node.addEventListener("mouseleave", hideTip); }
+/* tooltips only for a mouse: a tap on a phone also sends mouseenter, but never mouseleave, so the label stayed (also on later pages) */
+function bindTip(node, html) {
+  node.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") showTip(e, html); });
+  node.addEventListener("pointermove", e => { if (e.pointerType === "mouse") moveTip(e); });
+  node.addEventListener("pointerleave", hideTip);
+}
+addEventListener("scroll", () => { if (tip && !tip.hidden) hideTip(); }, { passive: true });
+document.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") hideTip(); }, { passive: true });
 
 /* ---------- svg helpers ---------- */
 function el(tag, attrs = {}, parent) {
@@ -307,29 +320,49 @@ const BRON_OUD = { begrippen: "bronnen-begrippen", wijzigingen: "bronnen-wijzigi
 VIEWS.forEach(x => { if (!$("#v-" + x)) { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-" + x; sec.hidden = true; $("main").appendChild(sec); } });
 const route = { view: "overzicht", sub: null };
 const rendered = {};
+/* ---------- memory: heavy pages are emptied two page switches after you left them ---------- */
+/* Every page stays in the document once built; after a tour of the site that was ±47.000 nodes. The heaviest pages are emptied
+   when they are no longer among the last three you saw, and built again on the next visit (their state, such as filters, stays). */
+const HEAVY_VIEWS = { personen: "#cardsOut", namen: "#v-namen", lijst: "#v-lijst", "bronnen-lijst": "#v-bronnen-lijst", "bronnen-tegenstrijdig": "#v-bronnen-tegenstrijdig", zoeken: "#v-zoeken", kranten: "#v-kranten" };
+const viewTrail = [];
+function trimViews(view) {
+  if (viewTrail[viewTrail.length - 1] !== view) viewTrail.push(view);
+  while (viewTrail.length > 3) viewTrail.shift();
+  Object.entries(HEAVY_VIEWS).forEach(([v, sel]) => {
+    if (viewTrail.includes(v) || !rendered[v]) return;
+    const el = $(sel); if (el) { el.innerHTML = ""; rendered[v] = false; }
+  });
+}
 function go(token, opts = {}) {
+  hideTip(); /* a tooltip never survives a change of page */
   if (document.body && document.body.hasAttribute("data-zuiver")) return; /* het boek in drukmodus heeft de site vervangen */
   if (!archTekstOk && /^beeld(-|$)/.test(token)) { archTekst().then(() => go(token, opts)); return; } /* Beeld heeft de tekst van de archiefbeelden nodig */
   if (/^boek(--|$)/.test(token) && !opts.voorgeladen && typeof window.boekVoorladen === "function") { window.boekVoorladen().then(() => go(token, Object.assign({}, opts, { voorgeladen: true }))); return; } /* het boek: openingsbeelden en tekst eerst */
   let view = token, sub = null;
-  if (/^lijn-\d+$/.test(token)) { view = "families"; sub = +token.slice(5); }
-  else if (/^verhaal-/.test(token)) { view = "verhalen"; sub = token.slice(8); }
-  else if (/^plaats-/.test(token)) { view = "plaats"; sub = SLUG[token] || null; if (!sub) view = "kaart"; }
+  if (/^lijn-\d+$/.test(token)) { view = "families"; sub = +token.slice(5); if (!LINES[sub]) view = "nietgevonden"; }
+  else if (/^verhaal-/.test(token)) { view = "verhalen"; sub = token.slice(8); if (!STORIES.some(s => s.id === sub)) view = "nietgevonden"; }
+  else if (/^plaats-/.test(token)) { view = "plaats"; sub = SLUG[token] || null; if (!sub) view = "nietgevonden"; }
   else if (/^stamboom-\d+$/.test(token)) { view = "stamboom"; sub = +token.slice(9); } /* midden van de waaier */
   else if (/^boom-\d+$/.test(token)) { view = "boom"; sub = +token.slice(5); } /* startpunt van de boom */
+  else if (/^profiel-\d+$/.test(token)) { view = "profiel"; sub = +token.slice(8); rendered.profiel = false; } /* the profile as a full page (pfRender) */
   else if (/^boek(--|$)/.test(token)) { view = "boek"; bkFromToken(token); const t2 = bkToken(); if (opts.keepHash && t2 !== token) opts = Object.assign({}, opts, { keepHash: false, replace: true }); token = t2; rendered.boek = false; } /* het boek, met de keuzes in de hash */
   else if (/^verwant(-|$)/.test(token)) { view = "verwant"; vwFromToken(token); } /* verwantschap: keuze uit de hash */
+  else if (/^maak(--|$)/.test(token) && VIEWS.includes("maak")) { view = "maak"; mkFromToken(token); token = mkToken(); rendered.maak = false; } /* laten maken: de hub, met het beginpunt */
   else if (/^(stam|naam)reeks(-\d+)?$/.test(token) || /^poster(--|$)/.test(token)) { const ps = token[0] === "p"; view = ps ? "poster" : "stamreeks"; if (ps) psFromToken(token); else srFromToken(token); token = ps ? psToken() : srToken(); rendered[view] = false; } /* stamreeks en poster, met de keuzes in de hash */
   else if (/^beeld-?-archief(--|$)/.test(token)) { /* archiefverkenner met filters; het oude beeld--archief… en onbekende waarden worden in de hash rechtgezet */
     view = "beeld-archief"; arvFromToken(token); const t2 = arvToken(); if (opts.keepHash && t2 !== token) opts = Object.assign({}, opts, { keepHash: false, replace: true }); token = t2; rendered[view] = false; }
   if (BRON_OUD[view]) { view = token = BRON_OUD[view]; opts = Object.assign({}, opts, { replace: true, keepHash: false }); }
   if (/^bronnen-(begrippen|wijzigingen|beeld)$/.test(token)) { view = "bronnen-over"; sub = token.slice(8); } /* een onderdeel van Over deze site */
-  if (!VIEWS.includes(view)) view = "overzicht";
+  if (!VIEWS.includes(view)) view = token && token !== "overzicht" ? "nietgevonden" : "overzicht"; /* een onbekend adres: zeg het, en laat het adres staan */
+  if (view === "nietgevonden") { if (token !== "nietgevonden") route.fout = T.prefix + token; rendered.nietgevonden = false; }
+  const nodig = (LATER_VOOR[view] || []).filter(n => !laterKlaar(n));
+  if (nodig.length && !opts.later) { Promise.all(nodig.map(laadLater)).then(() => go(token, Object.assign({}, opts, { later: true }))); return; } /* the page's data/later files first */
   if (!drawer.hidden && !opts.keepDrawer) closeProfile(true);
   if (!lb.hidden) closeLb(true);
   if (view !== "kaart") stopPlay();
   route.view = view; route.sub = sub;
   VIEWS.forEach(x => { const s = $("#v-" + x); if (s) s.hidden = x !== view; });
+  trimViews(view); /* heavy pages you left two switches ago are emptied (memory on a phone) */
   $$("nav.tabs button").forEach(b => { if (b.dataset.view === (NAV_OF[view] || view)) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
   showActiveTab();
   if (typeof menuSync === "function") menuSync(); /* hoofdmenu */
@@ -338,13 +371,16 @@ function go(token, opts = {}) {
   else if (!rendered[view]) { rendered[view] = true; r(); }
   if (view === "bronnen-over") requestAnimationFrame(() => bronNaar(sub));
   if (!opts.keepHash) setHash(T.prefix + token, opts.replace ? "replace" : "push");
-  if (!opts.keepScroll) window.scrollTo({ top: 0 });
+  const terugY = opts.fromHistory && history.state && typeof history.state.y === "number" ? history.state.y : null;
+  if (terugY !== null) { requestAnimationFrame(() => window.scrollTo({ top: terugY })); setTimeout(() => { if (Math.abs(scrollY - terugY) > 40) window.scrollTo({ top: terugY }); }, 250); } /* terug of vooruit: waar je was */
+  else if (!opts.keepScroll) window.scrollTo({ top: 0 });
   closeSearch();
 }
 /* browsergeschiedenis: elke paginawissel en elk geopend profiel is een stap, zodat vorige/volgende werken (ook via file://) */
 function setHash(h, how, state) {
   const url = "#" + h;
   if (location.hash === url) return;
+  if (how === "push") try { history.replaceState(Object.assign({}, history.state, { y: Math.round(scrollY) }), ""); } catch (e) {} /* de scrollpositie van de pagina die je verlaat */
   try { history[how === "push" ? "pushState" : "replaceState"](state || null, "", url); } catch (e) {}
 }
 /* telefoon: het menu scrolt opzij; houd het actieve tabblad in beeld en laat met een vervaging zien dat er meer is */
@@ -433,7 +469,7 @@ const PACK_IDX = typeof PACKS !== "undefined" ? PACKS : { place: {}, kw: {} };
 const PACK_CACHE = {};
 /* zoeklijst van alle archiefbeelden (PACKS.items): Beeld › Uit de archieven en de zoekfunctie. Per boom: plaatsbeelden altijd,
    persoonsbeelden alleen als die persoon in de huidige boom staat (via imgKey, dus ook in de samengestelde boom). */
-const ARCH_ALL = (PACK_IDX.items || []).map(a => ({ id: a[0], pack: a[1], soort: a[2], key: String(a[3]), kws: a[4] ? a[4].map(String) : null, t: a[5] || "", datum: a[6] || "", bron: a[7] || "", desc: a[8] || "", p: a[9] || null }));
+const ARCH_ALL = (PACK_IDX.items || []).map(a => ({ id: a[0], pack: a[1], soort: a[2], key: String(a[3]), kws: a[4] ? a[4].map(String) : null, t: a[5] || "", datum: a[6] || "", bron: a[7] || "", desc: a[8] || "", p: a[9] || null, tm: a[10] ? 1 : 0 }));
 const ARCH_TREE = {};
 /* de tekst van de zoeklijst (titel, bron, beschrijving) staat apart in PACKS.tekst en laadt pas bij Beeld of de zoekfunctie;
    daarna worden de afgeleide lijsten opnieuw opgebouwd. Zonder PACKS.tekst (oude vorm) staat de tekst al in items. */
@@ -485,11 +521,30 @@ function loadPack(name) {
     }
     /* src = los bestand in img/archief/ (sinds 8-10-2026: alleen geladen als het beeld getoond wordt); data = oude vorm (base64) */
     let src = it.src; if (!src) try { src = URL.createObjectURL(dataUrlBlob(it.data)); } catch (e) { return null; }
-    const im = Object.assign({}, it, { src, thumb: src, arch: true }); delete im.data;
+    const im = Object.assign({}, it, { src, thumb: it.thumb || src, arch: true }); delete im.data;
     IMG_ID[im.id] = im; return im;
   }).filter(Boolean));
   return PACK_CACHE[name];
 }
+/* ---------- rarely used data, loaded on demand ---------- */
+/* A file in data/later/ is not in index.html; laadLater("<name>") adds it as a script tag the first time it is needed (that also
+   works from disk, file://). Each such file ends with the line
+     (globalThis.LATER_KLAAR = globalThis.LATER_KLAAR || {})["<name>"] = true;
+   so the loader can see it has run. The single-file build (build.py) inlines data/later/*.js with the rest: the line has then
+   already run and nothing is loaded. A name with a slash is a path (for example "src/products/renderers/calendar.js").
+   A page that needs such data before it renders is listed in LATER_VOOR: go() waits for it (view: [names]). */
+const LATER_P = {}, LATER_VOOR = {};
+const laterKlaar = name => !!(globalThis.LATER_KLAAR || {})[name];
+function laadLater(name) {
+  if (laterKlaar(name)) return Promise.resolve(true);
+  return LATER_P[name] || (LATER_P[name] = new Promise(res => {
+    const sc = document.createElement("script"); sc.src = /\//.test(name) ? name : "data/later/" + encodeURIComponent(name) + ".js";
+    sc.onload = () => { sc.remove(); res(laterKlaar(name)); };
+    sc.onerror = () => { sc.remove(); delete LATER_P[name]; res(false); }; /* missing: the page renders without it; a later visit tries again */
+    document.head.appendChild(sc);
+  }));
+}
+window.laadLater = laadLater; window.laterKlaar = laterKlaar; window.LATER_VOOR = LATER_VOOR;
 /* vult host met een galerij zodra de packs binnen zijn; still() bewaakt dat de pagina intussen niet is gewisseld */
 function archGallery(host, entry, keep, still, o = {}) {
   if (!host || !entry || !entry[0] || !entry[0].length) return;
@@ -785,7 +840,8 @@ function topPlaces(ps, n) {
 const lb = $("#lb"); let lbList = [], lbI = 0, lbFocus = null;
 function openLb(id, list) {
   lbList = list && list.length ? list : [id]; lbI = Math.max(0, lbList.indexOf(id));
-  if (lb.hidden) lbFocus = document.activeElement;
+  if (lb.hidden) { lbFocus = document.activeElement;
+    if (!lbHist) { try { history.pushState(Object.assign({}, history.state, { lb: 1 }), ""); lbHist = true; } catch (e) { } } } /* "back" closes the lightbox */
   lb.hidden = false; showLb(); $("#lbClose").focus();
 }
 /* kw (in de huidige boom) van de persoon op een persoonsbeeld, via imgKey: werkt in alle drie de bomen */
@@ -853,7 +909,17 @@ function showLb() {
   $("#lbPrev").hidden = $("#lbNext").hidden = lbList.length < 2;
 }
 function stepLb(d) { if (lbList.length < 2) return; lbI = (lbI + d + lbList.length) % lbList.length; showLb(); }
-function closeLb(silent) { lb.hidden = true; $("#lbImg").removeAttribute("src"); if (!silent && lbFocus && lbFocus.focus) lbFocus.focus(); }
+/* the lightbox is a step in the history: "back" closes it and stays on the page; closing it yourself removes that step again.
+   Closed silently (a link in the caption, another page) the step stays: it is the same page. */
+let lbHist = false, lbSkipPop = false;
+function closeLb(silent) {
+  lb.hidden = true; $("#lbImg").removeAttribute("src"); if (!silent && lbFocus && lbFocus.focus) lbFocus.focus();
+  if (lbHist) { lbHist = false; if (!silent) { lbSkipPop = true; history.back(); } }
+}
+addEventListener("popstate", e => {
+  if (lbSkipPop) { lbSkipPop = false; e.stopImmediatePropagation(); return; } /* our own step back after closing */
+  if (lbHist && !lb.hidden) { lbHist = false; closeLb(true); if (lbFocus && lbFocus.focus) lbFocus.focus(); e.stopImmediatePropagation(); }
+});
 $("#lbClose").onclick = () => closeLb();
 $("#lbPrev").onclick = () => stepLb(-1);
 $("#lbNext").onclick = () => stepLb(1);
@@ -896,7 +962,7 @@ function kpathHtml(kw) {
     const q = person(k), s = i < ks.length - 1 ? stapSt(ks[i + 1]) : null, w = s === "C" || s === "D" ? " kp-" + s : "";
     const rel = k === 1 ? (T.key === "s" ? "kinderen" : "zelf") : relBase(gen(k) - 1, k);
     const nm = k === 1 && T.key === "s" ? T.rootFull : q ? q.n : "";
-    const yrs = q && !q.living && /\d/.test(lifeYears(q)) ? lifeYears(q) : "";
+    const yrs = q && !q.living && /\d/.test(lifeYears(q)) ? pfYears(q) : ""; /* one form for an unknown year in the profile */
     const naam = k === kw ? `<b>${esc(nm)}</b>` : `<button class="link" data-open="${k}">${esc(nm)}</button>`;
     return `<li class="kp${w}${k === kw ? " kp-nu" : ""}"${hid(i) ? " hidden" : ""}${w ? ` title="De stap naar de volgende generatie: ${s}, ${BEWIJS_KORT[s]}"` : ""}><span class="kp-rel">${esc(rel)}</span><span class="kp-n">${naam}${yrs ? ` <small>${esc(yrs)}</small>` : ""}</span></li>`;
   };
@@ -905,31 +971,568 @@ function kpathHtml(kw) {
     li.splice(ks.length - 3, 0, `<li class="kp kp-more${w ? " kp-" + w : ""}"><span class="kp-rel"></span><span class="kp-n"><button type="button" class="link kp-tog" aria-expanded="false">… ${n} generaties …</button></span></li>`); }
   return `<section><h5>Zo hoort ${esc(firstName(p))} bij ${esc(T.key === "s" ? T.rootFull : T.root)}${via}</h5><ol class="kpath">${li.join("")}</ol>${schakelRegel(kw)}</section>`;
 }
+/* ---------- profile: navigation in the header ---------- */
+/* The header of the profile (drawer and full page): back and forward through the profiles seen (the ordinary browser history;
+   the trail of kw numbers is kept in history.state.pn), a clickable path from kw 1 to this person, and one row of buttons:
+   previous in the generation · father · mother · partner · child · next in the generation. On a phone (≤ 560 px) that row is a
+   bar at the bottom of the drawer. Keys: ← → generation, ↑ father, ↓ child (↑ ↓ only with the focus in the header or the bar).
+   Full page: #profiel-<kw> (also a-/s-), the same content as a view; sharing keeps the link #kw<n>. */
+const PN_PATH = {
+  back: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  fwd: '<path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>',
+  full: '<path d="M14 4h6v6"/><path d="M10 20H4v-6"/><path d="m20 4-7 7"/><path d="m4 20 7-7"/>',
+  panel: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M14 4v16"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  vader: '<path d="M17 17 7 7"/><path d="M7 15V7h8"/>',
+  moeder: '<path d="M7 17 17 7"/><path d="M9 7h8v8"/>',
+  partner: '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+  kind: '<path d="M12 5v14"/><path d="m6 13 6 6 6-6"/>',
+  prev: '<path d="m15 18-6-6 6-6"/>',
+  next: '<path d="m9 18 6-6-6-6"/>',
+  share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/>'
+};
+const pnIco = k => `<svg class="pn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PN_PATH[k]}</svg>`;
+const PN_PHONE = matchMedia("(max-width:560px)");
+const PN = { t: [], i: -1, d: 0, onder: null }; /* trail of kw numbers, position of the open profile, profile entries pushed on top of the page under it */
+let pnCont = false, pnFocus = null; /* the next profile continues the trail; the button that gets the focus after a step */
+/* the number to open: the place itself, or above a duplicate place (pedigree collapse) the number where the data is */
+const pnTarget = k => k >= 1 && BY.has(k) ? k : k >= 1 && BY.has(fanKw(k)) ? fanKw(k) : null;
+let PN_GEN = null, PN_GEN_BY = null;
+function pnGenList(g) { /* known numbers per generation, sorted (rebuilt when the tree changes) */
+  if (PN_GEN_BY !== BY) { PN_GEN = new Map(); PN_GEN_BY = BY; for (const k of BY.keys()) { const x = gen(k); if (!PN_GEN.has(x)) PN_GEN.set(x, []); PN_GEN.get(x).push(k); } PN_GEN.forEach(a => a.sort((x, y) => x - y)); }
+  return PN_GEN.get(g) || [];
+}
+function pnGenNb(kw, dir) { const L = pnGenList(gen(kw)); if (dir < 0) { for (let j = L.length - 1; j >= 0; j--) if (L[j] < kw) return L[j]; } else for (const k of L) if (k > kw) return k; return null; }
+function pnLinks(kw) {
+  const me = person(kw) || {};
+  const kidWord = kw < 2 ? "Kind" : T.key === "s" && kw < 4 ? "Kinderen" : isMale(kw >> 1) ? "Zoon" : "Dochter";
+  return [
+    { k: "prev", word: "Vorige", kw: pnGenNb(kw, -1), key: "←", aria: "Vorige in generatie " + ROMAN[gen(kw)] },
+    { k: "vader", word: "Vader", kw: pnTarget(kw * 2), key: "↑" },
+    { k: "moeder", word: "Moeder", kw: pnTarget(kw * 2 + 1) },
+    { k: "partner", word: kw < 2 ? "Partner" : kw % 2 ? "Echtgenoot" : "Echtgenote", kw: kw > 1 ? pnTarget(mfPartnerKws(me, kw)[0] || kw ^ 1) : null }, /* several marriages: the first partner in the tree */
+    { k: "kind", word: kidWord, kw: kw > 1 ? pnTarget(kw >> 1) : null, key: "↓" },
+    { k: "next", word: "Volgende", kw: pnGenNb(kw, 1), key: "→", aria: "Volgende in generatie " + ROMAN[gen(kw)] }
+  ].map(l => { const q = l.kw ? person(l.kw) : null;
+    /* a step to a parent or child is only as sure as the link: C (onzeker) or D (hypothese) next to the word */
+    const lk = l.k === "vader" || l.k === "moeder" ? q && !q.living && q.link : l.k === "kind" ? !me.living && me.link : null;
+    return Object.assign(l, { p: q, st: lk === "C" || lk === "D" ? lk : null }); });
+}
+/* the short top line: "overgrootvader", in the joined tree "overgrootvader · kant van Harrie" (the path says of whom) */
+function pnRelWords(kw) {
+  if (kw === 1) return T.key === "s" ? "de kinderen van Harrie en Alies" : relBase(0, 1);
+  const r = relBase(gen(kw) - 1, kw);
+  return T.key === "s" && gen(kw) > 2 ? r + " · kant van " + TREES[kw >> (gen(kw) - 2) === 2 ? "h" : "a"].root : r;
+}
+/* the path from kw 1 to this person, always on one line: pnFitCrumbs hides names from the middle ("…") until it fits;
+   the … names them in its title and shows the whole path on a click */
+function pnCrumbs(kw) {
+  if (kw === 1) return `<span class="pn-crumbs"></span>`;
+  const ks = []; for (let k = kw; k >= 1; k >>= 1) ks.unshift(k);
+  const name = k => { if (k === 1 && T.key === "s") return `<span class="pn-lang">${esc(T.root)}</span><span class="pn-kort">${esc(TREE_KORT.s[0].toUpperCase() + TREE_KORT.s.slice(1))}</span>`;
+    const q = person(pnTarget(k) || k); return esc(q ? firstName(q) : "?"); };
+  const li = ks.map((k, i) => { const t = pnTarget(k);
+    return (i === 1 ? `<li class="pn-more" hidden><button type="button" class="link" data-pn-more>…</button></li>` : "")
+      + (k === kw ? `<li aria-current="page"><b>${name(k)}</b></li>` : t ? `<li><button type="button" class="link" data-open="${t}">${name(k)}</button></li>` : `<li>${name(k)}</li>`); });
+  return `<nav class="pn-crumbs" aria-label="Pad vanaf ${esc(T.root)}"><ol>${li.join("")}</ol></nav>`;
+}
+let pnCrRO = null, pnCrW = 0;
+function pnFitCrumbs() {
+  const ol = $("#dHead .pn-crumbs ol"); if (!ol || ol.classList.contains("pn-open") || !ol.clientWidth) return;
+  const items = $$(":scope > li:not(.pn-more)", ol), more = $(":scope > .pn-more", ol);
+  ol.classList.remove("pn-tight"); items.forEach(li => { li.hidden = false; }); if (more) more.hidden = true;
+  if (!more || ol.scrollWidth <= ol.clientWidth + 1) return;
+  more.hidden = false; const gone = [];
+  for (let i = 1; i < items.length - 1 && ol.scrollWidth > ol.clientWidth + 1; i++) { items[i].hidden = true; gone.push(items[i].textContent.trim()); }
+  if (ol.scrollWidth > ol.clientWidth + 1) ol.classList.add("pn-tight"); /* still too long: the first name gets an ellipsis */
+  const b = $("button", more); b.title = "Weggelaten: " + gone.join(" › ");
+  b.setAttribute("aria-label", `Toon het hele pad; weggelaten: ${gone.join(", ")}`);
+}
+function pnWatchCrumbs() {
+  if (pnCrRO) pnCrRO.disconnect(); pnCrW = 0;
+  const nav = $("#dHead .pn-crumbs"); if (!nav) return; pnFitCrumbs();
+  if ("ResizeObserver" in window) { pnCrRO = new ResizeObserver(() => { if (Math.abs(nav.clientWidth - pnCrW) > 1) { pnCrW = nav.clientWidth; pnFitCrumbs(); } }); pnCrRO.observe(nav); }
+}
+function pnHistBtn(dir) {
+  const k = dir === "back" ? PN.t[PN.i - 1] : PN.t[PN.i + 1], q = k ? person(k) : null;
+  const lab = q ? (dir === "back" ? "Terug naar " : "Vooruit naar ") + firstName(q) : dir === "back" ? "Terug (geen eerder profiel)" : "Vooruit (geen volgend profiel)";
+  return `<button type="button" class="pn-ib" data-pn="${dir}" aria-label="${esc(lab)}" title="${esc(lab)}"${q ? "" : " disabled"}>${pnIco(dir)}</button>`;
+}
+/* the row of buttons: the same markup on a wide screen (in the header) and on a phone (a bar at the bottom); pnPlace moves it */
+function pnNavHtml(kw) {
+  const cell = l => {
+    const lab = (l.aria || l.word) + (l.p ? ": " + l.p.n : ": niet bekend") + (l.st ? `, ${l.st === "C" ? "onzeker" : "hypothese"}` : "") + (l.key ? ` (toets ${l.key})` : "");
+    const inner = `${pnIco(l.k)}<span class="pn-t"><span class="pn-w">${esc(l.word)}${l.st ? ` <i class="pn-st st-${l.st}" aria-hidden="true">${l.st}</i>` : ""}</span><span class="pn-n">${l.p ? esc(firstName(l.p)) : l.k === "prev" || l.k === "next" ? "–" : "onbekend"}</span></span>`;
+    return `<button type="button" class="pn-b pn-${l.k}" data-pn="${l.k}"${l.kw ? ` data-open="${l.kw}" title="${esc(lab)}"` : " disabled"} aria-label="${esc(lab)}">${inner}</button>`;
+  };
+  /* a living person or a group (kw 1): only the buttons that lead somewhere, no "niet bekend" */
+  const me = person(kw) || {}, few = kw === 1 || me.living, L = pnLinks(kw).filter(l => !few || l.kw);
+  return `<nav class="pn-nav" id="dNav" aria-label="Familie en generatie"><div class="pn-row${few ? " pn-few" : ""}">${L.map(cell).join("")}</div></nav>`;
+}
+/* the generation at a glance: every place of this generation in kw order. Up to 16 places one dot each (filled = known, open =
+   not known, gold ring = this person, gold contour = a person who is in the tree more than once); a dot opens that person.
+   From 32 places a thin bar: how dense the known part is, with a mark at this person. A duplicate place counts as known and
+   opens the real person. This line stays in the header (also on a phone); the row of buttons follows it on a wide screen. */
+let PN_GI = null, PN_GI_BY = null;
+function pnGenInfo(g) {
+  if (PN_GI_BY !== BY) { PN_GI = new Map(); PN_GI_BY = BY; }
+  if (PN_GI.has(g)) return PN_GI.get(g);
+  const lo = 2 ** (g - 1), n = lo, places = [];
+  if (n <= 8192) for (let k = lo; k < lo + n; k++) { const q = BY.get(k), t = q ? (q.aliasOf || k) : BY.has(fanKw(k)) ? fanKw(k) : null;
+    places.push({ k, t, twin: !!t && (t !== k || twinKws(k).length > 0) }); }
+  const known = n <= 8192 ? places.filter(x => x.t).length : pnGenList(g).length;
+  const info = { lo, n, places, known }; PN_GI.set(g, info); return info;
+}
+function pnGenHtml(kw) {
+  if (kw < 2) return "";
+  const g = gen(kw), I = pnGenInfo(g), pre = genPre(g - 1), word = g === 2 ? "Ouders" : pre ? pre[0].toUpperCase() + pre.slice(1) + "ouders" : "Voorouders";
+  const stand = I.known === I.n ? `alle ${I.n} bekend` : `${I.known} van ${I.n} bekend`;
+  let viz = "";
+  /* small and quiet, on the top line: dots (wide screens only, they are a way to jump), or a 96 × 4 px bar that is left out
+     when the whole generation is known */
+  if (I.n <= 16) viz = `<span class="pn-dots" role="group" aria-label="${esc(word)}, generatie ${ROMAN[g]}">${I.places.map(x => {
+      const q = x.t ? person(x.t) : null, me = x.k === kw, lab = `kw ${x.k}: ${q ? q.n : "niet bekend"}${x.twin ? ", staat meer dan eens in de stamboom" : ""}${me ? " (dit profiel)" : ""}`;
+      return `<button type="button" class="pn-dot${q ? "" : " leeg"}${x.twin ? " twin" : ""}${me ? " nu" : ""}" tabindex="-1"${q && !me ? ` data-open="${x.t}"` : " disabled"}${me ? ' aria-current="true"' : ""} aria-label="${esc(lab)}" title="${esc(lab)}"><i></i></button>`; }).join("")}</span>`;
+  else if (I.places.length && I.known < I.n) { const B = Math.min(I.n, 48), per = I.n / B, f = new Array(B).fill(0);
+    I.places.forEach((x, j) => { if (x.t) f[Math.floor(j / per)]++; });
+    viz = `<span class="pn-bar2" aria-hidden="true"><svg viewBox="0 0 ${B} 1" preserveAspectRatio="none">${f.map((c, j) => c ? `<rect class="k" x="${j}" y="0" width="1.02" height="1" opacity="${(c / per).toFixed(2)}"/>` : "").join("")}</svg><span class="pn-mark" style="left:${((kw - I.lo + 0.5) / I.n * 100).toFixed(2)}%"></span></span>`; }
+  return ` · <span class="pn-gen"><span class="pn-stand" title="${esc(word)} in generatie ${ROMAN[g]}">${stand}</span>${viz}</span>`; /* the key tip lives in the "?" explanation, on wide screens */
+}
+/* the trail: a step inside the profile adds to it, a new profile from a page starts it again, the browser history restores it */
+function pnTrack(kw, fromHist, fresh) {
+  const st = history.state && history.state.pn;
+  if (fromHist && st && Array.isArray(st.t) && st.t[st.t.length - 1] === kw) {
+    const j = st.t.length - 1;
+    if (!(PN.t.length > j && st.t.every((k, x) => PN.t[x] === k))) PN.t = st.t.slice();
+    PN.i = j; PN.d = st.d || 0;
+  } else if (fromHist || fresh) { PN.t = [kw]; PN.i = 0; PN.d = fromHist ? 0 : 1; }
+  else if (PN.t[PN.i] !== kw) { PN.t = PN.t.slice(0, PN.i + 1).concat(kw); PN.i = PN.t.length - 1; PN.d = PN.d ? PN.d + 1 : 0; }
+}
+const pnState = () => ({ t: PN.t.slice(0, PN.i + 1), d: PN.d });
+/* the header and the body live in the drawer, or (full page) in the view #v-profiel; the bar goes where the screen wants it */
+function pfSec() { let s = $("#v-profiel"); if (!s) { s = document.createElement("section"); s.className = "view pf"; s.id = "v-profiel"; s.hidden = true; $("main").appendChild(s); } return s; }
+function pfWrap() { const s = pfSec(); let w = $(":scope > .pf-wrap", s); if (!w) { s.innerHTML = ""; w = document.createElement("div"); w.className = "pf-wrap"; s.appendChild(w); } return w; }
+/* one scroll area (the drawer, or the page) with, in this order: the sticky bar #dTop, the header #dHead (scrolls away),
+   the row of buttons #dNav (sticky under the bar; on a phone sticky at the bottom, after the body) and the body #dBody */
+function pnDock(page) {
+  const head = $("#dHead"), body = $("#dBody"), nav = $("#dNav"); if (nav) nav.remove();
+  let top = $("#dTop"); if (!top) { top = document.createElement("div"); top.id = "dTop"; top.className = "pn-top"; }
+  const box = page ? pfWrap() : drawer;
+  if (head.parentNode !== box || top.parentNode !== box || box.firstElementChild !== top) box.prepend(top, head, body);
+}
+function pnPlace() {
+  const nav = $("#dNav"), head = $("#dHead"), body = $("#dBody"); if (!nav || !head || !body) return;
+  const box = head.parentNode;
+  if (PN_PHONE.matches) { if (nav.parentNode !== box || nav.nextElementSibling) box.appendChild(nav); }
+  else if (nav.nextElementSibling !== body) box.insertBefore(nav, body);
+}
+/* the small name in the bar appears once the big name has scrolled under it */
+let pnNameIO = null;
+function pnWatchName(page) {
+  if (pnNameIO) { pnNameIO.disconnect(); pnNameIO = null; }
+  const nm = $("#dName"), top = $("#dTop"); if (!nm || !top || !("IntersectionObserver" in window)) return;
+  const off = top.offsetHeight + (page ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--vast")) || 0 : 0);
+  pnNameIO = new IntersectionObserver(es => es.forEach(e => top.classList.toggle("pn-named", !e.isIntersecting && e.boundingClientRect.top < off + 4)),
+    { root: page ? null : drawer, rootMargin: `-${Math.round(off)}px 0px 0px 0px` });
+  pnNameIO.observe(nm);
+}
+if (PN_PHONE.addEventListener) PN_PHONE.addEventListener("change", pnPlace);
+function pnTipOff() { try { localStorage.setItem("pn-tip", "1"); } catch (x) {} document.documentElement.classList.add("pn-tip-off"); }
+try { if (localStorage.getItem("pn-tip")) document.documentElement.classList.add("pn-tip-off"); } catch (x) {}
+/* the full page: the profile as a view (#profiel-<kw>); two columns from 900 px (CSS grid, rows measured here) */
+function pfRender(kw) {
+  if (!(kw >= 1) || !person(kw)) { pnDock(false); pfSec().innerHTML = `<div class="pf-leeg"><h1>Niet gevonden</h1><p>Dit nummer staat niet in deze stamboom. <a href="#${T.prefix}overzicht" data-go="overzicht">Naar het overzicht</a></p></div>`; return; }
+  openProfile(kw, { page: true, fromHistory: location.hash === "#" + T.prefix + "profiel-" + kw });
+}
+function pfOpen(kw) { /* from the drawer: the same entry in the history becomes the page */
+  if (!kw) return; const st = history.state || {};
+  pnCont = true; pnFocus = "panel"; go("profiel-" + kw, { replace: true });
+  try { history.replaceState(Object.assign({}, st, { profiel: 0 }), ""); } catch (x) {}
+}
+function pfToPanel(kw) { /* back to the drawer, above the page it was opened on */
+  const st = history.state || {}, onder = st.onder && !/^profiel-/.test(st.onder) ? st.onder : "overzicht";
+  pnCont = true; pnFocus = "full"; go(onder, { keepHash: true });
+  openProfile(kw, { fromHistory: true });
+  try { history.replaceState(Object.assign({}, st, { profiel: 1, onder }), "", "#" + T.prefix + "kw" + kw); } catch (x) {}
+}
+const PF_LEFT = /^(Familie|Zo hoort|Bronnen|Nog uit te zoeken|Zoek verder|Weet je meer)/;
+/* the order of the profile, from "who was this, and how sure are we": the core sentence, facts and life, the family (with the
+   actions tree, fan and "Hoe ben ik familie?" right below it), how the person belongs to the root, story and notes, images,
+   evidence and sources together (the "Bewijs" note opens the sources), their world, and what is still open. A block the
+   order does not know (a hook of another part of the site) moves as a whole together with the block before it. */
+const PF_RANK = [[".stnote:not(.implex):not(.pf-bewijs)", 5], ["p.implex", 15], [".vl-bar", 18], [".kort", 20], ["dl.dl", 30],
+  [/^Levensloop/, 32], [".dfam", 40], [".dacts", 44], [/^(Zo hoort|Broers en zussen|Kinderen)/, 46], [".pn-vsec", 47],
+  [/^Weetjes/, 50], [/^In de verhalen/, 51], [/^Bekende verwanten/, 52], [/^Portret/, 60], [".dmd", 61], [/^Uit het archief/, 62],
+  [/^Wat de akten zeggen/, 70], [".dsrc", 72], [/^Nog uit te zoeken/, 74],
+  [/^Plaatsen uit dit leven/, 80], [/^Hun grond/, 81], ["#dArch", 82], ["#dTijd", 83], ["#dWerk", 84], [/^Zoek verder/, 90], [".wjm", 95]];
+function pfOrder(p) {
+  const body = $("#dBody"); if (!body) return;
+  /* the general "Bewijs:" note belongs to the sources */
+  const bw = [...body.children].find(n => n.matches("p.stnote") && /^Bewijs:/.test(n.textContent.trim())), src = $(":scope > .dsrc:not(.dmd)", body);
+  if (bw && src) { bw.classList.add("pf-bewijs"); $("h5", src).insertAdjacentElement("afterend", bw); }
+  else if (bw) bw.classList.add("pf-bewijs");
+  let last = 0;
+  const ranked = [...body.children].map((n, i) => { const h = (($(":scope > h5", n) || {}).textContent || "").trim();
+    const hit = PF_RANK.find(([m]) => typeof m === "string" ? n.matches(m) : m.test(h));
+    const r = hit ? hit[1] : n.matches("p.pf-bewijs") ? 71 : last + 0.01; last = r; return { n, r, i }; });
+  ranked.sort((a, b) => a.r - b.r || a.i - b.i).forEach(x => body.appendChild(x.n));
+}
+let pfRO = null;
+function pfLayout(p) {
+  if (pfRO) { pfRO.disconnect(); pfRO = null; }
+  const body = $("#dBody"); if (!body || !body.closest("#v-profiel")) return;
+  body.classList.toggle("pf-cols", !p.living);
+  if (p.living) return;
+  [...body.children].forEach(n => {
+    const h = (($(":scope > h5", n) || {}).textContent || "").trim(), full = n.matches(".vl-bar, .kort, p.implex");
+    n.classList.toggle("pf-full", full); n.classList.toggle("pf-l", !full && (n.matches("dl.dl, p.stnote, .dfam, .dacts") || PF_LEFT.test(h)));
+  });
+  /* each block spans as many 4 px rows as it is high: two independent columns, in the order of the panel */
+  const fit = () => { const on = getComputedStyle(body).display === "grid";
+    [...body.children].forEach(n => { n.style.gridRowEnd = on ? "span " + Math.max(1, Math.ceil((n.getBoundingClientRect().height + 28) / 4)) : ""; }); };
+  fit();
+  if ("ResizeObserver" in window) { let q = 0; pfRO = new ResizeObserver(() => { cancelAnimationFrame(q); q = requestAnimationFrame(fit); }); [...body.children].forEach(n => pfRO.observe(n)); pfRO.observe(body); }
+}
+/* clicks: history, full page, the whole path; on the full page a family step stays on the page */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-pn]");
+  if (b) {
+    const a = b.dataset.pn;
+    if (a === "back" || a === "fwd") { e.preventDefault(); e.stopPropagation(); pnFocus = a; history[a === "back" ? "back" : "forward"](); return; }
+    if (a === "full") { e.preventDefault(); e.stopPropagation(); pfOpen(curKw); return; }
+    if (a === "panel") { e.preventDefault(); e.stopPropagation(); pfToPanel(route.sub); return; }
+    if (b.dataset.open) pnFocus = a; /* the same button keeps the focus after the step */
+  }
+  const m = e.target.closest("[data-pn-more]");
+  if (m) { e.preventDefault(); e.stopPropagation(); const ol = m.closest("ol"); ol.classList.add("pn-open"); ol.classList.remove("pn-tight"); $$(".pn-more", ol).forEach(x => x.remove()); $$("li", ol).forEach(x => { x.hidden = false; }); const f = $("li button", ol); if (f) f.focus(); return; }
+  const o = e.target.closest("[data-open]"), sec = $("#v-profiel");
+  if (o && sec && !sec.hidden && sec.contains(o)) { e.preventDefault(); e.stopPropagation(); pnCont = true; go("profiel-" + o.dataset.open); }
+}, true);
+/* keys: ← → always (not in a text field), ↑ ↓ only with the focus in the header or the bar, so the text below keeps scrolling */
+document.addEventListener("keydown", e => {
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const k = { ArrowLeft: "prev", ArrowRight: "next", ArrowUp: "vader", ArrowDown: "kind" }[e.key]; if (!k) return;
+  if (!lb.hidden || !sdlg.hidden || ($("#dHelp") && !$("#dHelp").hidden)) return;
+  const page = route.view === "profiel" && !pfSec().hidden, scope = !drawer.hidden ? drawer : page ? pfSec() : null; if (!scope) return;
+  const t = e.target, inHead = !!(t.closest && t.closest("#dTop, #dHead, #dNav"));
+  if (t.closest && t.closest("input, textarea, select, [contenteditable]")) return;
+  if ((k === "vader" || k === "kind") && !inHead) return;
+  if (!inHead && t !== document.body && !scope.contains(t)) return;
+  const b = $(`#dNav [data-pn="${k}"]`); if (!b || b.disabled) return;
+  e.preventDefault(); pnTipOff(); pnFocus = k; b.click();
+});
+
+/* ---------- profile: the family as a small tree ---------- */
+/* Three layers in the shape of the tree page: the parents with their marriage, the person (accent frame) with the partner(s)
+   and the siblings (folded), and the children. Only people with a kw get a box and are clickable (data-open); children and
+   siblings that are only text in the data become name lines, as written: nothing is derived. Marriages come from p.marriages
+   when present, otherwise from p.m and the text in p.m.note. The lines are one SVG behind the boxes, measured from the boxes
+   (aria-hidden); C dashed, D dotted. Living people: the name only; in the text lists the ±1925 rule. kw 1 keeps the old block. */
+const MF_RANK = { A: 0, B: 1, C: 2, D: 3 };
+const mfWorst = (...s) => s.filter(x => x in MF_RANK).sort((a, b) => MF_RANK[b] - MF_RANK[a])[0] || null;
+const mfSt = k => k > 1 ? stapSt(fanKw(k)) : null;
+const mfName = p => p.kw === 1 && T.key === "s" ? p.n : (firstName(p) + " " + shortSur(splitName(p.n).sur)).trim() || p.n;
+/* years in the profile: one form for an unknown year, "1722 – onbekend" (lifeYears itself is shared and stays as it is) */
+const pfYears = p => !p || p.living ? "" : lifeYears(p).replace(/^\? – /, "onbekend – ").replace(/ – \?$/, " – onbekend");
+const mfYears = pfYears;
+/* a kids item that is a summary, not a child ("in totaal dertien kinderen", "allen RK gedoopt in Joure"): it starts with a small
+   letter and is not "levenloos …", "een kind", "een zoon" or "een dochter". A safety net until the data moves these to kidsNote. */
+const isKidsSummary = t => /^[a-zà-ÿ]/.test(String(t || "").trim()) && !/^(levenloos|een kind|een zoon|een dochter)\b/i.test(String(t).trim());
+/* no years of people who may still live: years from 1925 go, unless the text also has a death (a range or "overleden") */
+const pfNoLivingYears = t => /\b(19[2-9]\d|20\d\d)\b/.test(t) && !/\d{4}\s*[–-]\s*\d{4}|overle|†/i.test(t)
+  ? t.replace(/\s*\(\s*(19[2-9]\d|20\d\d)\s*\)/g, "").replace(/,?\s*\b(19[2-9]\d|20\d\d)\b/g, "").replace(/\s{2,}/g, " ").trim() : t;
+/* the name with its ♂/♀: the last word and the sign never part */
+const mfNameMark = (name, mark) => { const s = String(name || ""), i = s.lastIndexOf(" ");
+  return mark ? `${esc(s.slice(0, i + 1))}<span class="mf-nw">${esc(s.slice(i + 1))}${mark}</span>` : esc(s); };
+const MF_FRAME = `<svg class="mf-frame" aria-hidden="true" focusable="false"><rect class="box" x="0" y="0" width="100%" height="100%"/></svg>`;
+/* one line of a text list (kids, sibs): { kw, name, sep, meta, group, living } or { remark, text }. May still be alive: no death
+   mentioned and born in 1925 or later, or no year at all while the parent was born after 1890 (or is living): the name only. */
+function mfEntry(raw, parent) {
+  let t = String(raw).trim(), kw = null, group = "";
+  const g = t.match(/^uit (?:het|haar|zijn) (eerste|tweede|derde|1e|2e|3e) huwelijk(?:,? met [^:]+)?:\s*/i);
+  if (g) { group = "uit het " + ({ eerste: "1e", tweede: "2e", derde: "3e" }[g[1].toLowerCase()] || g[1]) + " huwelijk"; t = t.slice(g[0].length); }
+  const dead = /overle|†|levenloos|–\s*[^)–]*\d{4}|\d{4}\s*–\s*\d{4}/i.test(t);
+  const years = (t.match(/\b(1[5-9]\d\d|20\d\d)\b/g) || []).map(Number), pb = parent && !parent.living ? yr(parent.b) : null;
+  const living = !dead && (/nog in leven|levend/i.test(t) || years.some(y => y >= 1925) || (!years.length && (!parent || parent.living || (pb && pb > 1890))));
+  /* one line with several names ("Riemke (1762), Uilkje (1763) en Lieutske"): the text as it is, a "kw N" in it clickable */
+  if (/\),\s+[A-ZÀ-Ý]|\)\s+en\s+[A-ZÀ-Ý]/.test(t) || /^[A-ZÀ-Ý][\wà-ÿ-]+(?:,\s+[A-ZÀ-Ý][\wà-ÿ-]+)*\s+en\s+[A-ZÀ-Ý]/.test(t) && /,|\sen\s/.test(t.split("(")[0])) return { multi: true, text: living ? t.replace(/\s*\([^)]*\)/g, "") : t, group, living };
+  t = t.replace(/\s*·\s*kw (\d+)\b/, (x, n) => { kw = +n; return ""; }).trim();
+  if (!kw && !/^[A-ZÀ-Ý']/.test(t) && isKidsSummary(t)) return { remark: true, text: living ? pfNoLivingYears(t) : t, group };
+  const cut = t.search(/\s\(|,|;/), name = cut < 0 ? t : t.slice(0, cut).trim();
+  const sep = cut >= 0 && /[,;]/.test(t[cut]) ? t[cut] : "", meta = cut < 0 ? "" : t.slice(cut).replace(/^\s*[,;]\s*/, "").trim();
+  /* man or woman only when the text says so (a role word); never from the name */
+  const sex = /\b(zoon|zoontje|broer|broertje|weduwnaar|man van|echtgenoot van)\b/i.test(t) ? "m" : /\b(dochter|dochtertje|zus|zusje|zuster|vrouw van|weduwe|echtgenote van)\b/i.test(t) ? "v" : "";
+  return { kw, name, sep, meta: living ? "" : meta, group, living, sex };
+}
+function mfBox(kw, rel, o = {}) {
+  const k = fanKw(kw), p = person(k);
+  if (!p) return `<div class="mf-box leeg">${MF_FRAME}<span class="mf-rel">${esc(rel)} · kw ${kw}</span><span class="mf-n">nog niet gevonden</span></div>`;
+  const tw = twinKws(k), unsure = !p.living && (p.st === "C" || p.st === "D") ? " st-" + p.st : "", tag = !p.living && p.st && p.st !== "A" ? p.st : "";
+  const yrs = mfYears(p), cls = `mf-box${o.self ? " zelf" : ""}${o.small ? " klein" : ""}${tw.length ? " twin" : ""}${unsure}`;
+  const label = `${rel}, kw ${kw}: ${p.n}${yrs ? ", " + yrs : ""}${tag ? ", bewijs " + tag : ""}${tw.length ? ", staat ook als kw " + tw.join(", ") : ""}`;
+  const inner = `${MF_FRAME}<span class="mf-stripe" style="--c:${lineColor(k)}"></span><span class="mf-rel">${esc(rel)} · kw ${kw}${o.inTree ? " · in de stamboom" : ""}</span>${tag ? `<span class="mf-st st-${tag}" aria-hidden="true">${tag}</span>` : ""}<b class="mf-n">${mfNameMark(mfName(p), sexMark(p))}</b>${yrs ? `<span class="mf-y">${esc(yrs)}</span>` : ""}`;
+  return o.self ? `<div class="${cls}" title="${esc(p.n)}"><span class="mf-sr">${esc(label)} (dit profiel)</span>${inner}</div>`
+    : `<button type="button" class="${cls}" data-open="${k}" title="${esc(p.n)}" aria-label="${esc(label)}">${inner}</button>`;
+}
+/* someone named in a source without a place in the tree: a light box, not clickable */
+const mfLos = (rel, name, meta, sex) => `<div class="mf-box los">${MF_FRAME}<span class="mf-rel">${esc(rel)}</span><b class="mf-n">${mfNameMark(name, sexMark(sex || ""))}</b>${meta ? `<span class="mf-meta">${esc(meta)}</span>` : ""}</div>`;
+/* one child or sibling: the child in the line as a full box ("in de stamboom"), others with a kw as small boxes, the rest as
+   compact cards with the name, ♂/♀ when the text says so, and what the text says (dates; for the living the name only) */
+function mfItem(e, word, inLine, hide) {
+  const h = hide ? " hidden" : "";
+  if (e.remark) return `<li class="mf-opm"${h}>${esc(e.text)}</li>`;
+  if (e.multi) return `<li class="mf-naam mf-multi"${h}>${kwLinks(e.text)}</li>`;
+  if (e.kw && person(fanKw(e.kw))) return `<li data-kid="${e.kw}"${e.kw === inLine ? ' data-lijn="1"' : ""}${h}>${mfBox(e.kw, word(e.kw), { small: e.kw !== inLine, inTree: e.kw === inLine })}</li>`;
+  return `<li class="mf-kid"${h}><b class="mf-n">${mfNameMark(e.name, sexMark(e.sex || ""))}</b>${e.meta ? `<span class="mf-meta">${esc(e.meta)}</span>` : ""}</li>`;
+}
+const mfDate = s => { const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(String(s || "")); return m ? `${+m[1]} ${MONTHS[+m[2] - 1]} ${m[3]}` : fmt(s); };
+const mfWhen = (d, pl) => [d ? mfDate(d) : "", pl ? placeName(pl) : ""].filter(Boolean).join(" · ");
+/* may this partner still be alive? Then the marriage shows the name only. The birth year decides (from 1925, without a death);
+   without a birth year a marriage from 1950 */
+function mfPrivate(q, date) {
+  if (q) { if (q.living) return true; if (q.d) return false; const b = yr(q.b); if (b) return b >= 1925; }
+  return (yr(date) || 0) >= 1950;
+}
+/* the partner's kw in the current tree: marriages[].kw is numbered in the person's own tree (in the joined tree: renumber) */
+const mfKwHere = (p, k) => k == null || !(k >= 1) ? null : T.key === "s" ? k + 2 ** (Math.floor(Math.log2(k)) + (p.side === "a" ? 1 : 0)) : k;
+/* the partners in the tree, in the order of the marriages (several when a person married twice inside the tree) */
+const mfPartnerKws = (p, kw) => Array.isArray(p.marriages) ? p.marriages.slice().sort((a, b) => (a.order || 0) - (b.order || 0)).map(m => mfKwHere(p, m.kw)).filter(Boolean) : [];
+/* all marriages of p, in order: { nr, pkw (partner in the tree) | null, name, when, extra, st, kids } */
+function mfMarriages(p, kw) {
+  const pk = kw ^ 1, pq = kw > 1 ? person(fanKw(pk)) : null;
+  if (Array.isArray(p.marriages) && p.marriages.length) {
+    const L = p.marriages.slice().sort((a, b) => (a.order || 0) - (b.order || 0)), more = L.length > 1;
+    const out = L.map((m, i) => { const pkw = mfKwHere(p, m.kw), q = pkw ? person(fanKw(pkw)) : null, priv = p.living || mfPrivate(q, m.date);
+      const name = !m.partner || /^onbekend$/i.test(m.partner) ? "onbekende partner" : m.partner;
+      return { nr: more ? (m.order || i + 1) + "e huwelijk" : "", pkw, inTree: !!pkw, name, when: priv ? "" : mfWhen(m.date, m.place), extra: priv ? "" : m.note || "", st: priv ? null : m.st || null, kids: Array.isArray(m.kids) ? m.kids : null, kidsNote: m.kidsNote ? pfNoLivingYears(String(m.kidsNote)) : "" }; });
+    if (!out.some(m => m.inTree) && pq) out.push({ nr: "", pkw: pk, inTree: true, name: pq.n, when: "", extra: "", st: null, kids: null });
+    return out;
+  }
+  const tm = { nr: "", pkw: pk, inTree: true, name: p.m ? p.m.w : pq ? pq.n : "", when: p.m && !p.living && !mfPrivate(pq, p.m.d) ? mfWhen(p.m.d, p.m.p) : "", extra: "", st: null, kids: null };
+  if (p.living) return [tm];
+  /* other marriages only where the data says so in words: "Eerste huwelijk 24-06-1843 [in X] met Y", "hertrouwd 05-05-1894 met Y" */
+  const note = (p.m && p.m.note) || "";
+  const e = note.match(/eerste huwelijk\s+(\d{2}-\d{2}-\d{4}|\d{4})?\s*(?:in ([A-Z][\w-]+(?: [A-Z][\w-]+)?)\s*)?met ([^;.]+)/i);
+  const hh = note.match(/hertrouwd\s+(\d{2}-\d{2}-\d{4}|\d{4})?\s*met ([^;.]+)/i);
+  const los = (nr, d, pl, w) => { const priv = mfPrivate(null, d), from = (w.match(/\buit\s+(.*)$/) || [])[0] || "";
+    return { nr, inTree: false, name: w.replace(/\s+uit\s+.*$/, "").trim(), when: priv ? "" : [d ? mfDate(d) : "", pl || ""].filter(Boolean).join(" · "), extra: priv ? "" : from, st: null, kids: null }; };
+  if (e) tm.nr = "2e huwelijk"; else if (hh) tm.nr = "1e huwelijk";
+  return [e ? los("1e huwelijk", e[1], e[2], e[3]) : null, tm, hh ? los(e ? "3e huwelijk" : "2e huwelijk", hh[1], "", hh[2]) : null].filter(Boolean);
+}
+function mfHtml(kw) {
+  const p = person(kw); if (!p || kw < 2) return "";
+  const fk = kw * 2, mk = kw * 2 + 1, fa = person(fanKw(fk)), mo = person(fanKw(mk)), pk = kw ^ 1, ck = kw >> 1, ch = person(fanKw(ck));
+  const male = isMale(kw), fn = firstName(p);
+  const childWord = k => T.key === "s" && k === 1 ? "kinderen" : isMale(k) ? "zoon" : "dochter", sibWord = k => isMale(k) ? "broer" : "zus";
+  /* layer 1: the parents, with their marriage */
+  const top = fa || mo ? `<ul class="mf-row" aria-label="Ouders"><li data-r="vader">${mfBox(fk, "vader")}</li><li data-r="moeder">${mfBox(mk, "moeder")}</li></ul>`
+    : `<ul class="mf-row" aria-label="Ouders"><li data-r="ouders" class="mf-span"><div class="mf-box leeg">${MF_FRAME}<span class="mf-rel">ouders · kw ${fk} en ${mk}</span><span class="mf-n">nog niet gevonden</span></div></li></ul>`;
+  const pm = fa && !fa.living && fa.m ? fa.m : mo && !mo.living && mo.m ? mo.m : null;
+  const pmTxt = pm && !(fa && fa.living) && !(mo && mo.living) ? mfWhen(pm.d, pm.p) : "";
+  const zone = `<div class="mf-zone${pmTxt ? "" : " leeg"}">${pmTxt ? mfWed("getrouwd", pmTxt) : ""}</div>`; /* the marriage sits on the line between the couple */
+  /* layer 2: the person with the siblings, and the partner(s) */
+  const sibs = p.living ? [] : (p.sibs || []).map(s => mfEntry(s, fa || mo)), sibN = sibs.filter(e => !e.remark);
+  const sibTog = sibs.length ? `<button type="button" class="mf-tog" aria-expanded="false" aria-controls="mfSibs">${sibN.length ? `+ ${sibN.length} ${sibN.length === 1 ? (sibN[0].kw ? sibWord(sibN[0].kw) : "broer of zus") : "broers en zussen"}` : "broers en zussen"}</button>
+    <ul class="mf-sibs" id="mfSibs" hidden aria-label="Broers en zussen van ${esc(fn)}">${sibs.map(e => mfItem(e, sibWord, -1)).join("")}</ul>` : "";
+  const M = mfMarriages(p, kw), pw = male ? "echtgenote" : "echtgenoot";
+  const partners = M.map(m => m.inTree ? `<li data-r="partner">${mfBox(m.pkw, pw + (m.nr ? " · " + m.nr : ""))}</li>`
+    : `<li data-r="partner" data-los="1">${mfLos(pw + (m.nr ? " · " + m.nr : ""), m.name, "", male ? "v" : "m")}</li>`).join("");
+  /* as in the pedigree: the man on the left, the woman on the right, also in the row of the couple */
+  const selfCol = `<div class="mf-col">${mfBox(kw, "dit profiel", { self: true })}${sibTog}</div>`, partCol = `<ul class="mf-col" aria-label="${M.length > 1 ? "Huwelijken" : "Huwelijk"} van ${esc(fn)}">${partners}</ul>`;
+  const mid = `<div class="mf-row mid">${male ? selfCol + partCol : partCol + selfCol}</div>`;
+  /* layer 3: per marriage the wedding (on the line, under the couple) and its children: from marriages[].kids, otherwise from
+     "uit het eerste huwelijk" in the text; the child in the line belongs to the marriage with the partner at kw ^ 1. Children
+     whose marriage the data does not name stay under "overige kinderen". The child in the line is a box, the others name lines. */
+  const kids = p.living ? [] : (p.kids || []).map((s, i) => Object.assign(mfEntry(s, p), { i }));
+  const home = Math.max(0, M.findIndex(m => m.pkw === pk) >= 0 ? M.findIndex(m => m.pkw === pk) : M.findIndex(m => m.inTree));
+  kids.forEach(e => { let j = M.findIndex(m => m.kids && m.kids.includes(e.i));
+    if (j < 0 && e.group) { const o = e.group.replace(/^uit het /, "").replace(/ huwelijk$/, ""); j = M.findIndex(m => m.nr && m.nr.startsWith(o + " ")); }
+    if (j < 0 && M.length === 1) j = 0;
+    if (j < 0 && e.kw === ck) j = home;
+    e.mi = j; });
+  if (ch && !kids.some(e => e.kw === ck)) kids.unshift({ kw: ck, name: ch.n, meta: "", mi: home });
+  const nK = kids.filter(e => !e.remark).length;
+  const block = (m, list, j) => {
+    /* all children as cards; above six the rest folds ("+ N meer"); the child in the line always shows */
+    const wed = !m ? `<p class="mf-wed mf-ov">overige kinderen</p>`
+      : M.length > 1 ? mfWed(`${m.nr}, met ${m.name === "onbekende partner" ? "een onbekende partner" : m.name}${m.when ? " ·" : ""}`, m.when, m.st)
+      : m.when ? mfWed("getrouwd", m.when, m.st) : "";
+    const note = m && m.extra ? `<p class="mf-wnote">${esc(m.extra)}</p>` : "";
+    /* summaries ("in totaal dertien kinderen", a line with several names) are one quiet line under the cards, not a card */
+    const sums = [...cards(list, "sum").map(e => e.multi ? kwLinks(e.text) : esc(e.text)), m && m.kidsNote ? esc(m.kidsNote) : ""].filter(Boolean);
+    const cl = cards(list, "card"), hd = cl.map((e, x) => cl.length > 6 && x >= 6 && e.kw !== ck), nh2 = hd.filter(Boolean).length;
+    const tog2 = nh2 ? `<li class="mf-meer"><button type="button" class="mf-tog" aria-expanded="false">+ ${nh2} meer</button></li>` : "";
+    if (!wed && !note && !list.length && !sums.length) return "";
+    return `<div class="mf-fam">${wed}${note}${cl.length ? `<ul class="mf-kids" aria-label="Kinderen${m && M.length > 1 ? " uit het " + esc(m.nr) : !m ? " (huwelijk niet vermeld)" : ""}">${cl.map((e, x) => mfItem(e, childWord, ck, hd[x])).join("")}${tog2}</ul>` : ""}${sums.map(s => `<p class="mf-knote">${s}</p>`).join("")}</div>`;
+  };
+  const cards = (list, w) => list.filter(e => !!(e.remark || e.multi) === (w === "sum"));
+  const fams = M.map((m, j) => block(m, kids.filter(e => e.mi === j), j)).join("") + (kids.some(e => e.mi < 0) ? block(null, kids.filter(e => e.mi < 0), -1) : "")
+    + (p.kidsNote && !p.living ? `<p class="mf-knote">${esc(pfNoLivingYears(String(p.kidsNote)))}</p>` : ""); /* a note about all children */
+  /* the same family in one or two sentences, for a screen reader */
+  const tmi = M.find(m => m.inTree), pa = tmi ? person(fanKw(tmi.pkw)) : null, ouders = [fa, mo].filter(Boolean).map(firstName);
+  const zin = [`${fn} is ${male ? "de zoon" : "de dochter"} van ${ouders.length ? ouders.join(" en ") : "nog onbekende ouders"}.`,
+    pa ? (!p.living && tmi && tmi.when ? `${male ? "Hij" : "Zij"} trouwde met ${pa.n} (${tmi.when}).` : `${male ? "Echtgenote" : "Echtgenoot"}: ${pa.n}.`) : "",
+    M.length > 1 ? `${M.length} huwelijken: met ${M.map(m => m.name).join(", ")}.` : "",
+    nK > 1 && ch ? `${nK} kinderen bekend, onder wie ${ch.n} (kw ${ck}).` : ch ? `${T.key === "s" && ck === 1 ? "Kinderen" : "Kind"}: ${ch.n} (kw ${ck}).` : "",
+    sibN.length ? `${sibN.length} ${sibN.length === 1 ? "broer of zus" : "broers en zussen"} bekend.` : ""].filter(Boolean).join(" ");
+  const leg = [fk, mk, kw, pk].some(k => ["C", "D"].includes(mfSt(k))) ? `<p class="mf-leg" aria-hidden="true"><span><i></i>akte of sterk</span><span><i class="c"></i>onzeker (C)</span><span><i class="d"></i>hypothese (D)</span></p>` : "";
+  return `<section class="dfam mf-sec"><h5>Familie</h5><figure class="mf" data-mf="${kw}" aria-label="Familie van ${esc(p.n)}"><figcaption class="mf-sr">${esc(zin)}</figcaption>
+    <div class="mf-tree"><svg class="mf-lines" aria-hidden="true" focusable="false"></svg>${top}${zone}${mid}<div class="mf-fams">${fams}</div></div>${leg}</figure></section>`;
+}
+/* a wedding on the line: a small pill with two rings, the words muted and the date and place in ink */
+const MF_RINGS = `<svg class="mf-rings" viewBox="0 0 20 14" aria-hidden="true" focusable="false"><circle cx="7.5" cy="7" r="4.5"/><circle cx="12.5" cy="7" r="4.5"/></svg>`;
+const mfWed = (words, when, st) => `<p class="mf-wed">${MF_RINGS}<span>${esc(words)}${when ? ` <b>${esc(when)}</b>` : ""}${st && st !== "A" ? " " + stTag(st) : ""}</span></p>`;
+let mfRO = null;
+function mfBind(fig) {
+  if (mfRO) { mfRO.disconnect(); mfRO = null; }
+  if (!fig) return; const kw = +fig.dataset.mf;
+  $$(".mf-tog", fig).forEach(b => b.onclick = () => {
+    const open = b.getAttribute("aria-expanded") !== "true", id = b.getAttribute("aria-controls");
+    if (id) { b.setAttribute("aria-expanded", String(open)); $("#" + id, fig).hidden = !open; }
+    else { const ul = b.closest("ul"), nu = $$(":scope > li[hidden]", ul); nu.forEach(li => { li.hidden = false; }); b.closest("li").remove();
+      const f = nu.map(li => $("button", li)).find(Boolean); if (f) f.focus(); else { ul.tabIndex = -1; ul.focus(); } }
+    mfDraw(fig, kw);
+  });
+  mfDraw(fig, kw);
+  if ("ResizeObserver" in window) { mfRO = new ResizeObserver(() => mfDraw(fig, kw)); mfRO.observe($(".mf-tree", fig)); }
+}
+/* the lines, as in the tree: var(--rule) 1.5; C "4 3" in var(--weak), D "1 3" in var(--hyp) */
+const mfDash = s => s === "D" ? { "stroke-dasharray": "1 3", "stroke-linecap": "round", stroke: "var(--hyp)", "stroke-width": 2 } : s === "C" ? { "stroke-dasharray": "4 3", stroke: "var(--weak)" } : {};
+function mfDraw(fig, kw) {
+  const tree = $(".mf-tree", fig), svg = $(".mf-lines", tree); if (!tree || !tree.clientWidth) return;
+  const R0 = tree.getBoundingClientRect(), r = n => { const b = n.getBoundingClientRect(); return { l: b.left - R0.left, r: b.right - R0.left, t: b.top - R0.top, b: b.bottom - R0.top, cx: (b.left + b.right) / 2 - R0.left, cy: (b.top + b.bottom) / 2 - R0.top }; };
+  svg.innerHTML = "";
+  const path = (d, a = {}) => el("path", Object.assign({ d, fill: "none", stroke: "var(--rule)", "stroke-width": 1.5 }, a), svg);
+  const selfB = $(".mf-box.zelf", tree); if (!selfB) return; const self = r(selfB);
+  /* the parents: a marriage line between them, from its middle one line down to the person (the weaker of the two links) */
+  const fv = $('[data-r="vader"] .mf-box', tree), mv = $('[data-r="moeder"] .mf-box', tree);
+  if (fv && mv) {
+    const f = r(fv), m = r(mv), y = Math.min(f.cy, m.cy), x = (f.r + m.l) / 2;
+    path(`M${f.r} ${y}H${m.l}`, fv.classList.contains("leeg") || mv.classList.contains("leeg") ? { "stroke-dasharray": "4 3" } : {});
+    path(`M${x} ${y}V${self.t - 12}H${self.cx}V${self.t}`, mfDash(mfWorst(mfSt(kw * 2), mfSt(kw * 2 + 1))));
+  }
+  /* partners: from the person's inner edge into the gap, then to each partner (a woman's partners stand on the left) */
+  const pbs = $$('[data-r="partner"] > .mf-box', tree).map(r), left = pbs.length && pbs[0].cx < self.cx;
+  const sx0 = left ? self.l : self.r, gx = pbs.length ? (left ? (pbs[0].r + self.l) / 2 : (self.r + pbs[0].l) / 2) : self.cx;
+  pbs.forEach(q => { const qx = left ? q.r : q.l; path(Math.abs(q.cy - self.cy) < 2 ? `M${sx0} ${self.cy}H${qx}` : `M${sx0} ${self.cy}H${gx}V${q.cy}H${qx}`); });
+  /* children: one straight line down from the couple (the weddings sit on it), with a short tick to each child */
+  let yEnd = pbs.length ? Math.max(...pbs.map(q => q.cy)) : self.b;
+  $$(".mf-fam .mf-wed, .mf-fam .mf-wnote", tree).forEach(n => { yEnd = Math.max(yEnd, r(n).cy); });
+  $$(".mf-kids > li:not([hidden])", tree).forEach(li => {
+    const b = $(".mf-box", li), y = b ? r(b).cy : r(li).t + 10, x = (b ? r(b) : r(li)).l;
+    yEnd = Math.max(yEnd, y);
+    path(`M${gx} ${y}H${x - 2}`, li.dataset.lijn === "1" ? mfDash(mfWorst(mfSt(kw), mfSt(kw ^ 1))) : li.classList.contains("mf-meer") ? { "stroke-dasharray": "2 3" } : {});
+  });
+  if (yEnd > (pbs.length ? self.cy : self.b)) path(`M${gx} ${pbs.length ? self.cy : self.b}V${yEnd}`);
+}
+
+/* ---------- profile: the sources, per kind ---------- */
+/* Four or more sources, or more than one kind: a small heading per kind (icon and word), the lines below it without a chip.
+   One to three of one kind: a plain list. The same source twice (the same address or the same label) is shown once. A deed
+   with a scan gets a small icon at the end of the line: the scan in the lightbox when the site has it, otherwise AlleFriezen. */
+const SRC_GROEP = [["Akte", "Akten"], ["Bevolkingsregister", "Registers"], ["Kerkboek (index)", "Kerkboeken"], ["Krant", "Kranten"], ["Graf", "Graven"], ["Bidprentje", "Bidprentjes"], ["Literatuur", "Literatuur"], ["Beeld", "Beelden"], ["Genealogie", "Genealogieën"]];
+const srcNorm = u => String(u || "").trim().replace(/^http:/i, "https:").replace(/#.*$/, "").replace(/\/+$/, "");
+/* the numbers that name one piece: the address, and an Archief RK Friesland number in the address or the label */
+function srcIds(label, url) {
+  const ids = new Set(), u = String(url || ""), l = String(label || ""); let m;
+  if (u) ids.add("u:" + srcNorm(u));
+  if ((m = /archiefrkfriesland\.nl\/archiefdata\/advertenties\/(\d+)/i.exec(u))) ids.add("rkf:" + m[1]);
+  if ((m = /archiefrkfriesland\.nl\/.*[?&]nummer=(\d+)/i.exec(u))) ids.add("rkfp:" + m[1]);
+  if ((m = /RK Friesland,?\s+(?:nr\.?\s*)?(\d{3,7})\b/i.exec(l))) ids.add("rkf:" + m[1]);
+  if ((m = /RK Friesland.*personendatabase\s+nr\.?\s*(\d{3,7})\b/i.exec(l))) ids.add("rkfp:" + m[1]);
+  return ids;
+}
+/* a label in two parts: the title (the link) and the archive details, muted ("Tresoar · toegang 30-31 · inv. 2036 · akte 72") */
+function srcSplit(label, type) {
+  let t = String(label || ""), d = ""; const i = t.indexOf(" · ");
+  if (i > 0) { d = t.slice(i + 3); t = t.slice(0, i); }
+  const m = /,\s*((?:akte|fol\.?|folio|blad|nr\.?)\s*[\w./-]+)$/i.exec(t);
+  if (m) { t = t.slice(0, m.index); d = d ? d + ", " + m[1] : m[1]; }
+  if (!d && type === "Krant") { const k = /^([^,(]+),\s+(.*\d{2}-\d{2}-\d{4}.*)$/.exec(t); if (k) { t = k[1]; d = k[2]; } } /* newspaper: the paper and the date */
+  if (/toegang|inv\.|akte|fol\./i.test(d)) d = d.replace(/,\s+(?![^(]*\))/g, " · ");
+  return { t, d };
+}
+/* about a relative: only when the label says so in its first words ("Bidprentje broertje …", "Overlijden zoon …") */
+const SRC_VERWANT = /^[^,(]*\b(broer|broertje|zus|zusje|zuster|zoon|zoontje|dochter|dochtertje|vader|moeder|kind|grootvader|grootmoeder|schoonvader|schoonmoeder|oom|tante|neef|nicht)\b/i;
+function srcBlock(kw, p) {
+  const frlOf = u => (/frl:([0-9a-f-]{36})/.exec(u || "") || [])[1] || null;
+  const srcG = new Set((p.src || []).map(x => frlOf(x[1])).filter(Boolean)), srcU = new Set((p.src || []).map(x => x[1]).filter(Boolean));
+  const losse = (p.scan || []).filter(x => x[1] && !srcU.has(x[1]) && ![...srcG].some(g => x[1].includes(g))); /* scans without a source line of their own */
+  const items = [], base = l => norm(String(l || "").replace(/\s*\([^)]*\)/g, "")).replace(/\s+/g, " ").trim();
+  /* the same piece twice (same address, same archive number, same label; a scan with the label of its source): shown once,
+     with the richest label; a scan file of a merged line becomes the scan icon */
+  const add = (label, url, scan) => { const ids = srcIds(label, url), nl = norm(label).replace(/\s+/g, " ").trim(), b = base(label), frl = frlOf(url);
+    const dup = items.find(x => [...ids].some(i => x.ids.has(i)) || (nl && x.nl === nl) || (scan && b.length >= 20 && x.b === b));
+    if (!dup) { items.push({ label: String(label || ""), url, ids, nl, b, frl, img: null, type: srcType(url, label) }); return; }
+    ids.forEach(i => dup.ids.add(i)); if (frl && !dup.frl) dup.frl = frl;
+    if (scan && url && url !== dup.url) dup.img = dup.img || url;
+    if (String(label || "").length > dup.label.length) dup.label = String(label); };
+  (p.src || []).forEach(s => add(s[0], s[1], false)); losse.forEach(x => add(x[0], x[1], true));
+  if (!items.length) return "";
+  /* scans the site has itself (the lightbox), by the first eight characters of the AlleFriezen number */
+  const akf = typeof akfIdx === "function" && !p.living ? [...new Set([kw, ...twinKws(kw)].map(imgKey))].flatMap(k => akfIdx().get(k) || []).filter(x => x.soort === "akte") : [];
+  const scans = u => { const m = UUID_RE.exec(u || ""); if (!m) return []; const h8 = m[0].slice(0, 8).toLowerCase(); return [...new Set(akf.filter(x => (/^akte-[a-z]+-([0-9a-f]{8})/.exec(x.id) || [])[1] === h8).map(x => x.id))]; };
+  /* one line: the title as the link, the archive details muted below it, the scan as an icon in a fixed right column */
+  const line = it => { const ids = scans(it.url), s = srcSplit(it.label, it.type);
+    const scan = ids.length ? `<span class="src-scan" data-akfl="${esc(ids.join(" "))}"><button type="button" class="src-scanb" data-akf="${esc(ids[0])}" aria-label="Bekijk de scan" title="Bekijk de scan">${srcIco("Scan")}</button></span>`
+      : it.img ? `<a class="src-scanb" href="${esc(it.img)}" target="_blank" rel="noopener" aria-label="Bekijk de scan (nieuw tabblad)" title="De scan, in een nieuw tabblad">${srcIco("Scan")}</a>`
+      : it.frl ? `<a class="src-scanb" href="https://allefriezen.nl/zoeken/deeds/${it.frl}" target="_blank" rel="noopener" aria-label="Bekijk de scan (AlleFriezen, nieuw tabblad)" title="De scan bij AlleFriezen, in een nieuw tabblad">${srcIco("Scan")}</a>` : "";
+    return `<li><span class="src-x">${it.url ? `<a class="src-t" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(s.t)}</a>` : `<span class="src-t">${esc(s.t)}</span>`}${s.d ? `<span class="src-d">${esc(s.d)}</span>` : ""}</span>${scan}</li>`; };
+  const list = its => { const own = its.filter(x => !SRC_VERWANT.test(x.label)), rel = its.filter(x => SRC_VERWANT.test(x.label));
+    return (own.length ? `<ul class="src-l">${own.map(line).join("")}</ul>` : "") + (rel.length ? `<p class="src-vk">over verwanten</p><ul class="src-l">${rel.map(line).join("")}</ul>` : ""); };
+  const known = SRC_GROEP.map(g => g[0]), types = [...new Set(items.map(x => known.includes(x.type) ? x.type : "Overig"))];
+  if (items.length < 4 && types.length === 1) return `<section class="dsrc"><h5>Bronnen</h5>${list(items)}</section>`;
+  const groups = [...SRC_GROEP, ["Overig", "Overig"]].filter(g => types.includes(g[0])).map(([t, w]) => { const its = items.filter(x => (known.includes(x.type) ? x.type : "Overig") === t);
+    return `<div class="src-g"><h6 class="src-gk">${srcIco(t)}<span>${esc(w)}</span> <span class="src-n">${its.length}</span></h6>${list(its)}</div>`; });
+  return `<section class="dsrc"><h5>Bronnen</h5>${groups.join("")}</section>`;
+}
+/* the block "Beeld": grouped like the sources (icon, kind, number), the title as the link, year and status muted */
+function mdBlock(md) {
+  if (!md.length) return "";
+  const ico = k => ({ bidprentje: srcIco("Bidprentje"), krant: srcIco("Krant"), kerk: navIco("beeld-plaatsen"), plek: navIco("kaart"), achtergrond: srcIco("Literatuur") })[k] || srcIco("Beeld");
+  const kinds = [...Object.keys(MEDIA_KINDS), ...new Set(md.map(m => m.kind))].filter((k, i, a) => a.indexOf(k) === i && md.some(m => m.kind === k));
+  return `<section class="dsrc dmd"><h5>Beeld</h5>${kinds.map(k => { const its = md.filter(m => m.kind === k);
+    return `<div class="src-g"><h6 class="src-gk">${ico(k)}<span>${esc((MEDIA_KINDS[k] || {}).label || "Overig")}</span> <span class="src-n">${its.length}</span></h6><ul class="src-l">${its.map(m => { const d = [m.y ? String(m.y) : "", m.unread ? "nog niet gelezen" : ""].filter(Boolean).join(" · ");
+      return `<li><span class="src-x"><button type="button" class="link src-t" data-media="${esc(m.id)}">${esc(m.t)}</button>${d ? `<span class="src-d">${esc(d)}</span>` : ""}</span></li>`; }).join("")}</ul></div>`; }).join("")}</section>`;
+}
 function openProfile(kw, opts = {}) {
   const p = person(kw);
   if (!p) { if (!drawer.hidden) closeProfile(true); if (opts.fromHistory) setHash(T.prefix + currentToken(), "replace"); return; } /* onbekend nummer: lade dicht, adres van de pagina eronder */
   if (opts.fromHistory && curKw === kw && !drawer.hidden) return; /* popstate en hashchange kunnen allebei vuren */
-  if (drawer.hidden) lastFocus = document.activeElement;
+  if (!opts.page && route.view === "profiel") { if (!opts.fromHistory) { pnCont = true; go("profiel-" + kw); return; } go("overzicht", { keepHash: true, keepScroll: true }); } /* on the full page a profile opens as a page */
+  if (drawer.hidden && !opts.page) lastFocus = document.activeElement;
+  pnTrack(kw, !!opts.fromHistory, opts.page ? !pnCont : drawer.hidden && !pnCont); pnCont = false;
+  if (!opts.page && drawer.hidden && !opts.fromHistory) PN.onder = currentToken();
+  else if (opts.fromHistory && history.state && history.state.onder) PN.onder = history.state.onder;
+  pnDock(!!opts.page);
   curKw = kw;
   const ln = lineOf(kw);
   const altBits = [p.roep && p.roep !== p.n ? `roepnaam ${p.roep}` : "", p.alt || ""].filter(Boolean).join(" · ");
   const port = portraitOf(kw);
-  $("#dHead").innerHTML = `
-    <div class="nav2"><button id="dUp" aria-label="Naar het kind in de lijn" title="Naar het kind in de lijn" ${kw === 1 ? "disabled" : ""}>↓</button></div>
-    <button class="close" aria-label="Sluiten" id="dClose">×</button>
+  const vli = typeof vlIcon === "function" ? vlIcon(p) : "", hn = opts.page ? "h1" : "h2"; /* read aloud: a small icon in the header */
+  $("#dHead").className = "pn-head" + (opts.page ? " pf-head" : "");
+  /* the sticky bar: back, forward, the name small (once the big name has scrolled away), share, read aloud, page, close */
+  $("#dTop").innerHTML = `<div class="pn-hist">${pnHistBtn("back")}${pnHistBtn("fwd")}</div><span class="pn-tname" aria-hidden="true">${esc(p.n)}</span>
+      <div class="pn-win"><button type="button" class="pn-ib" id="dShare" aria-label="Deel een link naar dit profiel" title="Delen">${pnIco("share")}</button>${vli}<span class="small dshare-ok pn-toast" id="dShareOk" role="status" aria-live="polite"></span>${opts.page ? `<button type="button" class="btn pf-panel" data-pn="panel">${pnIco("panel")}<span>Terug naar het paneel</span></button>`
+        : `<button type="button" class="pn-ib" data-pn="full" aria-label="Open als pagina" title="Open als pagina (breder, om te lezen)">${pnIco("full")}</button><button type="button" class="pn-ib" aria-label="Sluiten" title="Sluiten (Esc)" id="dClose">${pnIco("close")}</button>`}</div>`;
+  /* what scrolls with the content: the path, the top line with the generation, the big name, the labels */
+  $("#dHead").innerHTML = `${pnCrumbs(kw)}
     <div class="dtitle${port ? " withport" : ""}">${port ? `<button class="dport" data-img="${port.id}" aria-label="Vergroot het portret van ${esc(p.n)}" title="${esc(port.t)}"><img src="${port.thumb}" alt="Portret van ${esc(p.n)}" style="object-position:${cropOf(port)}"></button>` : ""}<div>
-    <div class="eyebrow"><abbr title="Kwartiernummer ${kw}: het nummer in de stamboom. De vader van nummer n heeft 2n, de moeder 2n + 1." aria-label="Kwartiernummer ${kw}">kw ${kw}</abbr> · generatie ${ROMAN[gen(kw)]} · ${esc(relTerm(kw))}</div>
-    <h2 id="dName">${esc(p.n)}</h2>
+    <div class="eyebrow pn-eb"><abbr title="Kwartiernummer ${kw}: het nummer in de stamboom. De vader van nummer n heeft 2n, de moeder 2n + 1." aria-label="Kwartiernummer ${kw}">kw ${kw}</abbr> · ${esc(pnRelWords(kw))}${kw > 1 ? ` · generatie ${ROMAN[gen(kw)]}` : ""}${pnGenHtml(kw)}</div>
+    <${hn} id="dName">${esc(p.n)}</${hn}>
     ${altBits ? `<div class="alt">${esc(altBits)}</div>` : ""}</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <div class="dchips" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       ${ln ? `<button class="chip" style="--c:var(--l${ln})" data-go="lijn-${ln}"><i></i>${p.aliasOf ? "via de lijn" : "familie"} ${esc(LINES[ln].name)}</button>` : ""}
       ${p.living ? `<span class="tag" style="color:var(--muted)">levend</span>` : p.st ? `<span class="tag st-${p.st}" title="Bewijs ${p.st}: ${BEWIJS_KORT[p.st]}. ${esc(STATUS[p.st].long)}" aria-label="Bewijs ${p.st}: ${BEWIJS_KORT[p.st]}">${p.st} · ${STATUS[p.st].label.toLowerCase()}</span>` : ""}
       ${p.living ? "" : chgTag(kw)}
       ${p.link && kw > 1 && person(kw >> 1) ? (() => { const kn = firstName(person(kw >> 1)), rol = isMale(kw) ? "vader" : "moeder"; return `<span class="tag st-${p.link}" title="Dat ${esc(firstName(p))} de ${rol} is van ${esc(kn)}: ${BEWIJS_KORT[p.link]} (${p.link})" aria-label="${rol} van ${esc(kn)}: ${BEWIJS_KORT[p.link]}">${rol} van ${esc(kn)} · ${p.link}</span>`; })() : ""}
       ${p.living ? "" : `<button type="button" class="qhelp" id="dHelpBtn" aria-label="Zo lees je dit profiel" title="Zo lees je dit profiel" aria-expanded="false" aria-controls="dHelp">?</button>`}
     </div>
-    ${p.living ? "" : `<div class="dhelp" id="dHelp" role="note" hidden><b>Zo lees je dit profiel.</b> <b>kw</b> is het nummer in de stamboom: de vader van nummer n heeft 2n, de moeder 2n + 1. De letter A tot D zegt hoe sterk het bewijs is, van A (akte) tot D (hypothese). Het tweede label zegt hoe zeker het is dat deze persoon de vader of moeder is van het kind in de lijn. <button type="button" class="link" data-go="bronnen">Meer uitleg</button></div>`}`;
-  let h = `<div class="dacts"><button class="btn" id="dTree">Toon in de boom</button><button class="btn" data-go="${kw > 1 ? "stamboom-" + kw : "stamboom"}">Toon in de waaier</button>${srProfielKnop(kw)}${vwProfielKnop(kw) ? `<button class="btn" data-go="verwant-${kw}" title="${esc(`Hoe is ${firstName(p)} familie van mij?`)}">Hoe ben ik familie?</button>` : "" /* verwantschap: de haak beslist of de knop er komt */}<button class="btn" id="dShare" type="button" title="Deel een link naar dit profiel">Delen</button><span class="small dshare-ok" id="dShareOk" role="status" aria-live="polite"></span></div>`;
+    ${p.living ? "" : `<div class="dhelp" id="dHelp" role="note" hidden><b>Zo lees je dit profiel.</b> <b>kw</b> is het nummer in de stamboom: de vader van nummer n heeft 2n, de moeder 2n + 1. De letter A tot D zegt hoe sterk het bewijs is, van A (akte) tot D (hypothese). Het tweede label zegt hoe zeker het is dat deze persoon de vader of moeder is van het kind in de lijn. <button type="button" class="link" data-go="bronnen">Meer uitleg</button><span class="pn-tip"><br>Toetsen: <kbd>←</kbd><kbd>→</kbd> generatie · <kbd>↑</kbd> vader · <kbd>↓</kbd> kind · <kbd>Esc</kbd> sluiten</span></div>`}
+    `;
+  $("#dHead").insertAdjacentHTML("afterend", pnNavHtml(kw)); /* the row of buttons: sticky under the bar (phone: at the bottom), see pnPlace */
+  /* the actions: tree, fan and (when the hook offers it) "Hoe ben ik familie?"; sharing and reading aloud are icons in the header */
+  let h = `<div class="dacts"><button class="btn" id="dTree">Toon in de boom</button><button class="btn" data-go="${kw > 1 ? "stamboom-" + kw : "stamboom"}">Toon in de waaier</button>${kw > 1 && vwProfielKnop(kw) ? `<button class="btn" data-go="verwant-${kw}" title="${esc(`Hoe is ${firstName(p)} familie van mij?`)}">Hoe ben ik familie?</button>` : "" /* verwantschap: de haak beslist of de knop er komt */}</div>`;
   const tw = twinKws(kw);
   if (tw.length) h += `<p class="stnote implex"><b>${["", "", "Twee", "Drie", "Vier", "Vijf"][tw.length + 1] || tw.length + 1} keer in de stamboom.</b> Deze persoon staat ook als kw ${tw.length > 1 ? tw.slice(0, -1).join(", ") + " en " + tw[tw.length - 1] : tw[0]}, via de ${[...new Set(tw.map(t => LINES[lineOf(t)] && LINES[lineOf(t)].name).filter(Boolean))].map(esc).join("- en ")}-lijn. ${tw.some(t => halfOf(t) !== halfOf(kw)) ? esc(T.key === "s" ? TREES[p.side].parents : T.parents) + " hebben hier gemeenschappelijke voorouders." : "Beide lijnen lopen via " + esc((person(halfOf(kw)) || {}).roep || (person(halfOf(kw)) || {}).n || "") + "."} ${tw.map(t => `<button class="link" data-open="${t}">Bekijk als kw ${t}</button>`).join(" · ")} · <button class="link" data-go="${implexStory(p.side)}">Lees het verhaal</button></p>`;
   if (p.living) {
@@ -963,8 +1566,13 @@ function openProfile(kw, opts = {}) {
     archGal = ims => ims.length ? gal("Uit het archief", ims) : "";
   }
   /* familie bij elkaar: ouders, partner, kind in de lijn; daaronder alle kinderen en broers en zussen */
-  h += `<section class="dfam"><h5>Familie</h5><div class="family">${pbtn(kw * 2, "vader")}${pbtn(kw * 2 + 1, "moeder")}${kw > 1 ? pbtn(kw % 2 ? kw - 1 : kw + 1, kw % 2 ? "echtgenoot" : "echtgenote") : ""}${kw > 1 ? pbtn(kw >> 1, T.key === "s" && kw < 4 ? "kinderen" : isMale(kw >> 1) ? "zoon" : "dochter") : ""}</div>${p.kids && p.kids.length ? `<h6>Kinderen</h6><ul>${p.kids.map(k => `<li>${kwLinks(k)}</li>`).join("")}</ul>` : ""}${p.sibs && p.sibs.length ? `<h6>Broers en zussen</h6><ul>${p.sibs.map(k => `<li>${kwLinks(k)}</li>`).join("")}</ul>` : ""}</section>`;
-  if (kw > 3) h += kpathHtml(kw);
+  if (kw > 1) h += mfHtml(kw); /* the family as a small tree; kw 1 keeps the cards (siblings and children come from the tree settings) */
+  else h += `<section class="dfam"><h5>Familie</h5><div class="family">${pbtn(kw * 2, "vader")}${pbtn(kw * 2 + 1, "moeder")}${kw > 1 ? pbtn(kw % 2 ? kw - 1 : kw + 1, kw % 2 ? "echtgenoot" : "echtgenote") : ""}${kw > 1 ? pbtn(kw >> 1, T.key === "s" && kw < 4 ? "kinderen" : isMale(kw >> 1) ? "zoon" : "dochter") : ""}</div>${p.kids && p.kids.length ? `<h6>Kinderen</h6><ul>${p.kids.map(k => `<li>${kwLinks(k)}</li>`).join("")}</ul>` : ""}${p.sibs && p.sibs.length ? `<h6>Broers en zussen</h6><ul>${p.sibs.map(k => `<li>${kwLinks(k)}</li>`).join("")}</ul>` : ""}</section>`;
+  /* "Vanaf hier:" the stamreeks and the book from this person, when those hooks offer a link */
+  const vanaf = [typeof srLink === "function" ? srLink(kw) : "", typeof bookFromHereLink === "function" ? bookFromHereLink(kw) : ""].filter(x => typeof x === "string" && x.trim());
+  const vanafHtml = vanaf.length ? `<div class="pn-vanaf"><span class="pn-vk">Vanaf hier:</span> ${vanaf.join(`<span class="pn-sep" aria-hidden="true"> · </span>`)}</div>` : "";
+  if (kw > 3) h += kpathHtml(kw).replace(/<\/section>$/, vanafHtml + "</section>");
+  else if (vanafHtml) h += `<section class="pn-vsec">${vanafHtml}</section>`;
   const ev = p.living ? [] : lifeEvents(p).filter(e => e.p);
   if (ev.length) h += `<section><h5>Levensloop</h5><ul class="restl">${ev.map(e => `<li><span class="y">${e.y ?? "?"}</span><span>${PLACES[e.p] && !PLACES[e.p].seat ? `<button class="link" data-go="${slug(e.p)}">${esc(placeName(e.p))}</button>` : `<b style="font-weight:600">${esc(placeName(e.p))}</b>`} · ${esc(e.t)} ${e.st && e.st !== "A" ? stTag(e.st) : ""}${typeof akteBij === "function" ? akteBij(kw, e, ev) : "" /* scan en tekst van de akte bij het feit */}</span></li>`).join("")}</ul>${ev.some(e => PLACES[e.p]) ? `<div class="pane lifemap" id="dLifeMap"></div><p style="margin:10px 0 0"><button class="link" id="dMap">Toon de levensloop op de grote kaart</button></p>` : ""}</section>`;
   if (p.notes && p.notes.length) h += `<section class="notes"><h5>Weetjes</h5>${p.notes.map(n => { const o = noteObj(n); return `<p class="${o.k ? "k" : ""}">${geldw(esc(o.t))} ${kindTag(o.k)}</p>`; }).join("")}</section>`;
@@ -973,14 +1581,10 @@ function openProfile(kw, opts = {}) {
   const nts = NOTABLES.filter(N => N.verdict !== "geen verband" && N.kws.some(k => [kw, ...twinKws(kw)].includes(k)));
   if (nts.length) h += `<section><h5>Bekende verwanten</h5><div class="links">${nts.map(N => `<button class="chip" data-go="verwanten">${esc(N.n)} · ${esc(VERDICT[N.verdict][1].toLowerCase())}</button>`).join("")}</div></section>`;
   const md = mediaOf(kw);
-  if (md.length) h += `<section><h5>Beeld</h5><ul class="srclist">${md.map(m => `<li><span class="tag" style="color:var(--muted)">${esc(MEDIA_KINDS[m.kind].label.split(" ")[0].toLowerCase())}</span><button class="link" data-media="${m.id}">${esc(m.t)}</button>${m.unread ? ` <span class="tag" style="color:var(--gold)">nog niet gelezen</span>` : ""}</li>`).join("")}</ul></section>`;
-  /* bronnen en scans in één lijst: een Friese akte krijgt een knopje "scan" (AlleFriezen); losse scans zonder eigen bron worden een regel "Scan" */
-  const frlOf = u => (/frl:([0-9a-f-]{36})/.exec(u || "") || [])[1] || null;
-  const srcG = new Set((p.src || []).map(x => frlOf(x[1])).filter(Boolean)), srcU = new Set((p.src || []).map(x => x[1]).filter(Boolean));
-  const losse = (p.scan || []).filter(x => x[1] && !srcU.has(x[1]) && ![...srcG].some(g => x[1].includes(g)));
+  h += mdBlock(md); /* grouped like the sources */
   h += archGal(archBeeld);
   h += aktenBlok(kw);
-  if ((p.src && p.src.length) || losse.length) h += `<section><h5>Bronnen</h5><ul class="srclist">${(p.src || []).map(s => { const t = srcType(s[1], s[0]), g = frlOf(s[1]); return `<li><span class="tag srctag" style="color:var(--muted)">${srcIco(t)}${t}</span><span>${s[1] ? `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>` : esc(s[0])}${g ? ` <a class="scanlink" href="https://allefriezen.nl/zoeken/deeds/${g}" target="_blank" rel="noopener" title="De scan bij AlleFriezen, in een nieuw tabblad">${srcIco("Scan")}scan</a>` : ""}</span></li>`; }).join("")}${losse.map(x => `<li><span class="tag srctag" style="color:var(--muted)">${srcIco("Scan")}Scan</span><a href="${esc(x[1])}" target="_blank" rel="noopener">${esc(x[0])}</a></li>`).join("")}</ul></section>`;
+  h += srcBlock(kw, p); /* the sources per kind, with the scans (see srcBlock) */
   if (!p.living) { /* hun wereld: plekken, grond, archiefbeelden en tijdbeelden (de lege vakken vullen zich na het openen) */
     const pk = []; lifeEvents(p).forEach(e => { if (!e.p || !PLACES[e.p]) return; if (tileImg(e.p) && !pk.some(x => x[2] === e.p)) pk.push([e.p, (e.y ? e.y + " · " : "") + e.t.split(/[;·]/)[0].trim(), e.p]); });
     if (pk.length) h += `<section><h5>Plaatsen uit dit leven</h5><div class="pstrip">${pk.slice(0, 4).map(x => placeTile(x[0], x[1], placeName(x[2]))).join("")}</div>${credits(pk.slice(0, 4).map(x => tileImg(x[0])))}</section>`;
@@ -988,12 +1592,17 @@ function openProfile(kw, opts = {}) {
   }
   if (p.open && p.open.length) h += `<section><h5>Nog uit te zoeken</h5><ul>${p.open.map(n => `<li>${esc(n)}</li>`).join("")}</ul></section>`;
   if (!p.living) h += `<section><h5>Zoek verder</h5><div class="links">${searchLinks(p).map(l => `<a class="chip" href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])}</a>`).join("")}</div></section>`;
+  const wjb = typeof wjmBlock === "function" ? wjmBlock(kw, p) : ""; /* "Weet je meer?" at the bottom */
+  h += wjb;
   $("#dBody").innerHTML = h;
-  drawer.hidden = false; scrim.hidden = false;
-  $("#dBody").scrollTop = 0;
-  $("#dClose").focus();
-  $("#dClose").onclick = () => closeProfile();
-  const up = $("#dUp"); if (up) up.onclick = () => openProfile(kw >> 1);
+  if (!opts.page) { drawer.hidden = false; scrim.hidden = false; }
+  $("#dBody").scrollTop = 0; drawer.scrollTop = 0; /* the drawer is the scroll area */
+  pfOrder(p);
+  pnPlace(); pnWatchCrumbs(); pnWatchName(!!opts.page);
+  mfBind($("#dBody .mf"));
+  { const fb = pnFocus && $(`#dTop [data-pn="${pnFocus}"], #dHead [data-pn="${pnFocus}"], #dNav [data-pn="${pnFocus}"]`); pnFocus = null; /* after a step the same button keeps the focus */
+    if (fb && !fb.disabled) fb.focus(); else if (!opts.page) $("#dClose").focus(); }
+  if ($("#dClose")) $("#dClose").onclick = () => closeProfile();
   const hb = $("#dHelpBtn"); if (hb) hb.onclick = () => profHelp($("#dHelp").hidden);
   const kt = $("#dBody .kp-tog"); if (kt) kt.onclick = () => { $$("#dBody .kpath li[hidden]").forEach(li => { li.hidden = false; }); kt.closest("li").remove(); };
   $("#dTree").onclick = () => { closeProfile(true); go(kw > 1 ? "boom-" + kw : "boom"); };
@@ -1006,7 +1615,6 @@ function openProfile(kw, opts = {}) {
     catch (e) { const t = document.createElement("textarea"); t.value = url; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select();
       let gelukt = false; try { gelukt = document.execCommand("copy"); } catch (x) {} t.remove(); meld(gelukt ? "Link gekopieerd" : "Kopiëren lukte niet: " + url); }
   };
-  vlProfiel(p); wjmProfiel(kw, p); /* voorlezen en "Weet je meer?" */
   const lm = $("#dLifeMap"); if (lm) lm.appendChild(lifeMap(p));
   const ks = [kw, ...twinKws(kw)], pe = ks.map(k => PACK_IDX.kw[imgKey(k)]).filter(Boolean), iks = ks.map(imgKey);
   if (!p.living && pe.length) { const shown = new Set(ks.flatMap(persImgs).map(i => i.id)); /* niet dubbel: wat al onder "Uit het archief" staat */
@@ -1022,7 +1630,11 @@ function openProfile(kw, opts = {}) {
     archStrip($("#dTijd"), la, () => curKw === kw, { n: innerWidth < 560 ? 4 : 8, head: `<h5>${zijnHaar(kw, true)} plaatsen in ${zijnHaar(kw)} tijd</h5><p class="small" style="margin:0 0 10px">Oude foto's, prenten en kaarten van ${np === 1 ? esc(placeName(la[0].key)) : np + " plaatsen uit dit leven"}, uit de jaren dat ${fn} er was.</p>` });
   }
   const dm = $("#dMap"); if (dm) dm.onclick = () => { closeProfile(true); mapFocusPerson = kw; mapState.place = null; go("kaart"); renderMap(); };
-  if (!opts.fromHistory) setHash(T.prefix + "kw" + kw, "push", { profiel: 1, onder: currentToken() });
+  if (opts.page) { pfLayout(p); /* the page entry gets the trail once go() has written the address */
+    queueMicrotask(() => { if (location.hash !== "#" + T.prefix + "profiel-" + kw) return; const s = history.state || {};
+      try { history.replaceState(Object.assign({}, s, { pn: pnState(), onder: s.onder || PN.onder || "overzicht" }), ""); } catch (x) {} }); }
+  else if (!opts.fromHistory) setHash(T.prefix + "kw" + kw, "push", { profiel: 1, onder: currentToken(), pn: pnState() });
+  else if (!(history.state && history.state.pn)) try { history.replaceState(Object.assign({}, history.state, { pn: pnState() }), ""); } catch (x) {}
 }
 /* klein kaartje met de plaatsen uit één leven, genummerd in volgorde */
 function lifeMap(p) {
@@ -1055,7 +1667,8 @@ function lifeMap(p) {
 function closeProfile(silent) {
   drawer.hidden = true; scrim.hidden = true; curKw = null;
   if (!silent) {
-    if (history.state && history.state.profiel && /^#(?:[as]-)?kw\d+$/.test(location.hash)) history.back(); /* terug naar de pagina eronder */
+    const terug = history.state && history.state.pn ? history.state.pn.d || 0 : 1; /* the profiles seen in this drawer, on top of the page under it */
+    if (history.state && history.state.profiel && terug > 0 && /^#(?:[as]-)?kw\d+$/.test(location.hash)) history.go(-terug); /* terug naar de pagina eronder */
     else setHash(T.prefix + currentToken(), "replace");
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
@@ -1069,8 +1682,10 @@ function currentToken() {
   if (route.view === "boom" && treeRoot > 1) return "boom-" + treeRoot;
   if (route.view === "verwant") return vwToken(); /* verwantschap */
   if (route.view === "stamreeks" || route.view === "poster") return route.view === "poster" ? psToken() : srToken(); /* stamreeks, poster */
+  if (route.view === "maak") return mkToken(); /* laten maken */
   if (route.view === "beeld-archief") return arvToken(); /* archiefverkenner */
   if (route.view === "boek") return bkToken(); /* het boek */
+  if (route.view === "profiel" && route.sub) return "profiel-" + route.sub; /* the profile as a full page */
   return route.view;
 }
 scrim.addEventListener("click", () => closeProfile());
@@ -1090,6 +1705,12 @@ function buildIndex() {
   });
   [["Namenregister", "Alle achternamen en patroniemen op alfabet", "namen achternamen register patroniemen alfabet"], ["Kwartierstaat als lijst", "Genummerd, om te lezen of af te drukken", "kwartierstaat lijst afdrukken printen pdf nummers"]].forEach(([t, sub, x], i) => INDEX.push({ type: "Pagina's", title: t, sub, text: t + " " + x, act: () => go(i ? "lijst" : "namen") }));
   INDEX.push({ type: "Pagina's", title: "Het boek", sub: "De stamboom als boek om te laten drukken, of als pdf", text: "boek stamboomboek pdf afdrukken printen drukken drukker drukkerij fotoboek boekje bundel uitgave blurb saal peecho", act: () => go("boek") }); /* het boek */
+  /* alle pagina's uit het menu (Waaier, Boom, Kaart, Tijdlijn …), met een paar gewone woorden erbij; dubbele titels niet */
+  const ZOEK_OOK = { stamboom: "waaier cirkel ringen generaties", boom: "boom takken stamboom", families: "families lijnen", lijst: "kwartierstaat lijst nummers", kaart: "kaart plaatsen dorpen landkaart",
+    tijdlijn: "tijdlijn jaren levens", tijd: "geschiedenis gebeurtenissen", cijfers: "getallen statistiek leeftijd", maak: "maken laten maken bestellen cadeau", poster: "poster afdrukken ophangen", personen: "personen mensen voorouders" };
+  if (typeof menuGroups === "function") menuGroups().forEach(([g, its]) => its.forEach(([l, v, u]) => {
+    if (INDEX.some(i => i.type === "Pagina's" && i.title === (l === "Overzicht" ? g : l))) return;
+    INDEX.push({ type: "Pagina's", title: l === "Overzicht" ? g : l, sub: u || g, text: [l, u, g, ZOEK_OOK[v] || ""].join(" "), act: () => go(v) }); }));
   INDEX.push({ type: "Pagina's", title: "Hoe ben ik familie?", sub: "Verwantschap uitrekenen: neef, nicht, oudoom, graad van bloedverwantschap", text: "verwantschap verwant familie hoe ben ik familie neef nicht achterneef achternicht oom tante oudoom graad bloedverwantschap aangetrouwd", act: () => go("verwant") }); /* verwantschap */
   LINE_KEYS.forEach(l => INDEX.push({ type: "Families", title: "Familie " + LINES[l].name, sub: LINES[l].sub, text: LINES[l].name + " " + LINES[l].sub + " " + LINES[l].region, act: () => go("lijn-" + l) }));
   Object.keys(PLACES).filter(k => !PLACES[k].seat).forEach(k => INDEX.push({ type: "Plaatsen", title: placeName(k), sub: `${PLACES[k].gem} · ${PLACES[k].prov}`, text: k + " " + placeName(k) + " " + PLACES[k].gem, act: () => go(slug(k)) }));
@@ -1105,6 +1726,7 @@ function buildIndex() {
 }
 let sFrom = null; /* wie de focus had vóór het zoekvenster; daar gaat hij na sluiten naartoe terug */
 function openSearch() { sFrom = document.activeElement; sdlg.hidden = false; sInput.value = ""; runSearch(); setTimeout(() => sInput.focus(), 10); }
+document.addEventListener("click", e => { if (e.target.closest("#sClose")) closeSearch(); });
 function closeSearch() { sdlg.hidden = true; if (sFrom && sFrom.focus && document.contains(sFrom)) sFrom.focus(); sFrom = null; }
 /* één scrollbalk tegelijk: zolang de lade, de zoekdialoog of de lichtbak open is, staat de pagina eronder stil.
    Een observer op [hidden] vangt elke weg (knop, Escape, terugknop, links naar een andere pagina). */
@@ -1197,6 +1819,7 @@ document.addEventListener("keydown", e => {
 /* labelScale: grotere letters (waaier op het overzicht); minPx: een naamlaag alleen tonen als de letters op het scherm minstens
    zo groot worden (gemeten aan de breedte van host), zodat er geen onleesbare grijze tekst staat */
 function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlightLine = null, root = 1, more = false, labelScale = 1, minPx = 0, keep = null } = {}) {
+  if (host && interactive && host.contains(document.activeElement)) host._fanHerstel = true; /* stond de focus in de waaier, dan komt hij na het hertekenen terug */
   const R = [0, 58, 126, 192, 268, 344, 412, 460, 498, 530];
   if (root > 1) { let depth = 1; for (let gn = 2; gn <= maxGen; gn++) { const n = 2 ** (gn - 1); for (let i = 0; i < n; i++) if (person(fanKw(root * n + i))) { depth = gn; break; } } maxGen = Math.min(maxGen, Math.max(3, depth + 1)); } /* één lege ring: daar is nog niets gevonden */
   const V = R[maxGen] + (more ? 40 : 10), rp = person(fanKw(root)), rootAlias = fanKw(root) !== root || !!ALIAS_OF[root]; /* de volledige waaier (more) krijgt marge rondom de boogjes */
@@ -1206,6 +1829,25 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
   const svg = el("svg", { viewBox: `${-V} ${-V} ${2 * V} ${2 * V}`, role: "group", "aria-label": "Waaier met de voorouders van " + (root > 1 && rp ? rp.n : T.root) + " per generatie" });
   const col = fanBranchColors(root).color; /* kleur per tak vanaf het midden (bij root 1: de familiekleur) */
   const g = el("g", {}, svg), lg = el("g", { "pointer-events": "none" }, svg); /* namen in een eigen laag boven alle vakken */
+  /* names that follow the ring (curved text along the middle of the segment): in the lower half mirrored, so everything reads
+     left to right. lines = [[text, size, attrs]], the first line on the outside at the top and on the inside at the bottom */
+  const uid = (drawFan.uid = (drawFan.uid || 0) + 1), defs = el("defs", {}, svg);
+  const arcLabel = (lab, kw, a0, a1, r0, r1, lines) => {
+    const an = ((((a0 + a1) / 2) % 360) + 360) % 360, low = an > 0 && an < 180, rm = (r0 + r1) / 2, pad = Math.min(4, (a1 - a0) * 0.06);
+    const [h1, h2] = lines.map(l => l[1] * 0.72), gap = lines.length > 1 ? lines[1][1] * 0.5 : 0; /* on a curve two lines need air */
+    const off = lines.length > 1 ? (h1 - h2) / 2 : -h1 / 2; /* centre the block of one or two lines on the middle of the ring */
+    lines.forEach(([str, fs0, at], i) => {
+      /* baseline radius: on top the glyphs stand outward from it, at the bottom (reversed path) inward */
+      const rb = !low ? (i === 0 ? rm + gap / 2 + off : rm - gap / 2 - h2 + off) : (i === 0 ? rm - gap / 2 + off : rm + gap / 2 + h2 + off);
+      /* a long name first gets smaller (to 0.72), then shorter; never below the minimum size on paper or screen (minPx) */
+      const span = (a1 - a0 - 2 * pad) * Math.PI / 180 * rb, fmin = Math.max(fs0 * 0.72, minPx && scale ? minPx / scale : 0);
+      const f = Math.max(fmin, Math.min(fs0, span / (Math.max(str.length, 1) * 0.56))), t = str.length * f * 0.56 > span ? trunc(str, Math.floor(span / (f * 0.56))) : str;
+      const [x1, y1] = pt(rb, low ? a1 - pad : a0 + pad), [x2, y2] = pt(rb, low ? a0 + pad : a1 - pad), id = `fa${uid}-${kw}-${i}`;
+      el("path", { id, d: `M${x1.toFixed(1)} ${y1.toFixed(1)}A${rb.toFixed(1)} ${rb.toFixed(1)} 0 0 ${low ? 0 : 1} ${x2.toFixed(1)} ${y2.toFixed(1)}`, fill: "none" }, defs);
+      const te = el("text", Object.assign({ "font-size": f.toFixed(2), fill: "var(--ink)" }, at), lab); /* the ink colour, as txt() gives it */
+      el("textPath", { href: "#" + id, startOffset: "50%", "text-anchor": "middle" }, te).textContent = t;
+    });
+  };
   const pt = (r, a) => { const t = a * Math.PI / 180; return [r * Math.cos(t), r * Math.sin(t)]; };
   for (let gn = 2; gn <= maxGen; gn++) {
     const n = 2 ** (gn - 1), r0 = R[gn - 1], r1 = R[gn];
@@ -1213,7 +1855,7 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
       const kw = root * n + i, ck = fanKw(kw), a0 = 90 + i * 360 / n, a1 = a0 + 360 / n;
       const [x1, y1] = pt(r1, a0), [x2, y2] = pt(r1, a1), [x3, y3] = pt(r0, a1), [x4, y4] = pt(r0, a0);
       const d = `M${x1} ${y1}A${r1} ${r1} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r0} ${r0} 0 0 0 ${x4} ${y4}Z`;
-      const p = keep && !keep.has(ck) ? null : person(ck), dim = highlightLine && lineOf(kw) !== highlightLine && gen(kw) >= 4;
+      const p0 = person(ck), p = keep && !keep.has(ck) && !(p0 && p0.living) ? null : p0, dim = highlightLine && lineOf(kw) !== highlightLine && gen(kw) >= 4;
       const twins = twinKws(ck), twin = !rootAlias && (twins.length || ck !== kw); /* staat het midden zelf in een dubbele tak, dan is alles dubbel: geen goud */
       let attrs;
       if (!p) attrs = { d, fill: "none", stroke: "var(--rule)", "stroke-dasharray": "3 3", "stroke-width": 1, "stroke-opacity": more && gn >= 7 ? 0.5 : null }; /* lege buitenste vakken lichter */
@@ -1223,7 +1865,7 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
       else attrs = { d, fill: col(kw), "fill-opacity": dim ? 0.06 : p.st === "D" ? 0.05 : p.st === "C" ? 0.12 : p.st === "B" ? 0.2 : 0.3, stroke: p.st === "C" || p.st === "D" ? col(kw) : "var(--surface)", "stroke-width": p.st === "C" || p.st === "D" ? 1 : 2, "stroke-dasharray": p.st === "D" ? "1 3" : p.st === "C" ? "3 2" : null };
       if (p && twin) Object.assign(attrs, { stroke: "var(--gold)", "stroke-width": labelScale > 1 || gn >= 7 ? 1.5 : 2.5, "stroke-dasharray": null }); /* dunner waar de vakken klein zijn (overzicht, buitenste ringen) */
       const path = el("path", attrs, g);
-      if (p && interactive) { path.setAttribute("class", "seg-path"); clickable(path, () => openProfile(ck), p.n); bindTip(path, tipFor(p) + (twins.length ? `<br><span style="opacity:.8">staat ook als kw ${twins.join(", ")}</span>` : "") + (ck !== kw ? `<br><span style="opacity:.8">op deze plek kw ${kw}</span>` : "")); }
+      if (p && interactive) { path.setAttribute("class", "seg-path"); path.dataset.kw = kw; clickable(path, () => openProfile(ck), p.n); bindTip(path, tipFor(p) + (twins.length ? `<br><span style="opacity:.8">staat ook als kw ${twins.join(", ")}</span>` : "") + (ck !== kw ? `<br><span style="opacity:.8">op deze plek kw ${kw}</span>` : "")); }
       if (p && more && interactive && gn === 9 && (person(fanKw(2 * kw)) || person(fanKw(2 * kw + 1)))) {
         const rr = R[9] + 5, e = Math.min(1.2, 90 / n), [m1, n1] = pt(rr, a0 + e), [m2, n2] = pt(rr, a1 - e);
         const mk = el("path", { d: `M${m1} ${n1}A${rr} ${rr} 0 0 1 ${m2} ${n2}`, class: "fan-more", stroke: col(kw) }, g);
@@ -1238,13 +1880,15 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
           const fs = fanFs(gn) * labelScale;
           if (gn === 2 && labelScale > 1) { /* grote letters: vanaf de rand van het midden naar buiten, zodat de naam de cirkel niet raakt */
             const left = cx < 0; txt(lab, left ? -(R[1] + 8) : R[1] + 8, cy + fs / 3, l1, { "text-anchor": left ? "end" : "start", "font-size": fs, "font-weight": 600 });
-          } else
+          } else if (gn === 3) { /* the grandparents follow the ring, like the rings further out */
+            arcLabel(lab, kw, a0, a1, r0, r1, labelScale === 1 ? [[l1, fs, { "font-weight": 600 }], [trunc(l2, 18), fs - 3, { fill: "var(--muted)" }]] : [[l1, fs, { "font-weight": 600 }]]);
+          } else {
           txt(lab, cx, cy - 2, l1, { "text-anchor": "middle", "font-size": gn === 2 ? Math.min(fs, (R[2] - R[1] - 18) / (l1.length * 0.56)) : fs, "font-weight": 600 }); /* ring 2 is smal: een lange naam wordt kleiner */
-          if (labelScale === 1) txt(lab, cx, cy + fs, trunc(l2, 14), { "text-anchor": "middle", "font-size": gn === 2 ? Math.min(fs - 3, (R[2] - R[1] - 18) / (trunc(l2, 14).length * 0.56)) : fs - 3, fill: "var(--muted)" }); /* op het overzicht alleen voornamen (grotere letters, anders botst de achternaam met het midden) */
+          const f2 = gn === 2 ? Math.min(fs - 3, (R[2] - R[1] - 18) / (trunc(l2, 14).length * 0.56)) : fs - 3;
+          if (labelScale === 1 && (!minPx || (gn !== 2 && f2 * scale >= minPx))) txt(lab, cx, cy + fs, trunc(l2, 14), { "text-anchor": "middle", "font-size": f2, fill: "var(--muted)" }); /* on paper (minPx) the parents by first name only: their surnames do not fit the narrow ring at 6 pt */
+          } /* op het overzicht alleen voornamen (grotere letters, anders botst de achternaam met het midden) */
         } else if (labelScale > 1 && gn === 4) { /* overzicht: generatie 4 langs de boog, daar is ruimte voor de hele voornaam */
-          const fs = fanFs(gn) * labelScale, an = ((am % 360) + 360) % 360, rot = an > 0 && an < 180 ? an - 90 : an + 90;
-          const t = el("g", { transform: `translate(${cx} ${cy}) rotate(${rot})` }, lab);
-          txt(t, 0, fs / 3, trunc(l1, Math.floor(2 * Math.PI * rm / n * 0.85 / (fs * 0.56))), { "text-anchor": "middle", "font-size": fs, "font-weight": 600 });
+          arcLabel(lab, kw, a0, a1, r0, r1, [[l1, fanFs(gn) * labelScale, { "font-weight": 600 }]]);
         } else {
           const fs = fanFs(gn) * labelScale, max = Math.floor((r1 - r0) * 0.92 / (fs * 0.56));
           const flip = am > 90 && am < 270, t = el("g", { transform: `translate(${cx} ${cy}) rotate(${flip ? am + 180 : am})` }, lab);
@@ -1280,6 +1924,32 @@ function drawFan(host, { maxGen = 9, labelGen = 7, interactive = true, highlight
     txt(g, kx, ky, root > 1 ? "moeder" + who : "moeders kant", { "font-size": kantFs, fill: "var(--muted)", "text-anchor": more ? "start" : "end", "font-family": "var(--mono)" });
   }
   host.innerHTML = ""; host.appendChild(svg);
+  if (interactive) fanToetsen(host, svg, root);
+}
+/* de waaier met het toetsenbord: één Tab-stop; pijl links en rechts langs een ring, omhoog naar de ouders, omlaag naar het kind,
+   Home naar de ouders van het midden; Enter of spatie opent het profiel. De laatst gekozen persoon houdt de focus na een herteken. */
+function fanToetsen(host, svg, root) {
+  const cells = [...svg.querySelectorAll(".seg-path[data-kw]")]; if (!cells.length) return;
+  const by = new Map(cells.map(c => [+c.dataset.kw, c]));
+  cells.forEach(c => c.setAttribute("tabindex", "-1")); svg.querySelectorAll(".fan-more").forEach(c => c.setAttribute("tabindex", "-1"));
+  const start = by.get(host._fanFocus) || by.get(root * 2) || by.get(root * 2 + 1) || cells[0];
+  start.setAttribute("tabindex", "0");
+  svg.setAttribute("aria-label", (svg.getAttribute("aria-label") || "Waaier") + ". Pijltoetsen: links en rechts langs een ring, omhoog naar de ouders, omlaag naar het kind; Enter opent het profiel.");
+  const zet = c => { cells.forEach(x => x.setAttribute("tabindex", "-1")); c.setAttribute("tabindex", "0"); c.focus(); host._fanFocus = +c.dataset.kw; };
+  svg.addEventListener("keydown", e => {
+    const c = e.target.closest(".seg-path[data-kw]"); if (!c) return;
+    const kw = +c.dataset.kw, d = gen(kw) - gen(root), lo = root * 2 ** d, hi = lo + 2 ** d - 1;
+    const ring = s => { for (let k = kw + s, i = 0; i <= hi - lo; i++, k += s) { if (k > hi) k = lo; if (k < lo) k = hi; if (by.has(k)) return by.get(k); } return null; };
+    let t;
+    if (e.key === "ArrowRight") t = ring(1); else if (e.key === "ArrowLeft") t = ring(-1);
+    else if (e.key === "ArrowUp") t = by.get(kw * 2) || by.get(kw * 2 + 1);
+    else if (e.key === "ArrowDown") t = by.get(kw >> 1);
+    else if (e.key === "Home") t = by.get(root * 2) || by.get(root * 2 + 1);
+    else return;
+    e.preventDefault(); if (t) zet(t);
+  });
+  svg.addEventListener("focusin", e => { const c = e.target.closest(".seg-path[data-kw]"); if (c) host._fanFocus = +c.dataset.kw; });
+  if (host._fanHerstel) { host._fanHerstel = false; start.focus({ preventScroll: true }); }
 }
 /* ---------- waaier op het overzicht ---------- */
 /* Op het overzicht is de waaier veel kleiner dan op de stamboompagina (op 1366 px ±490 px tegen ±850 px). Daarom grotere
@@ -1302,7 +1972,7 @@ function heroFan() {
     host.title = "Kleur: familie; hoe voller het vak, hoe sterker het bewijs" + (goud ? "; goud: dezelfde voorouder twee keer" : "") + ".";
     const ln = LINE_KEYS.filter(l => LINES[l]);
     note.innerHTML = `<div class="fan-legend${T.key === "s" ? " twee" : ""}" aria-label="De families">${ln.map(l => `<button type="button" class="fl-it" style="--c:var(--l${l})" data-go="stamboom-${l}" data-fl="${l}" title="Familie ${esc(LINES[l].name)} in het midden van de waaier"><i></i>${esc(LINES[l].name)}</button>`).join("")}</div>
-      <p class="ov-more"><button type="button" class="ov-link" id="heroFanOpen">Open de hele waaier →</button><span aria-hidden="true" style="color:var(--faint)"> · </span><a class="ov-link" href="#${T.prefix}boom" data-go="boom">Open de boom →</a></p>`;
+      <div class="fan-acts"><button type="button" class="btn" id="heroFanOpen">${navIco("stamboom")}Hele waaier</button><a class="btn" href="#${T.prefix}boom" data-go="boom">${navIco("boom")}Boom</a></div>`;
     $("#heroFanOpen").onclick = () => { fanRoot = 1; go("stamboom"); };
     /* aanwijzen of focus op een familie: die lijn licht op in de waaier, de rest dimt (met een muis, of met het toetsenbord) */
     const licht = l => { drawFan(host, { maxGen: 9, labelGen: 4, labelScale: 1.6, minPx: 8, highlightLine: l }); $$("[tabindex]", host).forEach(n => n.setAttribute("tabindex", "-1")); };
@@ -1660,10 +2330,10 @@ function renderOverzicht() {
   $("#v-overzicht").innerHTML = `
     <div class="hero">
       <div>
-        <div class="eyebrow">Stamboom van ${esc(T.rootFull)} · <span class="nw">${esc(VERSION).split(" · ").join('</span> · <span class="nw">')}</span></div>
+        <div class="eyebrow">Stamboom van ${esc(T.rootFull)} · <span class="nw">bijgewerkt ${esc(String(VERSION).split(" · ").pop())}</span></div>
         <h1>${T.TXT.heroTitle || "Boeren, veehouders en grutters uit <em>Friesland</em> en de Kop van Overijssel"}</h1>
         <p class="lede">${esc(heroLedeTekst(oldest))}</p>
-        <div class="stats">${[[H.n, "voorouders", H.weak ? `waarvan ${H.weak} onzeker gekoppeld (C of D)` : "allemaal bewezen gekoppeld"], [H.genProven, "generaties bewezen", H.genAll > H.genProven ? `met aanwijzingen tot ${H.genAll}` : ""], [S.nPlaces, "plaatsen", ""], [H.yearProven < 9999 ? H.yearProven : "–", "oudste bewezen jaar", H.yearAll <= H.yearProven - 10 ? `met aanwijzingen: ${H.yearAll}` : ""]].map(s => `<div class="stat"><b>${s[0]}</b><span>${s[1]}</span>${s[2] ? `<small>${s[2]}</small>` : ""}</div>`).join("")}</div>
+        <a class="stats" href="#${T.prefix}cijfers" data-go="cijfers" aria-label="Kerncijfers; meer in In getallen">${[[H.n, "voorouders", H.weak ? `Van ${H.weak} is de koppeling onzeker (C of D)` : ""], [H.genProven, "generaties", `Bewezen met akten${H.genAll > H.genProven ? `; met aanwijzingen ${H.genAll}` : ""}`], [S.nPlaces, "plaatsen", ""], [H.yearProven < 9999 ? H.yearProven : "–", "oudste jaar", `Bewezen met akten${H.yearAll <= H.yearProven - 10 ? `; met aanwijzingen ${H.yearAll}` : ""}`]].map(s => `<div class="stat"${s[2] ? ` title="${esc(s[2])}"` : ""}><b>${s[0]}</b><span>${s[1]}</span></div>`).join("")}</a>
         <div class="cta"><button class="btn primary" data-go="stamboom">Bekijk de stamboom</button>${T.key === "s" && typeof renderVerbanden === "function" ? `<button class="btn" data-go="verbanden">Waar de families elkaar kruisten</button>` : ""}${RENDER.zoeken && typeof zoekItems === "function" && zoekItems().length ? `<button type="button" class="ov-link cta-zoek" data-go="zoeken">${zoekItems().length} open vragen: help mee zoeken →</button>` : ""}</div>
       </div>
     ${(() => { const st = STORIES.length ? pickStories(1)[0] : null; return `<div class="ingangen">
@@ -1694,17 +2364,17 @@ function renderOverzicht() {
     </div>
     <div class="section-head"><h2>${navIco("meer")} Verder op deze site</h2><p>Van het grote plaatje tot de akte.</p></div>
     ${RENDER.boek ? `<a class="ov-boek" href="#${T.prefix}boek" data-go="boek"><span class="ov-boek-omslag" aria-hidden="true"><span class="ov-boek-t">De voorouders van ${esc(T.rootFull || T.root).replace(/ (de|van|ter|ten|der|den) (\S+)$/, " $1\u00a0$2")}</span><span class="ov-boek-rug">${LINE_KEYS.filter(l => LINES[l]).map(l => `<i style="background:var(--l${l})"></i>`).join("")}</span></span>
-      <span class="ov-boek-tx"><b>Het boek</b><span>De stamboom als boek om te laten drukken: per familie de verhalen en alle voorouders, met inhoud, register en bronnen. Kies hoe uitgebreid, en maak er een pdf van.</span><span class="ov-link">Maak er een boek van →</span></span></a>` : ""}
+      <span class="ov-boek-tx"><b>Het boek</b><span>De stamboom als boek om te laten drukken: per familie de verhalen en alle voorouders, met inhoud, register en bronnen.</span><span class="ov-link">Maak er een boek van →</span></span></a>` : ""}
     <div class="layers${RENDER.verwant || RENDER.zoeken ? " c4" : ""}">
       ${[["stamboom", "fan", "Stamboom", "Alle voorouders in een waaier, of stap voor stap terug in de boom."],
-         ["families", "fam", "Families", "De acht familielijnen, elk met eigen verhaal, stamvaders en plaatsen."],
+         ["families", "fam", "De acht families", "De acht familielijnen, elk met eigen verhaal, stamvaders en plaatsen."],
          ["personen", "card", "Personen", "Een profiel per persoon: data, familie, levensloop, scans en bronnen."],
-         ...(RENDER.verwant ? [["verwant", "rel", "Hoe zijn we familie?", "Kies twee personen en zie langs welke voorouders ze verwant zijn."]] : []),
+         ...(RENDER.verwant ? [["verwant", "rel", "Hoe zijn we familie?", "Langs welke voorouders twee mensen verwant zijn, en in welke graad."]] : []),
          ["verhalen", "book", "Verhalen", T.TXT.layerVerhalen || "De rode draden: de naam De Groot, het katholieke leven, verhuizingen."],
          ["tijdlijn", "clock", "Tijdlijn", "Welke levens elkaar overlapten, tegen de achtergrond van hun tijd."],
          ["kaart", "pin", "Kaart", "Wie woonde waar, en hoe de families zich verplaatsten."],
          ["beeld", "photo", "Beeld", "Portretten, bidprentjes, oude foto's van de dorpen en duizenden beelden uit de archieven."],
-         ["cijfers", "chart", "Cijfers", "Levensduur, trouwdagen, namen, beroepen en geld, berekend uit de akten."],
+         ["cijfers", "chart", "In getallen", "Levensduur, trouwdagen, namen, beroepen en geld, berekend uit de akten."],
          ["verwanten", "star", "Bekende verwanten", T.TXT.layerVerwanten || "Een heilige, een kanunnik, en wat er van adel en macht klopt."],
          ["bronnen", "archive", "Bronnen", "Hoe betrouwbaar alles is, wat nog open staat en waar je verder zoekt."],
          ...(RENDER.zoeken ? [["zoeken", "ask", "Help mee zoeken", "Open vragen in de stamboom: in welk archief het antwoord ligt en hoe je het vindt."]] : [])].map(l => `<button class="layer" data-go="${l[0]}">${navIco(l[0])}<span><h3>${l[2]}</h3><p>${l[3]}</p></span></button>`).join("")}
@@ -1738,9 +2408,15 @@ function famCard(l) {
 }
 
 /* ---------- stamboom ---------- */
+let fanAlleGen = false;
+document.addEventListener("click", e => { if (e.target.closest("[data-fan-gen]")) { fanAlleGen = !fanAlleGen; renderStamboom(route.sub); } });
 function renderStamboom(sub) {
   fanRoot = fanRootOk(sub) ? sub : 1; if (fanRoot > 1) mode = "fan";
-  drawFan($("#fan"), { maxGen: 9, labelGen: 7, root: fanRoot, more: true }); fanCrumbs(); fanJump(); fanLede();
+  /* telefoon: de namen worden met 9 ringen te klein (2–5 px); daarom standaard 6 ringen met grotere namen, en een knop voor alle generaties */
+  const smal = innerWidth < 620, licht = smal && !fanAlleGen;
+  drawFan($("#fan"), licht ? { maxGen: 5, labelGen: 5, root: fanRoot, more: true, labelScale: 2.4, minPx: 8 } : { maxGen: 9, labelGen: 7, root: fanRoot, more: true }); fanCrumbs(); fanJump(); fanLede();
+  let knop = $("#fanGenKnop"); if (!knop) { knop = document.createElement("p"); knop.id = "fanGenKnop"; knop.className = "fan-gen-knop"; $("#fan").insertAdjacentElement("afterend", knop); }
+  knop.hidden = !smal; knop.innerHTML = smal ? `<button type="button" class="btn" data-fan-gen>${licht ? "Toon alle generaties" : "Toon 5 generaties, met grotere namen"}</button>` : "";
   let comp = "";
   const fr = fanRoot, maxG = fr > 1 ? fanRelGens(fr) : Math.max(...ancestors.map(p => gen(p.kw)));
   for (let g = 2; g <= maxG; g++) {
@@ -1842,7 +2518,8 @@ function syncLineChips() { $("#lineChips").innerHTML = lineChipsHtml(cardState.l
 function genFoldToggle(e) { const d = e.target; if (!d.matches || !d.matches(".gen-fold")) return; d.open ? cardState.open.add(+d.dataset.g) : cardState.open.delete(+d.dataset.g); }
 function renderPersonen() {
   $("#genSel").innerHTML = `<option value="all">Alle generaties</option>` + Array.from({ length: Math.max(...ancestors.map(p => gen(p.kw))) }, (_, i) => `<option value="${i + 1}">Generatie ${ROMAN[i + 1]} · ${GEN_NAME[i + 1]}</option>`).join("");
-  $("#stChips").innerHTML = ["A", "B", "C", "D"].map(s => `<button class="chip st-${s}" aria-pressed="false" data-s="${s}">status ${s}</button>`).join("");
+  $("#genSel").value = String(cardState.gen); $("#sortSel").value = cardState.sort; /* a rebuilt page keeps the choices (see trimViews) */
+  $("#stChips").innerHTML = ["A", "B", "C", "D"].map(s => `<button class="chip st-${s}" aria-pressed="${cardState.st.has(s)}" data-s="${s}">status ${s}</button>`).join("");
   $$("#stChips [data-s]").forEach(b => b.onclick = () => { const s = b.dataset.s; cardState.st.has(s) ? cardState.st.delete(s) : cardState.st.add(s); b.setAttribute("aria-pressed", cardState.st.has(s)); renderCards(); });
   $("#q").oninput = e => { cardState.q = norm(e.target.value); renderCards(); };
   $("#genSel").onchange = e => { cardState.gen = e.target.value; renderCards(); };
@@ -1876,6 +2553,15 @@ function cardHtml(p) {
     ${p.occ ? `<div class="occ">${esc(p.occ.split(";")[0])}</div>` : ""}
     <div class="foot">${stTag(p.st, true)}${unc ? `<span class="unc" title="Sommige gegevens zijn onzekerder dan het profiel als geheel">deels onzeker</span>` : ""}${chgOf(p.kw) === "new" ? chgTag(p.kw) : ""}</div></button>`; /* onderaan alleen het bewijs, en "nieuw"; "bijgewerkt" staat op bijna elke kaart en zegt daar niets */
 }
+/* sort "op achternaam" like the Namenregister: the surname without its prefix (De Groot under G), then the given names; before 1811 the patronymic */
+const cardSurKey = p => { const sn = splitName(p.n), sur = sn.sur || "", m = PREFIX.exec(sur), given = [].concat(sn.given || []).join(" ");
+  return sur ? norm((m ? m[2] : sur) + " " + given) : "\uffff" + norm(given); }; /* only a given name: at the end */
+/* back to everyone: search term and filters off (the sorting stays) */
+function cardsReset() {
+  Object.assign(cardState, { q: "", gen: "all", chg: null }); cardState.lines.clear(); cardState.st.clear();
+  const q = $("#q"); if (q) { q.value = ""; q.focus(); } const g = $("#genSel"); if (g) g.value = "all";
+  $$("#stChips [data-s]").forEach(b => b.setAttribute("aria-pressed", "false")); syncLineChips(); syncChgChips(); renderCards();
+}
 function renderCards() {
   const s = cardState; filterCount();
   let list = all.filter(p => {
@@ -1886,9 +2572,11 @@ function renderCards() {
     if (s.q) { const hay = norm([p.n, p.alt, p.roep, p.occ, placeName(p.bp), placeName(p.dp), ...(p.res || []).map(r => placeName(r.p)), ...(p.notes || []).map(n => noteObj(n).t), ...(p.sibs || []), ...(p.kids || [])].join(" ")); if (!s.q.split(/\s+/).every(t => hay.includes(t))) return false; }
     return true;
   });
-  const sorter = { kw: (a, b) => a.kw - b.kw, b: (a, b) => (yr(a.b) || yr(a.d) || 9999) - (yr(b.b) || yr(b.d) || 9999), n: (a, b) => a.n.localeCompare(b.n, "nl") }[s.sort];
+  const sorter = { kw: (a, b) => a.kw - b.kw, b: (a, b) => (yr(a.b) || yr(a.d) || 9999) - (yr(b.b) || yr(b.d) || 9999), n: (a, b) => cardSurKey(a).localeCompare(cardSurKey(b), "nl") || a.kw - b.kw }[s.sort];
   list.sort(sorter);
-  if (!list.length) { $("#cardsOut").innerHTML = `<div class="empty">Geen profielen gevonden voor deze filters.</div>`; return; }
+  const raw = ($("#q") || {}).value || "", active = s.gen !== "all" || s.q || s.lines.size || s.st.size || s.chg;
+  const cnt = $("#cardsCount"); if (cnt) cnt.textContent = active && list.length ? `${nl(list.length)} ${list.length === 1 ? "persoon" : "personen"}` : "";
+  if (!list.length) { $("#cardsOut").innerHTML = `<div class="empty"><p>Niemand gevonden${raw.trim() ? ` met ‘${esc(raw.trim())}’` : ""}.</p><button type="button" class="btn" id="cardsReset">Wis zoekterm en filters</button></div>`; $("#cardsReset").onclick = cardsReset; return; }
   if (s.sort !== "kw") { $("#cardsOut").innerHTML = `<div class="cards" style="margin-top:20px">${list.map(cardHtml).join("")}</div>`; return; }
   const byGen = {}; list.forEach(p => (byGen[gen(p.kw)] = byGen[gen(p.kw)] || []).push(p));
   /* Zonder filter klappen generatie VI en ouder in (anders is de pagina op een telefoon tienduizenden pixels lang);
@@ -1949,7 +2637,7 @@ function renderTijdlijn() {
   $("#tlByLine").onclick = () => { tlState.by = "line"; $("#tlByLine").setAttribute("aria-pressed", true); $("#tlByYear").setAttribute("aria-pressed", false); drawTimeline(); };
   $("#tlByYear").onclick = () => { tlState.by = "year"; $("#tlByYear").setAttribute("aria-pressed", true); $("#tlByLine").setAttribute("aria-pressed", false); drawTimeline(); };
   syncTlChips();
-  $("#contextCards").innerHTML = CONTEXT.map(c => `<article class="fact"><span class="yr"><span>${c.y}${c.y2 ? "–" + c.y2 : ""}</span></span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p></article>`).join("");
+  const cc = $("#contextCards"); if (cc) cc.innerHTML = CONTEXT.map(c => `<article class="fact"><span class="yr"><span>${c.y}${c.y2 ? "–" + c.y2 : ""}</span></span><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p></article>`).join("");
   drawTimeline();
 }
 /* onder de tijdlijn: per periode de oude beelden waar de meeste (getoonde) voorouders toen woonden, van oud naar nieuw */
@@ -1974,8 +2662,9 @@ function drawTimeline() {
   const { X, ticks, deco } = tlScale(rows.filter(r => r.p).map(r => r.p), left, right, y1); /* beginjaar uit de getoonde rijen; vóór 1700 ingekort */
   /* gebeurtenissen bovenaan: elk label op de eerste rij waar het niet overlapt */
   const ctx = CONTEXT.filter(c => c.tl !== false).slice().sort((a, b) => a.y - b.y), ends = [];
-  ctx.forEach(c => { const x0 = X(c.y), w = (String(c.y).length + 1 + c.t.length) * 6.3 + 10; let r = ends.findIndex(e => e < x0); if (r < 0) { r = ends.length; ends.push(0); } ends[r] = x0 + w; c._r = r; });
-  const top = 22 + ends.length * 17, rh = tlNarrow() ? 28 : 21, hh = 30; /* telefoon: hogere rijen voor grotere namen */
+  const efs = tlNarrow() ? 17 : 11.5, eh = tlNarrow() ? 24 : 17; /* phone: the bars scale to ±0.64, so 17 reads as ±11 px */
+  ctx.forEach(c => { const x0 = X(c.y), w = (String(c.y).length + 1 + c.t.length) * efs * 0.55 + 10; let r = ends.findIndex(e => e < x0); if (r < 0) { r = ends.length; ends.push(0); } ends[r] = x0 + w; c._r = r; });
+  const top = 22 + ends.length * eh, rh = tlNarrow() ? 28 : 21, hh = 30; /* telefoon: hogere rijen voor grotere namen */
   let y = top; rows.forEach(r => { r.y = y; y += r.h || (r.head ? hh : rh); });
   const H = y + 30;
   /* twee svg's met dezelfde schaal: namen blijven staan, de balken scrollen (telefoon) */
@@ -1985,12 +2674,12 @@ function drawTimeline() {
   CONTEXT.filter(c => c.y2 && c.tl !== false).forEach(c => el("rect", { x: X(c.y), y: top - 6, width: X(c.y2) - X(c.y), height: H - top - 22, fill: "var(--gold)", "fill-opacity": 0.08 }, bands));
   deco(bands, top, H); for (const t of ticks) {
     el("line", { x1: X(t), x2: X(t), y1: top - 8, y2: H - 22, stroke: "var(--rule)", "stroke-width": t % 100 === 0 ? 1.2 : 0.6 }, bands);
-    if (t % 50 === 0) txt(bands, X(t), H - 8, t, { "text-anchor": "middle", "font-size": 11, fill: "var(--muted)", "font-family": "var(--mono)" });
+    if (t % 50 === 0) txt(bands, X(t), H - 8, t, { "text-anchor": "middle", "font-size": tlNarrow() ? 17 : 11, fill: "var(--muted)", "font-family": "var(--mono)" });
   }
   ctx.forEach(c => {
-    const ly = 14 + c._r * 17;
+    const ly = (tlNarrow() ? 19 : 14) + c._r * eh;
     el("line", { x1: X(c.y), x2: X(c.y), y1: ly + 4, y2: H - 22, stroke: "var(--gold)", "stroke-dasharray": "2 3", "stroke-width": 1 }, bands);
-    const t = txt(bands, X(c.y) + 4, ly, `${c.y} ${c.t}`, { "font-size": 11.5, fill: "var(--gold)" });
+    const t = txt(bands, X(c.y) + 4, ly, `${c.y} ${c.t}`, { "font-size": efs, fill: "var(--gold)" });
     bindTip(t, `<b>${c.y} · ${esc(c.t)}</b><br>${esc(c.d)}`);
   });
   const g = el("g", {}, svg), gn = el("g", {}, names);
@@ -2012,16 +2701,23 @@ function drawTimeline() {
     row.addEventListener("click", () => openProfile(p.kw));
     bindTip(row, tipFor(p) + (my ? `<br><span style="opacity:.8">getrouwd ${my}</span>` : ""));
   });
-  const host = $("#timeline"); host.innerHTML = "";
+  const host = $("#timeline"), was = $(".tl-bars", host), keep = was ? was.scrollLeft : null; host.innerHTML = "";
   const nc = document.createElement("div"); nc.className = "tl-names"; nc.appendChild(names);
   const bc = document.createElement("div"); bc.className = "tl-bars scroll-x"; bc.appendChild(svg);
   host.append(nc, bc);
+  /* a redraw keeps the scroll position; the first time on a phone the window opens on the middle of the birth years, not on the earliest */
+  if (keep !== null) bc.scrollLeft = keep;
+  else if (bc.scrollWidth > bc.clientWidth + 4) requestAnimationFrame(() => {
+    const ys = rows.filter(r => r.p).map(r => start(r.p)).filter(Boolean).sort((a, b) => a - b); if (!ys.length) return;
+    const k = svg.getBoundingClientRect().width / (W - left);
+    bc.scrollLeft = Math.max(0, (X(ys[ys.length >> 1]) - left) * k - bc.clientWidth / 2);
+  });
 }
 
 /* ---------- kaart ---------- */
 /* mode: "ooit" = iedereen met een gebeurtenis tot en met het jaar (stippen blijven staan); "levend" = alleen wie in dat jaar leeft,
    op de laatst bekende woonplaats. De keuze staat niet in de hash (vorige/volgende gaan niet door elk jaar), wel in localStorage. */
-const mapState = { year: 2026, lines: new Set(), moves: true, place: null, mode: (() => { try { return localStorage.getItem("stamboom-kaart-modus") === "levend" ? "levend" : "ooit"; } catch (e) { return "ooit"; } })() };
+const mapState = { year: 2026, lines: new Set(), moves: true, place: null, zoom: 1, cx: null, cy: null, mode: (() => { try { return localStorage.getItem("stamboom-kaart-modus") === "levend" ? "levend" : "ooit"; } catch (e) { return "ooit"; } })() };
 const MAP_EST = 70; /* zonder sterfjaar: leeft tot 70 jaar na het begin, of tot de laatste bekende gebeurtenis als die later is */
 /* levensspanne voor de kaart: begin = geboorte of eerste gebeurtenis, eind = sterfjaar of schatting; levenden nooit */
 function mapSpan(kw, evs) {
@@ -2086,6 +2782,7 @@ function aggregate(ev) {
 }
 function renderMap() {
   if (!rendered.kaart) return;
+  hideTip(); /* the dots are drawn anew: the one under the pointer never sends pointerleave */
   let ev = EVENTS.filter(e => e.y <= mapState.year && (!mapState.lines.size || mapState.lines.has(lineOf(e.kw))) && (!mapFocusPerson || e.kw === mapFocusPerson));
   let path = ev; mapState.est = new Set();
   if (mapState.mode === "levend") {
@@ -2099,7 +2796,12 @@ function renderMap() {
       path.push(...es); ev.push(es[es.length - 1]); if (s.est) mapState.est.add(+k);
     });
   }
-  const svg = el("svg", { viewBox: `0 0 ${MW} ${MH}`, role: "img", "aria-label": "Kaart van Noord-Nederland met woonplaatsen van de voorouders" });
+  /* zoom (buttons, pinch, drag when zoomed in): the visible part of the map; k = map units per screen pixel, so names and dots keep a
+     readable size on a phone */
+  const host = $("#map"), z = mapState.zoom = Math.min(8, Math.max(1, mapState.zoom || 1)), vw = MW / z, vh = MH / z;
+  const k = 1 / (Math.min((host.clientWidth || MW) / MW, innerHeight * 0.86 / MH) * z);
+  mapState.cx = Math.min(MW - vw / 2, Math.max(vw / 2, mapState.cx ?? MW / 2)); mapState.cy = Math.min(MH - vh / 2, Math.max(vh / 2, mapState.cy ?? MH / 2));
+  const svg = el("svg", { viewBox: `${(mapState.cx - vw / 2).toFixed(1)} ${(mapState.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`, role: "img", "aria-label": "Kaart van Noord-Nederland met woonplaatsen van de voorouders" });
   drawBase(svg);
   if (mapState.moves) {
     const mv = el("g", { fill: "none", "stroke-width": 1.6, "stroke-linecap": "round" }, svg);
@@ -2118,24 +2820,48 @@ function renderMap() {
   const list = aggregate(ev);
   const dots = el("g", {}, svg), labels = el("g", { "pointer-events": "none" }, svg);
   list.forEach(a => {
-    const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), n = a.people.size, r = 4 + 2.4 * Math.sqrt(n);
+    const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), n = a.people.size, r = Math.max((4 + 2.4 * Math.sqrt(n)) / Math.sqrt(z), 3.5 * k);
     const dom = +Object.entries(a.lines).sort((p, q) => q[1] - p[1])[0][0];
     const sel = mapState.place === a.key;
     const gg = el("g", { class: "place-dot" }, dots);
+    el("circle", { cx: x, cy: y, r: Math.max(r, 11 * k), fill: "transparent" }, gg); /* a target of at least 22 screen pixels */
     el("circle", { class: "d", cx: x, cy: y, r, fill: dom ? `var(--l${dom})` : "var(--accent)", "fill-opacity": 0.85, stroke: sel ? "var(--ink)" : "var(--surface)", "stroke-width": sel ? 2.5 : 1.5 }, gg);
-    clickable(gg, () => mapPick(a.key), placeName(a.key));
+    clickable(gg, () => mapPick(a.key), placeName(a.key)); gg.setAttribute("tabindex", "-1"); /* the list beside the map is the route for the keyboard (not ±200 dots) */
     bindTip(gg, `<b>${esc(placeName(a.key))}</b><br>${n} ${n === 1 ? "persoon" : "personen"}`);
   });
   const placed = []; /* plaatsnamen: de gekozen plaats eerst, daarna de grootste; een naam die een eerdere raakt, vervalt */
   list.map((a, i) => [a, i]).sort((p, q) => (q[0].key === mapState.place) - (p[0].key === mapState.place) || p[1] - q[1]).forEach(([a, i]) => {
-    if (i > 14 && mapState.place !== a.key && !mapFocusPerson) return;
-    const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), r = 4 + 2.4 * Math.sqrt(a.people.size);
-    if (!labelFits(placed, x + r + 3, y + 4, a.key, 12) && mapState.place !== a.key) return;
-    el("text", { x: x + r + 3, y: y + 4, "font-size": 12, fill: "var(--surface)", stroke: "var(--surface)", "stroke-width": 3, "stroke-linejoin": "round" }, labels).textContent = a.key;
-    txt(labels, x + r + 3, y + 4, a.key, { "font-size": 12, fill: "var(--ink)" });
+    if (i > 14 * z && mapState.place !== a.key && !mapFocusPerson) return;
+    const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), r = Math.max((4 + 2.4 * Math.sqrt(a.people.size)) / Math.sqrt(z), 3.5 * k), fs = Math.max(12 / z, 11.5 * k); /* ±11.5 px on screen */
+    if (!labelFits(placed, x + r + 3 * k, y + fs / 3, a.key, fs) && mapState.place !== a.key) return;
+    el("text", { x: x + r + 3 * k, y: y + fs / 3, "font-size": fs, fill: "var(--surface)", stroke: "var(--surface)", "stroke-width": 3 * k, "stroke-linejoin": "round" }, labels).textContent = a.key;
+    txt(labels, x + r + 3 * k, y + fs / 3, a.key, { "font-size": fs, fill: "var(--ink)" });
   });
-  $("#map").innerHTML = ""; $("#map").appendChild(svg);
+  host.innerHTML = ""; host.appendChild(svg);
+  host.insertAdjacentHTML("beforeend", `<div class="map-zoom"><button type="button" class="btn" data-mz="2" aria-label="Inzoomen">+</button><button type="button" class="btn" data-mz="0.5" aria-label="Uitzoomen"${z <= 1 ? " disabled" : ""}>−</button></div>`);
+  $(".map-zoom", host).onclick = e => { const b = e.target.closest("[data-mz]"); if (b) { mapState.zoom = z * +b.dataset.mz; renderMap(); } };
+  mapGestures(svg);
   renderMapSide(list);
+}
+/* drag (when zoomed in) and pinch on the map; the page still scrolls when the map is not zoomed in. After a drag no place is chosen. */
+function mapGestures(svg) {
+  svg.style.touchAction = mapState.zoom > 1 ? "none" : "pan-y";
+  const pts = new Map(); let st = null, moved = false;
+  const setVB = () => { const z = mapState.zoom = Math.min(8, Math.max(1, mapState.zoom)), vw = MW / z, vh = MH / z;
+    mapState.cx = Math.min(MW - vw / 2, Math.max(vw / 2, mapState.cx)); mapState.cy = Math.min(MH - vh / 2, Math.max(vh / 2, mapState.cy));
+    svg.setAttribute("viewBox", `${(mapState.cx - vw / 2).toFixed(1)} ${(mapState.cy - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`); };
+  const start = () => { const v = [...pts.values()], r = svg.getBoundingClientRect();
+    st = { x: v[0][0], y: v[0][1], cx: mapState.cx, cy: mapState.cy, z: mapState.zoom, u: (MW / mapState.zoom) / (r.width || 1), d: v.length > 1 ? Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1]) : 0 }; };
+  svg.addEventListener("pointerdown", e => { pts.set(e.pointerId, [e.clientX, e.clientY]); moved = false; start(); });
+  svg.addEventListener("pointermove", e => {
+    if (!pts.has(e.pointerId) || !st) return; pts.set(e.pointerId, [e.clientX, e.clientY]); const v = [...pts.values()];
+    if (v.length > 1 && st.d) { mapState.zoom = st.z * Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1]) / st.d; moved = true; setVB(); }
+    else if (mapState.zoom > 1) { const dx = v[0][0] - st.x, dy = v[0][1] - st.y; if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+      if (moved) { mapState.cx = st.cx - dx * st.u; mapState.cy = st.cy - dy * st.u; setVB(); } }
+  });
+  const end = e => { pts.delete(e.pointerId); if (pts.size) { start(); return; } st = null; if (moved) setTimeout(renderMap, 0); }; /* new names and dot sizes for the new zoom */
+  svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", end);
+  svg.addEventListener("click", e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
 }
 /* past een kaartlabel (tekst links-onder op x,y) zonder een eerder geplaatst label te raken? zo ja: onthoud het vak */
 function labelFits(placed, x, y, s, fs) {
@@ -2160,6 +2886,7 @@ function evList(evs) { return `<ul class="evlist">${evs.map(e => `<li><span clas
 /* de zijbalk scrolt mee met de pagina: na een keuze het begin ervan in beeld halen als dat boven de balk bovenin is verdwenen */
 function mapPick(key) {
   mapState.place = key; renderMap();
+  { const h = key ? $("#mapSide h3") : $("#mapSide [data-place]"); if (h) { if (key) h.tabIndex = -1; h.focus({ preventScroll: true }); } } /* the focus follows the choice */
   const t = $("#mapSide").getBoundingClientRect().top - $(".top").getBoundingClientRect().bottom;
   if (t < 0) window.scrollBy(0, t - 8);
 }
@@ -2348,9 +3075,9 @@ function renderBeeld(view = "beeld") {
   const P = {
     beeld: ["Familie in beeld", "Alles wat over de voorouders zelf bewaard bleef, ook rouwberichten en de beelden bij de verhalen.", "Zoek op naam, plaats of jaar"],
     "beeld-plaatsen": ["Plaatsen en kaarten", "Waar ze gedoopt werden, trouwden en begraven liggen, en hoe het land eruitzag waar ze woonden; ook plekken met een eigen verhaal.", "Zoek een plaats, kerk of kaart"],
-    "beeld-archief": ["Uit de archieven", "Duizenden beelden uit archieven en musea, bij de plaatsen en voorouders uit de stamboom. Kies een plaats, een periode of een soort, of zoek op een woord.", "Zoek op plaats, onderwerp, naam of jaar"] }[view];
+    "beeld-archief": ["Uit de archieven", "Duizenden oude foto's, prenten en kaarten uit archieven en musea, bij de plaatsen en voorouders uit de stamboom.", "Zoek op plaats, onderwerp, naam of jaar"] }[view];
   const zelf = view === "beeld" ? `<details class="box beeld-zelf"><summary><b>Zelf zoeken in oude kranten</b> <span class="small">kant-en-klare zoekopdrachten in Delpher</span></summary>
-      <p class="small">Pas de woorden aan voor andere namen.</p><div class="chips">${PAPER_SEARCHES.map(x => `<a class="chip" target="_blank" rel="noopener" href="${esc(x[1])}">${esc(x[0])}</a>`).join("")}</div></details>`
+      <div class="chips">${PAPER_SEARCHES.map(x => `<a class="chip" target="_blank" rel="noopener" href="${esc(x[1])}">${esc(x[0])}</a>`).join("")}</div></details>`
     : view === "beeld-plaatsen" ? `<details class="box beeld-zelf"><summary><b>Meer foto's per plaats</b> <span class="small">fotocollecties op Wikimedia Commons</span></summary>
       <p class="small">Hele fotocollecties van dorpen, kerken en boerderijen.</p><div class="chips">${Object.keys(COMMONS).map(k => `<a class="chip" target="_blank" rel="noopener" href="${COMMONS_BASE + COMMONS[k]}">${esc(placeName(k))}</a>`).join("")}</div></details>` : "";
   host.innerHTML = `
@@ -2405,7 +3132,7 @@ function drawBeeld() {
       const fa = Object.values(first), step = Math.max(1, fa.length / 12);
       archTodo = Array.from({ length: Math.min(12, fa.length) }, (_, j) => fa[Math.floor(j * step)]);
       const naar = toks.length ? "beeld-archief--zoek-" + kaal(beeldState.raw) : "beeld-archief";
-      h += head("archief", MICON.archief, IMG_KINDS.archief.label, "Een greep uit de oude foto's, prenten en kaarten in archieven en musea. In de verkenner kies je zelf plaats, periode en soort.", all.length)
+      h += head("archief", MICON.archief, IMG_KINDS.archief.label, "Een greep uit de oude foto's, prenten en kaarten in archieven en musea.", all.length)
         + (archTodo.length ? `<div id="archOut" class="capped pgal arch" data-imggroup><p class="small">Beelden laden…</p></div>` : "")
         + `<p class="ov-more"><a class="ov-link" href="#${T.prefix}${naar}" data-go="${naar}">Verken ${toks.length ? "deze" : "alle"} ${all.length.toLocaleString("nl-NL")} archiefbeelden →</a></p>`;
     }
@@ -2447,6 +3174,8 @@ function fillArch(host, items) {
    tegels worden nooit weggehaald) en de filterstand als kaal hash-token: beeld-archief--plaats-leeuwarden--tijd-1900.
    Het raster haalt de miniaturen rechtstreeks uit img/archief/ (het pad volgt uit het id); de packs pas voor de lichtbak. */
 const archSrc = id => "img/archief/" + String(id).toLowerCase().replace(/[^a-z0-9-]/g, "-") + ".jpg";
+/* a tile: the 480 px miniature of a heavy image (img/archief/t/), otherwise the web image itself */
+const archTile = a => a && a.tm ? archSrc(a.id).replace("img/archief/", "img/archief/t/") : archSrc(a.id);
 const ARCH_ID = Object.fromEntries(ARCH_ALL.map(a => [a.id, a]));
 const kaal = s => norm(s).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const ARV = { plaats: "", tijd: "", soort: "", onderwerp: "", voor: "", lijn: "", bron: "", sort: "oud", cap: 600, list: [], shown: 0 };
@@ -2534,7 +3263,7 @@ function arvRender(host, opts = {}) {
   host.innerHTML = `<div class="arv">
     <details class="arv-f"${wide || opts.open ? " open" : ""}><summary>Filters${actief ? ` · ${actief} actief` : ""} · <b>${list.length.toLocaleString("nl-NL")}</b> beelden</summary>
       <div class="arv-fb">
-        <fieldset><legend>Plaats</legend><input type="search" id="arvPq" placeholder="Zoek een plaats" aria-label="Zoek een plaats" value="${esc(opts.pq || "")}"><div class="chips">${chips("plaats", toonP.map(k => [k, placeName(k)]), cP)}</div>${!pq && topP.length > 12 ? `<p class="small">${topP.length} plaatsen; typ om te zoeken.</p>` : ""}</fieldset>
+        <fieldset><legend>Plaats</legend><input type="search" id="arvPq" placeholder="Zoek een plaats" aria-label="Zoek een plaats" value="${esc(opts.pq || "")}"><div class="chips">${chips("plaats", toonP.map(k => [k, placeName(k)]), cP)}</div>${!pq && topP.length > 12 ? `<p class="small">${toonP.length} van de ${topP.length} plaatsen.</p>` : ""}</fieldset>
         <fieldset><legend>Periode</legend><div class="chips">${chips("tijd", ARV_TIJD, tel("tijd"))}</div></fieldset>
         <fieldset><legend>Soort</legend><div class="chips">${chips("soort", ARV_SOORT, tel("soort"))}</div></fieldset>
         <fieldset><legend>Onderwerp</legend><div class="chips">${chips("onderwerp", ARV_OND.map(o => [o[0], o[1]]), tel("onderwerp"))}</div></fieldset>
@@ -2572,7 +3301,7 @@ function arvMeer(n) {
   const g = $("#arvGrid"); if (!g) return;
   const tot = Math.min(ARV.shown + n, ARV.cap, ARV.list.length);
   g.insertAdjacentHTML("beforeend", ARV.list.slice(ARV.shown, tot).map(a => { const tt = archTitle(niceTitle(a), a.pk || a.key);
-    return `<button class="arv-t" data-arv="${esc(a.id)}" aria-label="${esc((a.pk ? placeName(a.pk) + ", " : "") + (a.ys ? yearLabel(a.ys) + ": " : "") + tt)}"><img src="${archSrc(a.id)}" alt="" loading="lazy" decoding="async"><span><small>${esc([a.pk ? placeName(a.pk) : "", a.ys ? yearLabel(a.ys) : ""].filter(Boolean).join(" · "))}</small>${esc(tt)}</span></button>`; }).join(""));
+    return `<button class="arv-t" data-arv="${esc(a.id)}" aria-label="${esc((a.pk ? placeName(a.pk) + ", " : "") + (a.ys ? yearLabel(a.ys) + ": " : "") + tt)}"><img src="${archTile(a)}" alt="" loading="lazy" decoding="async"><span><small>${esc([a.pk ? placeName(a.pk) : "", a.ys ? yearLabel(a.ys) : ""].filter(Boolean).join(" · "))}</small>${esc(tt)}</span></button>`; }).join(""));
   ARV.shown = tot;
   const rest = ARV.list.length - ARV.shown, p = $("#arvMoreP"), b = $("#arvMore");
   if (p) { p.hidden = !rest; if (b) b.textContent = ARV.shown >= ARV.cap ? `Toon de volgende ${Math.min(600, rest).toLocaleString("nl-NL")} (nog ${rest.toLocaleString("nl-NL")}; verfijn eventueel met de filters)` : `Laad meer (nog ${rest.toLocaleString("nl-NL")})`; }
@@ -2659,7 +3388,7 @@ function zoekAuto() {
     if ((st === "C" || st === "D") && kind) { const r = schakelReden(q, st, kind); /* de algemene uitleg van C/D staat al in de kop van de groep; per regel alleen een eigen reden */
       (st === "C" ? kc : kd).push({ p: q, extra: `${isMale(q.kw) ? "vader" : "moeder"} van ${esc(firstName(kind))}${r && r !== STATUS[st].long ? " · " + esc(r) : ""}` }); }
   });
-  const blok = (titel, uitleg, list) => list.length ? `<details class="zk-auto"><summary>${titel} <span class="mono small">${list.length}</span></summary><p class="small">${uitleg}</p>${perLijn(list)}</details>` : "";
+  const blok = (titel, uitleg, list) => list.length ? `<details class="bk zk-auto"><summary>${titel} <span class="mono small">${list.length}</span></summary><p class="small">${uitleg}</p>${perLijn(list)}</details>` : "";
   const h = blok("Waar de lijnen ophouden", "Voorouders van wie geen van beide ouders bekend is. Hier gaat de stamboom niet verder terug.", geen)
     + blok("Eén ouder bekend", "Voorouders van wie maar één ouder bekend is.", een)
     + blok("Koppelingen uit online stambomen (C)", "Een ouder die alleen in een online stamboom of genealogie zonder bron staat. Een akte zou deze stap zeker maken.", kc)
@@ -2670,7 +3399,7 @@ function zoekAuto() {
 function onderzoeksVragen() {
   if (!OPEN_QUESTIONS.length) return "";
   return `<div class="section-head"><h2>Alle onderzoeksvragen</h2><p>Hoe meer bolletjes, hoe meer er van het antwoord afhangt.</p></div>
-    <details class="box zk-auto"><summary>Toon alle onderzoeksvragen <span class="mono small">${OPEN_QUESTIONS.length}</span></summary>
+    <details class="box bk zk-auto"><summary>Toon alle onderzoeksvragen <span class="mono small">${OPEN_QUESTIONS.length}</span></summary>
     <div class="pane scroll-x"><table class="mini stack"><thead><tr><th>Belang</th><th>Vraag</th><th>Waar zoeken</th></tr></thead><tbody>
       ${OPEN_QUESTIONS.slice().sort((a, b) => a.pri - b.pri).map(o => `<tr><td class="y">${"●".repeat(4 - o.pri)}</td><td>${esc(o.q)} <button class="link small" data-open="${o.kw}">kw ${o.kw}</button></td><td class="small" data-l="Waar zoeken">${esc(o.where)}</td></tr>`).join("")}
     </tbody></table></div></details>`;
@@ -2685,7 +3414,7 @@ function renderZoeken() {
   const list = kort ? top : pool;
   host.innerHTML = `<div class="eyebrow"><button class="link" data-go="bronnen">Bronnen</button> › Help mee zoeken</div>
     <h1 class="page-title">Help mee zoeken</h1>
-    <p class="lede">Vaak ligt het antwoord in één bepaald boek of op één scan: een doopboek, een weesakte, een register in een archief. Bij elke vraag staat waar het waarschijnlijk ligt, wat het zou beslissen en of je het vrij online kunt bekijken. Heb je een akte, foto, bidprentje of familiepapier dat iets aanvult? Bij elke vraag en in elk profiel staat de knop ‘Weet je meer?’.</p>
+    <p class="lede">Vaak ligt het antwoord in één boek of op één scan. Bij elke vraag staat waar het waarschijnlijk ligt, wat het zou beslissen en of het vrij online staat. Heb je zelf een akte, foto of bidprentje dat helpt? Daarvoor is de knop ‘Weet je meer?’.</p>
     ${items.length ? `<div class="chips" id="zkChips"><button class="chip" aria-pressed="${!zoekState.online}" data-zk="">Alles <span class="mono">${items.length}</span></button>${soorten.map(o => `<button class="chip" aria-pressed="${zoekState.online === o}" data-zk="${esc(o)}">${esc(o.charAt(0).toUpperCase() + o.slice(1))} <span class="mono">${items.filter(z => z.online === o).length}</span></button>`).join("")}</div>
     <div class="zkgrid">${list.map(zoekCard).join("")}</div>
     ${kort ? ovMore(`id="zkAll"`, `Alle ${pool.length} vragen`) : ""}` : `<div class="empty">Er staan hier nog geen vragen.</div>`}
@@ -2725,8 +3454,8 @@ function renderBronnen() {
   $("#v-bronnen").insertAdjacentHTML("beforeend", gedBlok(true)); /* download als GEDCOM */
 }
 /* filter in een lijst: tekst in een invoerveld verbergt wat niet past en opent de groepen met treffers */
-function bronFilter(input, groups, item, telling, wat) {
-  const tot = groups.reduce((n, g) => n + $$(item, g).length, 0);
+function bronFilter(input, groups, item, telling, wat, total) {
+  const tot = total || groups.reduce((n, g) => n + $$(item, g).length, 0);
   const run = () => {
     const q = norm(input.value.trim()); let n = 0;
     groups.forEach(g => { let m = 0; $$(item, g).forEach(li => { const ok = !q || norm(li.textContent).includes(q); li.hidden = !ok; if (ok) m++; }); g.hidden = !!q && !m; if (q) g.open = m > 0 && m <= 40; n += m; });
@@ -2738,25 +3467,49 @@ function renderTegenstrijdig() {
   const host = $("#v-bronnen-tegenstrijdig");
   if (!CONFLICTS.length) { host.innerHTML = `${bronKop("Tegenstrijdigheden")}<div class="empty">In deze stamboom spreken de bronnen elkaar nergens tegen.</div>`; return; }
   const g = {}; CONFLICTS.forEach(c => { const l = lineOf(c.kw) || 0; (g[l] = g[l] || []).push(c); });
-  host.innerHTML = `${bronKop("Tegenstrijdigheden", `${nl(CONFLICTS.length)} gevallen: een andere datum, een andere naam, of twee kandidaten voor dezelfde ouder. Onder elk geval staat in het kort wat we ermee doen. Geordend per familielijn.`)}
+  host.innerHTML = `${bronKop("Tegenstrijdigheden", `${nl(CONFLICTS.length)} gevallen: een andere datum, een andere naam, of twee kandidaten voor dezelfde ouder. Per familielijn, met wat we aanhouden.`)}
     <div class="toolbar"><input type="search" id="tgQ" placeholder="Zoek op naam, plaats of onderwerp" aria-label="Zoek in de tegenstrijdigheden"><span class="small" id="tgN" aria-live="polite"></span></div>
-    <div class="tg-wrap">${Object.keys(g).sort((a, b) => a - b).map(l => `<details class="box tg-l"><summary><b>${esc(LINES[l] ? "Familie " + LINES[l].name : "Generatie I–III")}</b> <span class="mono small">${g[l].length}</span></summary>
+    <div class="tg-wrap">${Object.keys(g).sort((a, b) => a - b).map(l => `<details class="box bk tg-l"><summary><b>${esc(LINES[l] ? "Familie " + LINES[l].name : "Generatie I–III")}</b> <span class="mono small">${g[l].length}</span></summary>
       ${g[l].map(c => { const p = person(c.kw), nu = String(c.now || "").split(/(?<=\.)\s/)[0]; return `<details class="tg"><summary>${esc(c.topic)}${p && !norm(c.topic).includes(norm(firstName(p))) ? ` <span class="small">· ${esc(p.n)}</span>` : ""}${T.key === "s" && c.side ? " " + sideTag(c.side) : ""}<span class="tg-nu">${esc(trunc(nu, 110))}</span></summary>
         <dl class="tg-dl"><dt>De ene bron</dt><dd>${esc(c.a)}</dd><dt>De andere bron</dt><dd>${esc(c.b)}</dd><dt>Wat we ermee doen</dt><dd>${esc(c.now)}</dd></dl>
         ${p ? `<p class="small" style="margin:6px 0 0"><button class="link" data-open="${c.kw}">Profiel van ${esc(p.n)}</button></p>` : ""}</details>`; }).join("")}</details>`).join("")}</div>`;
   bronFilter($("#tgQ"), $$(".tg-l", host), ".tg", $("#tgN"), "gevallen");
 }
+/* Alle bronnen: a group is filled when it is first opened (or searched, or printed), so the page starts small */
+function bronItem(it) {
+  const ks = [...it.kws].filter(k => person(k) && !person(k).living);
+  return `<li><a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.label)}</a>${ks.length ? `<span class="bl-wie">${ks.slice(0, 2).map(k => `<button type="button" class="link" data-open="${k}" title="kw ${k}">${esc(person(k).n)}</button>`).join(", ")}${ks.length > 2 ? ` en ${ks.length - 2} ${ks.length === 3 ? "ander" : "anderen"}` : ""}</span>` : ""}</li>`;
+}
+function bronVul(g, agg) {
+  if (g.dataset.vol) return; g.dataset.vol = "1";
+  $(".bl-list", g).innerHTML = Object.values(agg[g.dataset.t] || {}).map(bronItem).join("");
+}
 function renderBronLijst() {
   const host = $("#v-bronnen-lijst"), agg = bronAgg(), total = Object.values(agg).reduce((n, o) => n + Object.keys(o).length, 0);
   host.innerHTML = `${bronKop("Alle bronnen", `${nl(total)} bronnen uit de profielen, gegroepeerd per soort: akten, registers, kranten en genealogieën. Bij elke bron staat bij wie hij hoort.`)}
     <div class="toolbar"><input type="search" id="blQ" placeholder="Zoek in de bronnen" aria-label="Zoek in alle bronnen"><span class="small" id="blN" aria-live="polite"></span></div>
-    <div style="display:flex;flex-direction:column;gap:10px">${SRC_ORDER.filter(t => agg[t]).map(t => { const items = Object.values(agg[t]); return `<details class="box bl-g"><summary style="cursor:pointer">${typeof srcIco === "function" ? srcIco(t) : ""}<b>${esc(SRC_MV[t] || t)}</b> <span class="small">${items.length}</span></summary><ul class="bl-list">${items.map(it => { const ks = [...it.kws].filter(k => person(k) && !person(k).living);
-      return `<li><a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.label)}</a>${ks.length ? `<span class="bl-wie">${ks.slice(0, 2).map(k => `<button type="button" class="link" data-open="${k}" title="kw ${k}">${esc(person(k).n)}</button>`).join(", ")}${ks.length > 2 ? ` en ${ks.length - 2} ${ks.length === 3 ? "ander" : "anderen"}` : ""}</span>` : ""}</li>`; }).join("")}</ul></details>`; }).join("")}</div>
-    ${SOURCE_GROUPS.length ? `<details class="box bl-gen"><summary><b>Genealogieën en naslag, naar betrouwbaarheid</b> <span class="small">${SOURCE_GROUPS.reduce((n, g) => n + g[1].length, 0)}</span></summary>
+    <div style="display:flex;flex-direction:column;gap:10px">${SRC_ORDER.filter(t => agg[t]).map(t => `<details class="box bk bl-g" data-t="${esc(t)}"><summary>${typeof srcIco === "function" ? srcIco(t) : ""}<b>${esc(SRC_MV[t] || t)}</b> <span class="small">${Object.keys(agg[t]).length}</span></summary><ul class="bl-list"></ul></details>`).join("")}</div>
+    ${SOURCE_GROUPS.length ? `<details class="box bk bl-gen"><summary><b>Genealogieën en naslag, naar betrouwbaarheid</b> <span class="small">${SOURCE_GROUPS.reduce((n, g) => n + g[1].length, 0)}</span></summary>
     <p class="small">De genealogieën van anderen, ingedeeld naar hoe goed ze hun bronnen noemen, en de naslagwerken. Gebruikt als aanwijzing; een gegeven uit een genealogie heeft status B of C.</p>
     <div class="cols">${SOURCE_GROUPS.map(g => `<div><h3>${esc(g[0])}</h3><ul>${g[1].map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join("")}</ul></div>`).join("")}</div></details>` : ""}`;
-  bronFilter($("#blQ"), $$(".bl-g", host), "li", $("#blN"), "bronnen");
+  const groups = $$(".bl-g", host), q = $("#blQ");
+  groups.forEach(g => { g.addEventListener("toggle", () => { if (g.open) bronVul(g, agg); }); g.addEventListener("vul", () => bronVul(g, agg)); });
+  q.addEventListener("input", () => { if (q.value.trim()) groups.forEach(g => bronVul(g, agg)); });
+  bronFilter(q, groups, "li", $("#blN"), "bronnen", total);
 }
+/* printing a Bronnen page: every card open (and every research question), closed again afterwards */
+let bronDicht = [], zoekPrint = false;
+addEventListener("beforeprint", () => {
+  const v = route && route.view; if (!["bronnen", "bronnen-tegenstrijdig", "bronnen-lijst", "bronnen-over", "zoeken"].includes(v)) return;
+  if (v === "zoeken" && !zoekState.alle && !zoekState.online) { zoekState.alle = zoekPrint = true; renderZoeken(); }
+  const host = $("#v-" + v); if (!host) return;
+  $$(".bl-g", host).forEach(g => { if (!g.dataset.vol) g.dispatchEvent(new Event("vul")); });
+  const dicht = $$("details:not([open])", host).filter(d => !d.hidden); dicht.forEach(d => d.open = true); bronDicht = bronDicht.concat(dicht);
+});
+addEventListener("afterprint", () => {
+  bronDicht.forEach(d => d.open = false); bronDicht = [];
+  if (zoekPrint) { zoekState.alle = zoekPrint = false; if (route.view === "zoeken") renderZoeken(); }
+});
 /* beeldbronnen samengevat: op de basisnaam (Delpher, Tresoar …), met aantallen, de grootste eerst */
 function beeldBronnen(behalve, max = 8) {
   const c = {}; IMGS.forEach(i => { const b = bronOf(i).split(/\s*[,»(:]\s*/)[0].trim() || bronOf(i); if (b !== behalve) c[b] = (c[b] || 0) + 1; });
@@ -2779,10 +3532,10 @@ function renderOverSite() {
     <div class="toolbar"><input type="search" id="bgQ" placeholder="Zoek een begrip" aria-label="Zoek in de begrippen"><span class="small" id="bgN" aria-live="polite"></span></div>
     <div class="box"><dl class="dl bg-dl" style="grid-template-columns:160px minmax(0,1fr)">${GLOSSARY.slice().sort((a, b) => a[0].localeCompare(b[0], "nl")).map(g => `<div class="bg-it"><dt id="${glossId(g[0])}"><b style="color:var(--ink)">${esc(g[0])}</b></dt><dd>${esc(g[1])}${g[2] ? ` <span class="small">Bron: <a href="${esc(g[2][1])}" target="_blank" rel="noopener">${esc(g[2][0])}</a></span>` : ""}</dd></div>`).join("")}</dl></div>
     <div class="section-head" id="bo-wijzigingen"><h2>Wijzigingen</h2><p>Wat er per versie is veranderd.</p></div>
-    <div class="wz">${CHANGELOG.map((c, i) => `<details class="box"${i ? "" : " open"}><summary><b>${esc(c.v)}</b> <span class="small">${esc(c.d)} · ${c.items.length} ${c.items.length === 1 ? "punt" : "punten"}</span></summary><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>`).join("")}</div>
+    <div class="wz">${CHANGELOG.map((c, i) => `<details class="box bk"${i ? "" : " open"}><summary><b>${esc(c.v)}</b> <span class="small">${esc(c.d)} · ${c.items.length} ${c.items.length === 1 ? "wijziging" : "wijzigingen"}</span></summary><ul>${c.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>`).join("")}</div>
     ${IMGS.length ? `<div class="section-head" id="bo-beeld"><h2 id="beeldverantwoording">Beeldverantwoording</h2></div>
     <p class="small bo-beeld">${IMGS.length} afbeeldingen, met maker, licentie en bron. Ze komen uit ${beeldBronnen("", 8)}.${archList().length ? ` Daarnaast ${nl(archList().length)} beelden uit archieven en musea; maker, rechten en bron staan bij elk beeld (<button class="link" data-archief>Beeld › Uit de archieven</button>).` : ""}</p>
-    <details class="box"><summary style="cursor:pointer"><b>Alle afbeeldingen</b> <span class="small">${IMGS.length}</span></summary><ul class="srclist" style="margin-top:10px">${IMGS.slice().sort((a, b) => a.t.localeCompare(b.t, "nl")).map(i => `<li><span class="small">${esc(i.t)}</span><span>${credit(i)}${refLine(i) ? ` · ${refLine(i)}` : ""}</span></li>`).join("")}</ul></details>` : ""}`;
+    <details class="box bk"><summary><b>Alle afbeeldingen</b> <span class="small">${IMGS.length}</span></summary><ul class="srclist" style="margin-top:10px">${IMGS.slice().sort((a, b) => a.t.localeCompare(b.t, "nl")).map(i => `<li><span class="small">${esc(i.t)}</span><span>${credit(i)}${refLine(i) ? ` · ${refLine(i)}` : ""}</span></li>`).join("")}</ul></details>` : ""}`;
   const bg = $(".bg-dl", host); if (bg) bronFilter($("#bgQ"), [bg], ".bg-it", $("#bgN"), "begrippen");
 }
 /* naar een onderdeel van Over deze site (of naar boven) */
@@ -2836,9 +3589,19 @@ const numWord = w => +w || NUMW[String(w).toLowerCase()] || 0;
 /* Kinderen tellen uit de lijst in het profiel. Een regel telt als kind als hij met een naam begint (of "levenloos geboren");
    "in totaal dertien kinderen" geeft het totaal, "vier jongere kinderen" komt erbij. Een naam die terugkomt zonder eigen
    jaartal (bijvoorbeeld in een opsomming uit een memorie) is hetzelfde kind en telt niet opnieuw. */
-function kidCount(ks) {
-  if (!ks || !ks.length) return 0;
+function kidCount(p, partnerKw) {
+  /* Summaries such as "in totaal dertien kinderen" or "nog drie kinderen" live in kidsNote, on the person or per marriage:
+     "nog N", "N jongere/andere … kinderen" add to the list, any other "N kinderen" is a total. With more than one marriage,
+     count only the children of the marriage with partnerKw (the kw in the person's own tree) when that marriage lists them. */
+  if (!p) return 0;
+  const ms = p.marriages || [], mm = ms.length > 1 && ms.find(x => x.kw === partnerKw && x.kids);
+  const ks = mm ? mm.kids.map(i => (p.kids || [])[i]).filter(Boolean) : p.kids || [];
+  const notes = [p.kidsNote].concat(mm ? [mm.kidsNote] : ms.map(x => x.kidsNote)).filter(Boolean);
   const seen = []; let n = 0, extra = 0, total = 0;
+  notes.forEach(t => {
+    const m = /(?:\b(nog)\s+)?(\d+|[a-z]+)\s+(?:(jongere|oudere|andere|overige|verdere)\s+)?kinderen/i.exec(t), v = m && numWord(m[2]);
+    if (v) { if (m[1] || m[3]) extra += v; else total = Math.max(total, v); }
+  });
   ks.forEach(k => {
     const s = String(k).trim(), m = /(\d+|[a-z]+)\s+(?:(jongere|oudere|andere|overige|verdere)\s+)?kinderen/i.exec(s);
     if (m && /totaal/i.test(s)) { total = Math.max(total, numWord(m[1])); return; }
@@ -2872,7 +3635,7 @@ function computeStats() {
     if (m.kw < 4 || m.kw % 2) continue;
     const f = person(m.kw + 1); if (!f || f.living) continue;
     const md = (m.m && m.m.d) || (f.m && f.m.d) || null, mp = (m.m && m.m.p) || (f.m && f.m.p) || null;
-    couples.push({ m, f, md, mp, kids: Math.max(kidCount(m.kids), kidCount(f.kids)) });
+    couples.push({ m, f, md, mp, kids: Math.max(kidCount(m, f.origKw || f.kw), kidCount(f, m.origKw || m.kw)) });
   }
   S.couples = couples;
   const dated = couples.filter(c => fullDate(c.md));
@@ -2965,17 +3728,21 @@ function computeStats() {
   S.oldestYearAB = Math.min(...A.filter(p => p.st === "A" || p.st === "B").flatMap(p => [yr(p.b), yr(p.d), ...(p.res || []).map(r => r.y)]).filter(Boolean));
   return S;
 }
+/* charts keep their letters at reading size: at most 1.2× their own width on a wide screen, and a narrow drawing on a phone */
+const chartNarrow = () => (window.innerWidth || 1024) < 560;
+const chartMax = W => ` style="max-width:${Math.round(W * 1.2)}px"`;
 function vbars(data, o = {}) {
   const n = data.length, bw = o.bw || 34, gap = o.gap || 12, W = n * (bw + gap) + gap, H = 150, top = 22, base = H - 26;
+  const fs = chartNarrow() && W > 320 ? 15 : 12;
   const max = o.max || Math.max(1, ...data.map(d => d.v));
   const hi = Math.max(...data.map(d => d.v));
-  let s = `<svg class="vbars" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label || "")}">`;
+  let s = `<svg class="vbars" viewBox="0 0 ${W} ${H}"${chartMax(W)} role="img" aria-label="${esc(o.label || "")}">`;
   s += `<line x1="${gap / 2}" x2="${W - gap / 2}" y1="${base}" y2="${base}" stroke="var(--rule)"/>`;
   data.forEach((d, i) => {
     const x = gap + i * (bw + gap), h = (base - top) * d.v / max, y = base - h;
     s += `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h, d.v ? 1 : 0)}" rx="3" fill="${o.color || "var(--accent)"}" fill-opacity="${d.v === hi ? 1 : 0.42}"><title>${esc(d.tip || (d.full || d.l) + ": " + d.v)}</title></rect>`;
-    s += `<text x="${x + bw / 2}" y="${y - 6}" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="var(--mono)">${d.lab ?? d.v}</text>`;
-    s += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--mono)">${esc(d.l)}</text>`;
+    s += `<text x="${x + bw / 2}" y="${y - 6}" text-anchor="middle" font-size="${fs}" fill="var(--ink)" font-family="var(--mono)">${d.lab ?? d.v}</text>`;
+    s += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="${fs}" fill="var(--muted)" font-family="var(--mono)">${esc(d.l)}</text>`;
   });
   return s + `</svg>`;
 }
@@ -2985,13 +3752,13 @@ function hbars(rows, o = {}) {
 }
 /* Leeftijd bij overlijden tegen geboortejaar: één stip per voorouder. Mannen rond, vrouwen ruit; open = jaartal geschat (ca.). */
 function lifeScatter(life) {
-  const W = 680, H = 250, L = 34, R = 22, T = 10, B = 26;
+  const W = chartNarrow() ? 360 : 680, H = chartNarrow() ? 220 : 250, step = chartNarrow() ? 100 : 50, fs = chartNarrow() ? 14 : 11, L = 34, R = 22, T = 10, B = 26;
   const ys = life.map(x => yr(x.p.b)), y0 = Math.floor(Math.min(...ys) / 50) * 50, y1 = Math.ceil((Math.max(...ys) + 1) / 50) * 50;
   const X = y => L + (y - y0) / (y1 - y0) * (W - L - R), Y = a => T + (1 - a / 100) * (H - T - B);
-  let s = `<svg class="scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="Leeftijd bij overlijden tegen geboortejaar, één stip per voorouder">`;
-  [20, 40, 60, 80, 100].forEach(a => { s += `<line x1="${L}" x2="${W - R}" y1="${Y(a)}" y2="${Y(a)}" stroke="var(--rule)" stroke-dasharray="${a === 100 ? "" : "2 4"}"/><text x="${L - 6}" y="${Y(a) + 4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${a}</text>`; });
+  let s = `<svg class="scatter" viewBox="0 0 ${W} ${H}"${chartMax(W)} role="img" aria-label="Leeftijd bij overlijden tegen geboortejaar, één stip per voorouder">`;
+  [20, 40, 60, 80, 100].forEach(a => { s += `<line x1="${L}" x2="${W - R}" y1="${Y(a)}" y2="${Y(a)}" stroke="var(--rule)" stroke-dasharray="${a === 100 ? "" : "2 4"}"/><text x="${L - 6}" y="${Y(a) + 4}" text-anchor="end" font-size="${fs}" fill="var(--muted)" font-family="var(--mono)">${a}</text>`; });
   s += `<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--rule)"/>`;
-  for (let y = y0; y <= y1; y += 50) s += `<text x="${X(y)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">${y}</text>`;
+  for (let y = Math.ceil(y0 / step) * step; y <= y1; y += step) s += `<text x="${X(y)}" y="${H - 8}" text-anchor="middle" font-size="${fs}" fill="var(--muted)" font-family="var(--mono)">${y}</text>`;
   const tr = []; for (let c = Math.floor(y0 / 25) * 25; c < y1; c += 25) { const g = life.filter(x => { const y = yr(x.p.b); return y >= c && y < c + 25; }); if (g.length >= 5) tr.push({ c, m: meanOf(g.map(x => x.v)), n: g.length }); }
   life.slice().sort((a, b) => a.exact - b.exact).forEach(x => {
     const cx = X(yr(x.p.b)).toFixed(1), cy = Y(Math.min(x.v, 100)).toFixed(1), m = isMale(x.p.kw), c = m ? "var(--l8)" : "var(--l13)", est = !x.exact && (isApprox(x.p.b) || isApprox(x.p.d));
@@ -3007,15 +3774,15 @@ function lifeScatter(life) {
 /* Aantal voorouders in leven per jaar, als vlak met de piek gemarkeerd */
 function aliveChart(al, pk) {
   const i0 = al.findIndex(a => a.v >= 3); al = al.slice(Math.max(0, i0));
-  const W = 680, H = 180, L = 34, R = 22, T = 22, B = 26, y0 = Math.floor(al[0].y / 50) * 50, y1 = Math.ceil((al[al.length - 1].y + 1) / 50) * 50;
+  const W = chartNarrow() ? 360 : 680, H = 180, L = 34, R = 22, T = 22, B = 26, step = chartNarrow() ? 100 : 50, fs = chartNarrow() ? 14 : 11, y0 = Math.floor(al[0].y / 50) * 50, y1 = Math.ceil((al[al.length - 1].y + 1) / 50) * 50;
   const top = Math.ceil(pk.v / 25) * 25, X = y => L + (y - y0) / (y1 - y0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
   const line = al.map((a, i) => `${i ? "L" : "M"}${X(a.y).toFixed(1)} ${Y(a.v).toFixed(1)}`).join("");
-  let s = `<svg class="scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="Aantal voorouders in leven per jaar; het meest in ${pk.y}: ${pk.v}">`;
-  for (let v = 25; v <= top; v += 25) s += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-dasharray="2 4"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v}</text>`;
-  for (let y = y0; y <= Math.min(y1, new Date().getFullYear()); y += 50) s += `<text x="${X(y)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">${y}</text>`;
+  let s = `<svg class="scatter" viewBox="0 0 ${W} ${H}"${chartMax(W)} role="img" aria-label="Aantal voorouders in leven per jaar; het meest in ${pk.y}: ${pk.v}">`;
+  for (let v = 25; v <= top; v += 25) s += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-dasharray="2 4"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="${fs}" fill="var(--muted)" font-family="var(--mono)">${v}</text>`;
+  for (let y = Math.ceil(y0 / step) * step; y <= Math.min(y1, new Date().getFullYear()); y += step) s += `<text x="${X(y)}" y="${H - 8}" text-anchor="middle" font-size="${fs}" fill="var(--muted)" font-family="var(--mono)">${y}</text>`;
   s += `<path d="${line}L${X(al[al.length - 1].y).toFixed(1)} ${Y(0)}L${X(al[0].y).toFixed(1)} ${Y(0)}Z" fill="var(--accent)" fill-opacity=".14"/><path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>`;
   s += `<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--rule)"/>`;
-  s += `<circle cx="${X(pk.y)}" cy="${Y(pk.v)}" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text x="${X(pk.y)}" y="${Y(pk.v) - 9}" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="var(--mono)">${pk.y}: ${pk.v}</text>`;
+  s += `<circle cx="${X(pk.y)}" cy="${Y(pk.v)}" r="4.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text x="${X(pk.y)}" y="${Y(pk.v) - 9}" text-anchor="middle" font-size="${fs + 1}" fill="var(--ink)" font-family="var(--mono)">${pk.y}: ${pk.v}</text>`;
   /* per decennium een onzichtbaar vlak met de waarde, voor wie de muis erover houdt */
   al.filter(a => a.y % 10 === 0).forEach(a => { s += `<rect x="${X(a.y - 5)}" y="${T}" width="${X(a.y + 5) - X(a.y - 5)}" height="${H - T - B}" fill="transparent"><title>${a.y}: ${a.v} voorouders in leven</title></rect>`; });
   return s + `</svg>`;
@@ -3086,12 +3853,9 @@ function renderCijfers() {
   host.innerHTML = `
     <div class="eyebrow">In getallen</div>
     <h1 class="page-title">De familie in getallen</h1>
-    <p class="lede">Alleen over de overleden voorouders: wie nog leeft, telt niet mee.</p>
-    <div style="margin-top:22px">
-      <div class="box"><span class="eyebrow">Maatstaf</span><h3>Waarom voorouders oud lijken te worden</h3><p style="margin:0;font-size:14px;color:var(--muted)">Een voorouder is per definitie volwassen geworden en heeft een kind gekregen. Wie als kind overleed, komt in een kwartierstaat niet voor. De gemiddelde levensduur hieronder ligt daardoor veel hoger dan de levensverwachting bij de geboorte in die tijd, die in het midden van de negentiende eeuw door de hoge kindersterfte nog maar zo'n 36 tot 38 jaar was. Vergelijk dus met volwassenen, niet met pasgeborenen.</p></div>
-    </div>
+    <p class="lede">Alleen over de overleden voorouders.</p>
 
-    <div class="section-head" id="c-leven"><h2>Leven en sterven</h2><p>${S.life.length} voorouders met een geboorte- en sterfjaar; ${S.life.filter(x => x.exact).length} daarvan tot op de dag.</p></div>
+    <div class="section-head" id="c-leven"><h2>Leven en sterven</h2><p>${S.life.length} voorouders met een geboorte- en sterfjaar; ${S.life.filter(x => x.exact).length} daarvan tot op de dag. Wie als kind stierf, is geen voorouder: daarom liggen deze leeftijden hoger dan de levensverwachting van toen (rond 1850 zo'n 37 jaar).</p></div>
     <div class="cols">
       <div class="box"><h3>Gemiddelde leeftijd</h3>
         <div class="duo"><div><b class="big">${r0(mAvg)}</b><span>jaar · ${S.lifeM.length} mannen</span><small>mediaan ${r0(medianOf(S.lifeM))}</small></div><div><b class="big">${r0(fAvg)}</b><span>jaar · ${S.lifeF.length} vrouwen</span><small>mediaan ${r0(medianOf(S.lifeF))}</small></div></div>
@@ -3158,7 +3922,7 @@ function renderCijfers() {
     </div>
     <p class="small" style="margin:10px 0 0">Kinderen werden meestal naar hun grootouders genoemd; daardoor keren dezelfde namen in elke generatie terug.</p>
 
-    <div class="section-head" id="c-werk"><h2>Werk</h2><p>${S.nOcc} voorouders met een bekend beroep; de percentages zijn van hen. Wie meer dan één beroep had, telt bij elk mee, dus samen is het meer dan 100%.</p></div>
+    <div class="section-head" id="c-werk"><h2>Werk</h2><p>${S.nOcc} voorouders met een bekend beroep; de percentages zijn van hen. Wie meer beroepen had, telt bij elk mee, dus samen is het meer dan 100%.</p></div>
     ${S.nRel >= 30 && S.rel.length > 1 ? `<div class="cols"><div class="box"><h3>Beroepen</h3>${hbars(S.occ, { wide: true, cls: "pct" })}</div>
       <div class="box"><h3>Geloof</h3><div class="hbars pct">${S.rel.map(r => { const mx = S.rel[0].sure + S.rel[0].prob; return `<div class="hb"><span class="hl">${esc(r.l)}</span><span class="track stack"><span style="width:${(r.sure / mx * 100).toFixed(1)}%;background:var(--accent)"></span><span style="width:${(r.prob / mx * 100).toFixed(1)}%;background:var(--accent);opacity:.4"></span></span><span class="mono hv">${pctN(r.sure + r.prob, S.nRel)}</span></div>`; }).join("")}</div>
         <p class="legend" style="margin-top:10px"><span><i class="lg" style="background:var(--accent)"></i>uit een bron</span><span><i class="lg" style="background:var(--accent);opacity:.4"></i>vermoedelijk</span></p>
@@ -3331,11 +4095,11 @@ function renderNamen() {
   const list = surnameIndex(), host = $("#v-namen");
   const letter = e => norm(e.key)[0].toUpperCase();
   const letters = [...new Set(list.map(letter))];
-  const row = e => `<li data-n="${esc(norm(e.key + " " + e.ps.map(p => p.n).join(" ")))}"><div class="nm"><b>${esc(e.key)}</b><span class="dots">${[...e.lines].map(l => `<i style="background:var(--l${l})" title="${esc(LINES[l].name)}"></i>`).join("")}</span><span class="mono small">${e.ps.length}${e.y0 < 9999 ? ` · ${e.y0}${e.y1 > e.y0 ? "–" + e.y1 : ""}` : ""}</span></div><div class="who">${e.ps.sort((a, b) => a.kw - b.kw).map(p => `<span class="nw">${sexIco(p.kw)}<button class="link" data-open="${p.kw}">${esc(firstName(p))}</button></span>`).join(", ")}</div></li>`;
+  const row = e => `<li data-n="${esc(norm(e.key + " " + e.ps.map(p => p.n).join(" ")))}"><div class="nm"><b>${esc(e.key)}</b><span class="dots" role="img" aria-label="${esc("Familie " + [...e.lines].map(l => LINES[l].name).join(", "))}">${[...e.lines].map(l => `<i style="background:var(--l${l})" title="${esc(LINES[l].name)}"></i>`).join("")}</span><span class="mono small">${e.ps.length}${e.y0 < 9999 ? ` · ${e.y0}${e.y1 > e.y0 ? "–" + e.y1 : ""}` : ""}</span></div><div class="who">${e.ps.sort((a, b) => a.kw - b.kw).map(p => `<span class="nw">${sexIco(p.kw)}<button class="link" data-open="${p.kw}">${esc(firstName(p))}</button></span>`).join(", ")}</div></li>`;
   host.innerHTML = `
     <div class="eyebrow"><button class="link" data-go="personen">Personen</button> › Namenregister</div>
     <h1 class="page-title">Namenregister</h1>
-    <p class="lede">${list.length} achternamen en patroniemen, met de voornamen van wie ze droeg. Voorvoegsels als de, van en ten staan achter de naam: De Groot vind je bij de G. Tot 1811 hadden veel voorouders geen vaste achternaam; dan staat hier het patroniem (Hylkes, zoon van Hylke).</p>
+    <p class="lede">${list.length} achternamen en patroniemen, met de voornamen van wie ze droeg. De Groot vind je bij de G; vóór 1811 staat er vaak het patroniem (Hylkes: zoon van Hylke). De stippen zijn de families.</p>
     <div class="toolbar"><input type="search" id="nmQ" placeholder="Zoek een naam" aria-label="Zoek in het namenregister"></div>
     <nav class="chips letters" aria-label="Letters">${letters.map(L => `<button class="chip" data-letter="${L}">${L}</button>`).join("")}</nav>
     <div class="namereg">${letters.map(L => `<section id="nm-${L}"><h2>${L}</h2><ul>${list.filter(e => letter(e) === L).map(row).join("")}</ul></section>`).join("")}</div>
@@ -3378,7 +4142,7 @@ function renderLijst() {
   host.innerHTML = `
     <div class="eyebrow noprint"><button class="link" data-go="personen">Personen</button> › Kwartierstaat</div>
     <h1 class="page-title">Kwartierstaat ${l ? "· familie " + esc(LINES[l].name) : esc(T.brand)}</h1>
-    <p class="lede">De klassieke vorm: elke voorouder met een nummer. De vader van nummer n is 2n, de moeder 2n + 1. Achter de naam de bewijsstatus (A akte, B sterk, C onzeker, D hypothese). Van levenden staat alleen de naam.</p>
+    <p class="lede">Alle voorouders met hun nummer, generatie na generatie, en achter de naam hoe sterk het bewijs is. Van levenden staat alleen de naam.</p>
     <div class="toolbar noprint">
       <select id="lijstLine" aria-label="Familie"><option value="0">Alle families</option>${LINE_KEYS.map(k => `<option value="${k}"${k === l ? " selected" : ""}>Familie ${esc(LINES[k].name)}</option>`).join("")}</select>
       <button class="btn primary" id="lijstPrint">${navIco("print")}Afdrukken of opslaan als pdf</button>
@@ -3388,7 +4152,7 @@ function renderLijst() {
   $("#lijstLine").onchange = e => { lijstState.line = +e.target.value; renderLijst(); };
   $("#lijstPrint").onclick = () => window.print();
   gedcomToolbar($("#v-lijst")); /* afdrukken en GEDCOM in één werkbalk */
-  if (STAMREEKS_KNOP) $("#v-lijst .toolbar").insertAdjacentHTML("afterend", ovMore(`data-go="stamreeks"`, "Alleen vader op vader: de stamreeks")); /* de stamreeks */
+  if (STAMREEKS_KNOP) $("#v-lijst .toolbar").insertAdjacentHTML("afterend", ovMore(`data-go="stamreeks"`, "Van vader op vader terug: de stamreeks")); /* de stamreeks */
 }
 
 /* ---------- bekende verwanten ---------- */
@@ -3401,7 +4165,7 @@ const VERDICT = {
 const verdictTag = v => `<span class="verdict v-${VERDICT[v][0]}">${VERDICT[v][1]}</span>`;
 function notableCard(N, compact) {
   const por = imgOf("persoon", N.id);
-  if (compact) return `<button class="notable-mini${por ? " withimg" : ""}" data-go="verwanten">${por ? `<img class="por" src="${por.thumb}" alt="" loading="lazy">` : ""}<span class="eyebrow">${esc(N.y)}</span><h3>${esc(N.n)}</h3><p>${esc(N.rel.split(". ")[0])}.</p>${verdictTag(N.verdict)}</button>`;
+  if (compact) return `<button class="notable-mini${por ? " withimg" : ""}" data-go="verwanten">${por ? `<img class="por" src="${por.thumb}" alt="" loading="lazy">` : ""}<span class="eyebrow">${esc(N.y)}</span><h3>${esc(N.n)}</h3><p>${esc(N.rel.split(". ")[0]).replace(/\s*\(kw \d+(?: en kw \d+)?\)/g, "")}.</p>${verdictTag(N.verdict)}</button>`; /* on the front page without kw numbers: the page itself has them */
   return `<article class="notable" id="n-${N.id}">
     ${por ? `<div class="nhead">${fig(por, { thumb: true, cls: "portrait", cap: false })}<div>` : ""}
     <header><div><h3>${esc(N.n)}</h3><span class="small">${esc([N.alt, N.y].filter(Boolean).join(" · "))}</span></div>${verdictTag(N.verdict)}</header>
@@ -3425,7 +4189,7 @@ function renderVerwanten() {
   $("#v-verwanten").innerHTML = `
     <div class="eyebrow"><button class="link" data-go="personen">Mensen</button> › Bekende verwanten</div>
     <h1 class="page-title">Bekende verwanten</h1>
-    <p class="lede">We zochten in de hele stamboom naar mensen die in de geschiedenisboeken staan: edelen, bestuurders, rijke grondbezitters, of mensen die bij grote gebeurtenissen betrokken waren. Het korte antwoord: in de directe lijn geen adel en geen hoge bestuurders. Wel twee bekende geestelijken als naaste verwanten, onder wie een heilige, en een paar welgestelde boeren en kooplieden.</p>
+    <p class="lede">Gezocht naar edelen, bestuurders en rijke grondbezitters: in de directe lijn geen adel en geen hoge bestuurders. Wel twee bekende geestelijken als naaste verwanten, onder wie een heilige, en een paar welgestelde boeren en kooplieden.</p>
     <div class="section-head"><h2>Bloedverwanten met een plaats in de geschiedenis</h2><p>Afstammelingen van dezelfde voorouders, met akten bewezen.</p></div>
     <div class="notables">${NOTABLES.filter(N => N.verdict === "bewezen" && ["brandsma", "spitzen"].includes(N.id)).map(N => notableCard(N)).join("")}</div>
     <div class="section-head"><h2>Aangetrouwd, en alleen dezelfde naam</h2><p>Wat we ook nagingen, en waarom het geen of een zwakke band is.</p></div>
@@ -3440,6 +4204,8 @@ function renderVerwanten() {
 }
 
 const RENDER = { overzicht: renderOverzicht, stamboom: renderStamboom, families: renderFamilies, personen: renderPersonen, verhalen: renderVerhalen, tijdlijn: renderTijdlijn, kaart: renderKaart, plaats: renderPlaats, beeld: () => renderBeeld("beeld"), "beeld-plaatsen": () => renderBeeld("beeld-plaatsen"), "beeld-archief": () => renderBeeld("beeld-archief"), cijfers: renderCijfers, verwanten: renderVerwanten, bronnen: renderBronnen, "bronnen-tegenstrijdig": renderTegenstrijdig, "bronnen-lijst": renderBronLijst, "bronnen-over": renderOverSite, namen: renderNamen, lijst: renderLijst, zoeken: renderZoeken };
+/* the profile as a full page: #profiel-<kw> (see pfRender) */
+VIEWS.push("profiel"); pfSec(); RENDER.profiel = () => pfRender(route.sub);
 /* ---------- twee bomen: wisselen ---------- */
 /* hash "#a-..." = de boom van Alies, "#s-..." of geen hash = Harrie + Alies (de kinderen); andere hash zonder prefix = Harrie. Interne links (data-go, data-open) blijven in de huidige boom. */
 function treeChrome() {
@@ -3582,8 +4348,8 @@ function tlHead(r, gn, g, left, right, X) {
   /* rechts: de periode als lichte band, en de knoppen */
   el("rect", { x: X(r.y0), y: r.y + 12, width: Math.max(4, X(r.y1) - X(r.y0)), height: 6, rx: 3, fill: c, "fill-opacity": 0.3 }, g);
   let x = left + 8;
-  if (more) { const t = txt(g, x, r.y + 37 * f, r.open ? "toon alleen de stamlijn" : `toon alle ${r.n}`, { "font-size": 12 * f, fill: "var(--accent)", class: "tlact" }); clickable(t, flip, t.textContent); t.setAttribute("tabindex", "-1"); x += t.textContent.length * 6.6 * f + 14; }
-  const lk = txt(g, x, r.y + 37 * f, `naar de familie ${trunc(LINES[l].name, 28)} ›`, { "font-size": 12 * f, fill: "var(--accent)", class: "tlact" });
+  if (more) { const t = txt(g, x, r.y + 37 * f, r.open ? "Toon alleen de stamlijn" : `Toon alle ${r.n}`, { "font-size": 12 * f, fill: "var(--accent)", class: "tlact" }); clickable(t, flip, t.textContent); t.setAttribute("tabindex", "-1"); x += t.textContent.length * 6.6 * f + 14; }
+  const lk = txt(g, x, r.y + 37 * f, `Naar de familie ${trunc(LINES[l].name, 28)} →`, { "font-size": 12 * f, fill: "var(--accent)", class: "tlact" });
   clickable(lk, () => go("lijn-" + l), "Naar de familie " + LINES[l].name);
   [[gn, 10, left], [g, left, right]].forEach(([G, x1, x2]) => el("line", { x1, x2, y1: r.y + r.h - 2, y2: r.y + r.h - 2, stroke: c, "stroke-opacity": 0.35 }, G));
 }
@@ -3718,7 +4484,7 @@ function renderVerbanden() {
   host.innerHTML = `
     <div class="eyebrow"><button class="link" data-go="kaart">Kaart</button> › Waar de families elkaar kruisten</div>
     <h1 class="page-title">Waar de families elkaar kruisten</h1>
-    <p class="lede">Harrie en Alies hebben, voor zover bekend, geen gemeenschappelijke voorouders. Toch woonden hun families vaak in dezelfde dorpen. Hier staan de ${L.length} plaatsen waar voorouders van beide kanten binnen ${VB_GAP} jaar van elkaar voorkomen: geboren, getrouwd, wonend of overleden. Bovenaan de dichtste ontmoetingen.</p>
+    <p class="lede">Harrie en Alies hebben, voor zover bekend, geen gemeenschappelijke voorouders, maar hun families woonden vaak in dezelfde dorpen. Hier de ${L.length} plaatsen waar voorouders van beide kanten binnen ${VB_GAP} jaar van elkaar voorkomen; de dichtste ontmoetingen staan bovenaan.</p>
     <p class="small">${sideTag("h")} en ${sideTag("a")} · Een gedeelde plaats en tijd betekent niet dat de families elkaar kenden. <button class="link" data-go="verhaal-buren">Lees het verhaal Buren zonder het te weten</button></p>
     <div class="vb-grid">
       <div class="pane vb-map" id="vbMap"></div>
@@ -3777,7 +4543,10 @@ const vwG = (sx, m, v) => sx === "m" ? m : sx === "v" ? v : m + " of " + v;
 const vwCap = s => s.charAt(0).toUpperCase() + s.slice(1);
 const vwSx = kw => kw === 1 ? (T.key === "s" ? null : T.rootMale ? "m" : "v") : kw % 2 ? "v" : "m";
 const vwNm = kw => { const p = person(kw); return !p ? "kw " + kw : kw === 1 && T.key === "s" ? T.rootFull : p.living ? firstName(p) : p.n; };
-const vwLabel = kw => { const p = person(kw); return !p ? "" : p.living ? vwNm(kw) : `${p.n} (${lifeYears(p)})`; };
+/* the full name, with the call name first when it differs from the given names: "Kees (Cornelis Johannes Petrus) de Groot" (search fields: two Keeses stay apart) */
+const vwVol = kw => { const p = person(kw); if (!p) return "kw " + kw; if (kw === 1 && T.key === "s") return T.rootFull; const sn = splitName(p.n);
+  return p.roep && sn.given.length && !sn.given.includes(p.roep) ? [p.roep, "(" + sn.given.join(" ") + ")", sn.sur].filter(Boolean).join(" ") : p.n; };
+const vwLabel = kw => { const p = person(kw); return !p ? "" : p.living ? vwVol(kw) : `${vwVol(kw)} (${lifeYears(p)})`; };
 const vwWho = kw => { const pl = T.key === "s" && kw === 1, nm = kw === 1 ? (pl ? T.rootFull : T.root) : firstName(person(kw)); return { kw, name: nm, obj: nm, poss: pl ? "hun" : vwSx(kw) === "m" ? "zijn" : "haar", sx: vwSx(kw), pl }; };
 const VW_YOU = { name: "jij", obj: "jou", poss: "jouw", sx: null, you: true };
 const vwIs = P => P.you ? "bent" : P.pl ? "zijn" : "is";
@@ -3991,7 +4760,7 @@ function vwBind(id, onlyAnc, set, outId) {
     if (t > innerHeight * 0.35 || t < vast) scrollTo({ top: scrollY + t - vast - 40 }); }, 250); };
   const close = () => { ul.hidden = true; inp.setAttribute("aria-expanded", "false"); inp.removeAttribute("aria-activedescendant"); };
   const draw = () => {
-    ul.innerHTML = items.length ? items.map((c, i) => `<li role="option" id="${id}o${i}" aria-selected="${i === sel}" data-i="${i}"><b>${esc(vwNm(c.kw))}</b><span>${c.p.living ? "" : esc(lifeYears(c.p)) + " · "}kw ${c.kw}</span></li>`).join("") : `<li class="none" role="option" aria-disabled="true">Niemand gevonden${onlyAnc ? " (van levenden staat alleen de naam in de stamboom; zij zijn hier geen keuze)" : ""}</li>`;
+    ul.innerHTML = items.length ? items.map((c, i) => `<li role="option" id="${id}o${i}" aria-selected="${i === sel}" data-i="${i}"><b>${esc(vwVol(c.kw))}</b><span>${c.p.living ? "" : esc(lifeYears(c.p)) + " · "}kw ${c.kw}</span></li>`).join("") : `<li class="none" role="option" aria-disabled="true">Niemand gevonden${onlyAnc ? " (van levenden staat alleen de naam in de stamboom; zij zijn hier geen keuze)" : ""}</li>`;
     ul.hidden = false; inp.setAttribute("aria-expanded", "true");
     if (items.length) inp.setAttribute("aria-activedescendant", id + "o" + sel); else inp.removeAttribute("aria-activedescendant");
   };
@@ -4028,13 +4797,12 @@ function renderVerwant() {
       ${vwPick("vwY", "Persoon 2", vwState.y, "Naam, jaartal of kw-nummer")}
     </div>
     <div id="vwOut2" class="vw-out" aria-live="polite"></div>
-    <div class="section-head"><h2>Zo rekenen we</h2></div>
-    <div class="box vw-uitleg">
+    <details class="box vw-uitleg"><summary>Wat de woorden betekenen</summary>
       <p><b>Neef of nicht</b>: jullie delen grootouders. <b>Achterneef of achternicht</b>: jullie delen overgrootouders (neven en nichten in de tweede lijn); <b>achter-achterneef</b>: betovergrootouders (derde lijn). Staat de een een generatie lager onder de gedeelde voorouder dan de ander, dan heet dat <i>één generatie verschoven</i>.</p>
       <p><b>Oom of tante, oudoom of oudtante</b>: de broer of zus van een ouder of grootouder. Het kind van je broer of zus heet in het Nederlands ook neef of nicht, het kleinkind achterneef of achternicht. Die woorden hebben dus twee betekenissen; de uitleg bij elke uitkomst zegt welke bedoeld is.</p>
       <p><b>Graad van bloedverwantschap</b>: tel de geboorten tussen jullie twee, via de gedeelde voorouder. Ouder en kind zijn bloedverwant in de eerste graad, broers en zussen in de tweede, neven en nichten in de vierde. Zo staat het in het <a href="https://wetten.overheid.nl/BWBR0002656/" target="_blank" rel="noopener">Burgerlijk Wetboek, Boek 1, artikel 3</a>. Halfverwanten (via een ander huwelijk) hebben dezelfde graad.</p>
       <p><b>Bewijs</b>: elke stap tussen ouder en kind heeft een label: ${["A", "B", "C", "D"].map(s => stTag(s, true)).join(" ")}. Een pad is zo sterk als de zwakste stap. Kwartierverlies: wie langs twee lijnen in de stamboom staat, maakt dat mensen langs twee wegen verwant zijn.</p>
-    </div>`;
+    </details>`;
   vwBind("vwAnc", true, kw => { vwState.anc = kw; if (kw && !vwState.dSet) { vwState.d = vwDefD(kw); $("#vwD").value = vwState.d; } vwMine(); vwSync(); }, "vwOut1");
   $("#vwD").onchange = e => { vwState.d = +e.target.value; vwState.dSet = true; vwMine(); vwSync(); requestAnimationFrame(() => vwShow("vwOut1")); };
   vwBind("vwX", false, kw => { vwState.x = kw; vwPair(); vwSync(); }, "vwOut2");
@@ -4110,7 +4878,7 @@ function renderOpvallend() {
   const chip = (grp, val, label, extra) => `<button type="button" class="chip" data-opf="${grp}" data-opv="${esc(String(val))}" aria-pressed="${S[grp].has(val)}"${extra || ""}>${label}</button>`;
   v.innerHTML = `<div class="eyebrow"><button class="link" data-go="verhalen">Verhalen</button> › Opvallende feiten</div>
     <h1 class="page-title">Opvallende feiten</h1>
-    <p class="lede">Ook uit andere bronnen dan akten. Het label A tot D zegt hoe sterk het bewijs is; de bronnen zelf staan in het profiel van de persoon.</p>
+    <p class="lede">Uit akten, registers en kranten, elk met een label voor hoe sterk het bewijs is. De bronnen staan in het profiel van de persoon.</p>
     <details class="op-fd"${matchMedia("(max-width:620px)").matches ? "" : " open"}><summary>Filters</summary>
     <div class="op-filters" role="group" aria-label="Filters">
       ${ln.length > 1 ? `<div class="op-f"><span class="op-l" id="opLf">Familie</span><div class="chips" role="group" aria-labelledby="opLf">${ln.map(l => chip("lines", l, `<i></i>${esc(LINES[l].name)}`, ` style="--c:var(--l${l})"`)).join("")}</div></div>` : ""}
@@ -4149,327 +4917,76 @@ function opGa(i) {
 /* Het stamboomboek: #boek (ook a-/s-) met de keuzes in de hash, bv. #boek--diepte-7--formaat-a4--delen-fam.verh--beeld-weinig--druk.
    Het voorbeeld staat in een iframe met een eigen document: de boekstijlen (src/book-css.js) en Paged.js (src/vendor, MIT) laden alleen daar, zodat
    de printstijlen de site niet raken. "Maak pdf" drukt dat iframe af. Met --zuiver vervangt het boek de hele pagina (voor een
-   pdf op exact formaat met tools/boek.py); daarna staan documentElement.dataset.boek = "klaar" en window.BOEK_INFO klaar.
+   pdf op exact formaat); daarna staan documentElement.dataset.boek = "klaar" en window.BOEK_INFO klaar.
    Typografie, voorwerk en nawerk (boekVoorwerk, boekInhoud, boekNawerk) en omslag, waaier, boom en beelden (boekOmslag,
    boekWaaier, boekBoom, boekOpening, boekBeelden) komen uit eigen secties; zonder die haken staat er een eenvoudige vorm.
    Van levenden staat alleen de naam in het boek. */
-VIEWS.push("boek");
+VIEWS.push("nietgevonden");
+if (!$("#v-nietgevonden")) { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-nietgevonden"; sec.hidden = true; $("main").appendChild(sec); }
+RENDER.nietgevonden = () => { $("#v-nietgevonden").innerHTML = `<h1 class="page-title">Deze pagina bestaat niet</h1>
+  <p class="lede">Het adres <code>#${esc(route.fout || "")}</code> hoort bij geen pagina van de stamboom van ${esc(T.rootFull || T.root)}. Misschien is de link oud of verkeerd overgenomen.</p>
+  <p><a class="btn primary" href="#${T.prefix}overzicht" data-go="overzicht">Naar het overzicht</a> <button type="button" class="btn" data-zoek-open>Zoeken</button></p>`; };
+document.addEventListener("click", e => { if (e.target.closest("[data-zoek-open]")) { e.preventDefault(); openSearch(); } });
+/* lukt het laden van de boekkern niet (src/products/book/build.js), dan start de rest van de site gewoon; alleen het boek ontbreekt */
+const PB = (typeof Products !== "undefined" && Products.book) || null;
+if (PB) VIEWS.push("boek");
 if (!$("#v-boek")) { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-boek"; sec.hidden = true; $("main").appendChild(sec); }
-/* onderdelen: elk met een korte uitleg; "fam" is de kern (per familie de opening, het verhaal en alle voorouders) */
-const BK_DELEN = [
-  ["fam", "De families", "Opening, stamlijn, verhaal en alle voorouders"],
-  ["verst", "De verste voorouder", "Een pagina over de oudste per familie"],
-  ["verh", "Andere verhalen", "Verhalen over meer families tegelijk"],
-  ["tijd", "Hun tijd", "De geschiedenis rond de families"],
-  ["kw", "Kwartierstaat", "Alle voorouders genummerd, als lijst"],
-  ["open", "Open vragen", "Tegenstrijdigheden en wat nog open is"],
-  ["bron", "Bronnen en beelden", "Archieven, genealogieën en beeldherkomst"]];
-/* eindmaten van het boek (na het snijden); de afloop komt erbij volgens de keuze voor de drukker */
-const BK_FORMAAT = [["a4", "A4 staand", "a4", "210mm 297mm"], ["foto", "Fotoboek 21,5 × 27,5", "foto", "215mm 275mm"], ["vierkant", "Vierkant 30 × 30", "vierkant", "300mm 300mm"], ["trade", "Boek 20,3 × 25,4", "trade", "203mm 254mm"]];
-const BK_AFLOOP = [["", "Thuis of op kantoor"], ["3", "Fotoboek, zoals Saal Digital (3 mm afloop)"], ["blurb", "Blurb, gebonden boek"], ["0", "Peecho, gebonden boek (zonder afloop)"]];
-const BK_BEELD = [["geen", "Geen"], ["weinig", "Weinig"], ["veel", "Veel"]];
-const BK_BRON = [["noten", "Als noten per familie"], ["profiel", "Bij elk profiel"], ["site", "Alleen een verwijzing naar de site"]];
-const BK_HYP = [["mark", "Erbij, gemarkeerd als hypothese"], ["weg", "Weglaten"]];
-/* drie voorinstellingen; daarna kan elk onderdeel nog aan of uit */
-const BK_PRESET = {
-  compact: { naam: "Compact", uitleg: "De families; volledig tot generatie V.", detail: 5, beeld: "weinig", bron: "site", hyp: "weg", delen: ["fam", "verst"] },
-  standaard: { naam: "Standaard", uitleg: "Plus Hun tijd en kwartierstaat; volledig tot VII.", detail: 7, beeld: "weinig", bron: "noten", hyp: "mark", delen: ["fam", "verst", "verh", "tijd", "kw"] },
-  volledig: { naam: "Volledig", uitleg: "Alles, elk profiel volledig; vaak in twee delen.", detail: 99, beeld: "veel", bron: "noten", hyp: "mark", delen: BK_DELEN.map(d => d[0]) } };
-/* het boek in delen: één boek, twee delen (vaderskant en moederskant; in de boom van de kinderen de kant van Harrie en die van Alies),
-   of een deel per familie. Elk deel heeft een eigen omslag, titel, inhoud en register; de inleiding en de waaier staan in deel 1, de
-   losse hoofdstukken (Hun tijd, kwartierstaat …) in het laatste deel. */
-const BK_SPLIT = [["een", "Eén boek"], ["kanten", "Twee delen"], ["familie", "Een deel per familie"]];
-const BK_MAX = { "3": ["Saal Digital", 160], blurb: ["Blurb", 480], "0": ["Peecho", 504] };
-function bkDelenVan(S) {
-  const fams = LINE_KEYS.filter(l => LINES[l]);
-  if (S.lijn) return [{ nr: 1, aantal: 1, naam: "", lijnen: [S.lijn] }];
-  if (S.split === "kanten") { const k = T.key === "s" ? ["De kant van " + TREES.h.root, "De kant van " + TREES.a.root] : ["Vaderskant", "Moederskant"];
-    return [{ nr: 1, aantal: 2, naam: k[0], lijnen: fams.filter(l => l < 12) }, { nr: 2, aantal: 2, naam: k[1], lijnen: fams.filter(l => l >= 12) }]; }
-  if (S.split === "familie") return fams.map((l, n) => ({ nr: n + 1, aantal: fams.length, naam: "Familie " + LINES[l].name, lijnen: [l] }));
-  return [{ nr: 1, aantal: 1, naam: "", lijnen: fams }];
-}
-/* de omslag: drie ontwerpen (van de sectie omslag en beeld); b is de standaard */
-const BK_OMSLAG = [["b", "Papier en waaier", "Licht papier met de waaier groot aan de onderrand; de namen zijn goed te lezen. Rustig, als een echt boek."],
-  ["a", "Donker en goud", "Een donkere omslag met de volle waaier en een gouden titel. Klassiek en sterk in de boekenkast."],
-  ["c", "Oude kaart", "Een oude kaart van de streek als achtergrond, met de waaier en de titel in een kader."]];
-const bkLeeg = () => ({ omslag: "b", split: "een", deelNr: 1, detail: 7, formaat: "a4", delen: new Set(BK_PRESET.standaard.delen), beeld: "weinig", bron: "noten", hyp: "mark", afloop: "", lijn: 0, zuiver: false, hires: false });
+/* De opbouw van het boek zelf (keuzes, wie erin staat, titels, hoofdstukken, schatting) staat puur in de productmotor:
+   src/products/book/build.js (Products.book), zodat hij later ook op een server kan draaien. Hier blijven de gegevens van de boom
+   (bkBookData), het paneel, het voorbeeld (Paged.js) en het afdrukken. De namen hieronder blijven, omdat de secties voor typografie
+   en omslag ze gebruiken. */
+const BK_DELEN = PB ? PB.PARTS : [], BK_FORMAAT = PB ? PB.FORMATS : [["a4", "A4 staand", "a4", "210mm 297mm"]], BK_AFLOOP = PB ? PB.BLEEDS : [["", ""]], BK_BEELD = PB ? PB.IMAGES : [];
+const BK_BRON = PB ? PB.SOURCES : [], BK_HYP = PB ? PB.HYPOTHESES : [], BK_PRESET = PB ? PB.PRESETS : {}, BK_SPLIT = PB ? PB.SPLITS : [];
+const BK_MAX = PB ? PB.MAX_PAGES : {}, BK_OMSLAG = PB ? PB.COVERS : [];
+const bkLeeg = PB ? PB.empty : () => ({ start: 1, paar: false, omslag: "b", split: "een", deelNr: 1, detail: 7, formaat: "a4", delen: new Set(), beeld: "weinig", bron: "noten", hyp: "mark", afloop: "", lijn: 0, zuiver: false, hires: false });
 const bkState = bkLeeg();
-function bkFromToken(t) {
-  const S = Object.assign(bkState, bkLeeg());
-  String(t).split("--").slice(1).forEach(x => {
-    let m;
-    if ((m = x.match(/^(?:detail|diepte)-(alle|ab|\d{1,2})$/))) S.detail = m[1] === "alle" || m[1] === "ab" ? 99 : Math.max(3, Math.min(30, +m[1])); /* "diepte" en "ab" van vroeger: volledig tot */
-    else if ((m = x.match(/^preset-(\w+)$/)) && BK_PRESET[m[1]]) { const P = BK_PRESET[m[1]]; Object.assign(S, { detail: P.detail, beeld: P.beeld, bron: P.bron, hyp: P.hyp, delen: new Set(P.delen) }); }
-    else if ((m = x.match(/^formaat-(\w+)$/)) && BK_FORMAAT.some(f => f[0] === m[1])) S.formaat = m[1];
-    else if ((m = x.match(/^delen-([\w.]*)$/))) S.delen = new Set(m[1].split(".").filter(d => BK_DELEN.some(b => b[0] === d)));
-    else if ((m = x.match(/^beeld-(\w+)$/)) && BK_BEELD.some(b => b[0] === m[1])) S.beeld = m[1];
-    else if ((m = x.match(/^bron-(\w+)$/)) && BK_BRON.some(b => b[0] === m[1])) S.bron = m[1];
-    else if ((m = x.match(/^hyp-(\w+)$/)) && BK_HYP.some(b => b[0] === m[1])) S.hyp = m[1];
-    else if ((m = x.match(/^lijn-(\d+)$/)) && LINES[+m[1]]) S.lijn = +m[1];
-    else if ((m = x.match(/^in-(kanten|familie)$/))) S.split = m[1];
-    else if ((m = x.match(/^deel-(\d{1,2})$/))) S.deelNr = Math.max(1, +m[1]);
-    else if ((m = x.match(/^druk(?:-(3|blurb|0))?$/))) S.afloop = m[1] || "3";
-    else if ((m = x.match(/^omslag-([abc])$/))) S.omslag = m[1];
-    else if (x === "zuiver") S.zuiver = true;
-    else if (x === "hires") S.hires = true; /* scherpe originelen, alleen lokaal (tools/boek.py) */
-  });
-}
-function bkToken(S0) {
-  const S = S0 || bkState, D = bkLeeg(), p = ["boek"], ds = [...S.delen].sort().join("."), dd = [...D.delen].sort().join(".");
-  if (S.detail !== D.detail) p.push("detail-" + (S.detail >= 99 ? "alle" : S.detail));
-  if (S.formaat !== D.formaat) p.push("formaat-" + S.formaat);
-  if (S.omslag !== D.omslag) p.push("omslag-" + S.omslag);
-  if (ds !== dd) p.push("delen-" + BK_DELEN.map(d => d[0]).filter(d => S.delen.has(d)).join("."));
-  if (S.beeld !== D.beeld) p.push("beeld-" + S.beeld);
-  if (S.bron !== D.bron) p.push("bron-" + S.bron);
-  if (S.hyp !== D.hyp) p.push("hyp-" + S.hyp);
-  if (S.lijn) p.push("lijn-" + S.lijn);
-  if (S.split !== "een" && !S.lijn) p.push("in-" + S.split);
-  if (S.split !== "een" && !S.lijn && S.deelNr > 1) p.push("deel-" + S.deelNr);
-  if (S.afloop) p.push("druk-" + S.afloop);
-  if (S.zuiver) p.push("zuiver");
-  if (S.hires) p.push("hires");
-  return p.join("--");
-}
-/* het zwakste bewijs in de keten van iemand naar het midden (A 0 … D 3) */
-const BK_R = { A: 0, B: 1, C: 2, D: 3 };
-function bkKeten(kw) { let w = 0; for (let k = kw; k > 1; k >>= 1) { const p = person(k); if (!p) return 3; if (!p.living) w = Math.max(w, BK_R[p.st] ?? 3); } return w; }
-/* iedereen staat in het boek; de diepte bepaalt alleen of het profiel volledig of kort is. "Hypotheses weglaten" laat wie op een
-   D-schakel rust weg. */
-function bkMensen(S) { return ancestors.filter(p => !p.aliasOf && (S.hyp !== "weg" || bkKeten(p.kw) < 3)); }
-let bkCurB = null; /* de keuzes van het boek dat nu wordt opgebouwd */
-/* titel en ondertitel van het boek, uit de keuze (de hele boom, één familie, of een deel), voor de omslag, de titelpagina, de koppen,
-   het colofon, document.title en de bestandsnaam. kern = het kw-nummer in het midden van de waaier op de omslag. */
-function bkTitels(S, deel, mensen) {
-  const van = T.rootFull || T.root, lijnen = S.lijn ? [S.lijn] : deel.lijnen; /* van: alleen in de titel van het hele boek */
-  /* het oudste bewezen jaar, streng zoals op de site en de omslag (bkbJaren: A/B, bewezen keten, oudsteJaar(p, true)) */
-  const oudste = bkbJaren(mensen.map(person).filter(p => p && lijnen.includes(lineOf(p.kw)))), jaren = oudste ? `${oudste} – ${new Date().getFullYear()}` : "";
-  /* bij een familie of deel geen naam van de hoofdpersoon in de ondertitel (ook een broer of nicht moet het boek kunnen laten maken):
-     generaties, streek en jaren van die lijnen */
-  const gens = new Set(mensen.filter(k => lijnen.includes(lineOf(k))).map(gen)).size;
-  const streek = lijnen.length === 1 && LINES[lijnen[0]] ? LINES[lijnen[0]].region || "" : "";
-  const info = [gens > 1 ? `${gens} generaties` : "", streek, jaren].filter(Boolean).join(" · ");
-  let titel = `De voorouders van ${van}`, ondertitel = "", kern = 1;
-  if (S.lijn && LINES[S.lijn]) { titel = `De familie ${LINES[S.lijn].name}`; ondertitel = info || "Een familiegeschiedenis"; kern = S.lijn; }
-  else if (deel.aantal > 1) {
-    if (S.split === "familie") { titel = `De familie ${LINES[deel.lijnen[0]].name}`; kern = deel.lijnen[0]; ondertitel = [`Deel ${deel.nr} van ${deel.aantal}`, info].filter(Boolean).join(" · "); }
-    else { /* een kant: persoonsneutraal, met de families van de twee grootouders (hun vaderlijnen: kw 8 en 10, of 12 en 14) */
-      kern = deel.nr === 1 ? 2 : 3;
-      const fam = l => LINES[l] ? String(LINES[l].name).split(" · ")[0] : "", gp = [kern * 4, kern * 4 + 2].map(fam).filter(Boolean);
-      titel = `${deel.naam}: ${T.key === "s" ? "" : "de families "}${gp.join(" en ")}`;
-      ondertitel = [`Deel ${deel.nr} van ${deel.aantal}`, lijnen.map(fam).filter(Boolean).join(" · "), jaren].filter(Boolean).join(" · "); }
-  }
-  /* bestandsnaam = de nette titel; alleen tekens die een bestandsnaam niet mag bevatten gaan eruit (":" wordt " –") */
-  const bestand = titel.replace(/\s*:\s*/g, " – ").replace(/[\/\\?*"<>|]+/g, " ").replace(/\s+/g, " ").trim();
-  return { titel, ondertitel, jaren, oudste, kern, bestand: bestand + ".pdf" };
-}
-function bkB() {
-  const S = bkState, dl = bkDelenVan(S), deel = dl[Math.min(S.deelNr, dl.length) - 1];
-  const mensen = bkMensen(S).filter(p => p.kw < 8 || deel.lijnen.includes(lineOf(p.kw))).map(p => p.kw);
-  const keuzes = [
-    S.lijn ? `Alleen de familie ${LINES[S.lijn].name}.` : deel.aantal > 1 ? `Deel ${deel.nr} van ${deel.aantal}: ${deel.naam}.` : "Alle families.",
-    S.detail >= 99 ? "Elke voorouder met een volledig profiel." : `Een volledig profiel tot en met generatie ${ROMAN[S.detail]}, daarboven een kort profiel.`,
-    S.hyp === "weg" ? "Voorouders die alleen op een hypothese (D) rusten, zijn weggelaten." : "Hypotheses (D) staan erin, en zijn als hypothese gemarkeerd.",
-    { noten: "De bronnen staan als noten achter elke familie.", profiel: "De bronnen staan bij elk profiel.", site: "De bronnen staan op de site; het boek verwijst ernaar." }[S.bron],
-    { geen: "Zonder beelden.", weinig: "Met de belangrijkste beelden.", veel: "Met veel beelden." }[S.beeld],
-    "Onderdelen: " + BK_DELEN.filter(d => S.delen.has(d[0])).map(d => d[1].toLowerCase()).join(", ") + "."];
-  const C = BK_PRESET.compact, compact = S.detail === C.detail && S.beeld === C.beeld && S.bron === C.bron && S.hyp === C.hyp;
-  keuzes.push(`Omslag: ${(BK_OMSLAG.find(o => o[0] === S.omslag) || BK_OMSLAG[0])[1].toLowerCase()}.`);
-  const tt = bkTitels(S, deel, mensen);
-  return { boom: T.key, ...tt, omslag: S.omslag, compact, detail: S.detail, diepte: S.detail, formaat: S.formaat, delen: new Set(S.delen), beeld: S.beeld, bron: S.bron, hyp: S.hyp, druk: !!S.afloop, afloop: S.afloop, hires: S.hires, lijn: S.lijn, deel, mensen, keuzes };
-}
 const bkHaak = (n, ...a) => typeof window[n] === "function" ? window[n](...a) : null;
 const BK_SITE = "stamboom.harriedegroot.com";
 const bkSiteUrl = tok => BK_SITE + "/#" + T.prefix + tok;
-/* een verhaal als boektekst: koppen, alinea's, en bij afgeleide of hypothetische zinnen het soort */
-function bkVerhaal(s, B) {
-  const alinea = n => { const o = noteObj(n); if (o.k === "hypothese" && B && B.hyp === "weg") return ""; return `<p${o.k ? ` class="bk-${o.k}"` : ""}>${esc(o.t)}${o.k ? ` <span class="bk-soort">${esc(o.k)}</span>` : ""}</p>`; };
-  const delen = s.parts.filter(pt => !(B && B.hyp === "weg" && pt.st === "D"));
-  return `<article class="bk-verhaal" data-verhaal="${esc(s.id)}" id="bk-verhaal-${esc(s.id)}" data-kop-l="${esc(s.title)}" data-kop-r="Verhaal">
-    <h2 class="bk-h2">${esc(s.title)}</h2>${s.lede ? `<p class="bk-lede">${esc(s.lede)}</p>` : ""}
-    ${delen.map((pt, i) => `<section class="bk-deel${i ? " bk-deel-volg" : ""}"${pt.st ? ` data-st="${pt.st}"` : ""}>${(() => { const al = pt.p.map(alinea).filter(Boolean).map((h, j) => !i && !j ? h.replace(/^<p(?: class="([^"]*)")?/, (m, c) => `<p class="${c ? c + " " : ""}bk-ini"`) : h);
-      return `<div class="bk-deel-begin"><h3 class="bk-h3">${esc(pt.h)}${pt.st ? ` <span class="bk-st">${pt.st}</span>` : ""}</h3>${al[0] || ""}</div>${al.slice(1).join("")}`; })()}</section>`).join("")}
-  </article>`;
+/* de gegevens van deze boom voor het boek: de sobere boomdata van de brug (van levenden alleen kw, n, roep en living), wat alleen
+   het boek gebruikt, en per persoon een paar afgeleide gegevens (portret, oudste bewezen jaar) */
+const BK_HAKEN = { omslag: "boekOmslag", voorwerk: "boekVoorwerk", inhoud: "boekInhoud", waaier: "boekWaaier", opening: "boekOpening", naam: "bookSurnameBlock", beelden: "boekBeelden", src: "boekSrc", verste: "boekVerste", nawerk: "boekNawerk", zetwerk: "boekZetwerk", achterkant: "boekAchterkant", kaart: "bookMap", kruis: "bookCrossings", tijdlijn: "bookTimeline" };
+const bkHooks = () => Object.fromEntries(Object.entries(BK_HAKEN).map(([k, n]) => [k, (...a) => bkHaak(n, ...a)]));
+function bkBookData() {
+  const td = Products.site.treeData(T.key), ps = td.people;
+  return Object.assign({}, td, {
+    rootFull: T.rootFull || T.root, rootShort: T.root, version: VERSION, site: BK_SITE, prefix: T.prefix, thisYear: new Date().getFullYear(),
+    sides: T.key === "s" ? { 2: TREES.h.root, 3: TREES.a.root } : {}, genNames: GEN_NAME.slice(),
+    stories: STORIES, historyTouch: T.HISTORY_TOUCH || [], context: CONTEXT, conflicts: CONFLICTS, openQuestions: OPEN_QUESTIONS, archives: ARCHIVES, sourceGroups: SOURCE_GROUPS,
+    status: STATUS, offmap: OFFMAP,
+    short: Object.fromEntries(td.facts.filter(f => f.kind === "short").map(f => [f.kw, f.text])),
+    portraits: Object.fromEntries(ps.filter(p => !p.living).map(p => [p.kw, portraitOf(p.kw)]).filter(x => x[1])),
+    provenYear: Object.fromEntries(ps.filter(p => !p.living).map(p => [p.kw, bkbJaren([person(p.kw) || p])]).filter(x => x[1])),
+    front: bkFrontData() });
 }
-function bkBeeld(im, maat, cls) {
-  if (!im) return "";
-  const src = typeof window.boekSrc === "function" ? window.boekSrc(im, bkCurB || bkB()) : im.src; /* bij hires het origineel; "" = te klein voor druk (89) */
-  if (!src) return "";
-  const cr = typeof im.credit === "string" ? im.credit : im.maker || "";
-  return `<figure class="bk-beeld${cls ? " " + cls : ""}" data-img="${esc(im.id || "")}" data-maat="${maat}"><img src="${esc(src)}" alt=""${src !== im.src ? ` onerror="this.onerror=null;this.src='${esc(im.src)}'"` : ""}${im.crop ? ` style="object-position:${cropOf(im)}"` : ""}>${im.t || cr ? `<figcaption class="bk-bijschrift">${esc(im.t || "")}${cr ? ` <span class="bk-credit">${esc(cr)}</span>` : ""}</figcaption>` : ""}</figure>`;
-}
-const bkLeefJaren = p => { const t = lifeYears(p); return t === "jaartallen onbekend" ? "" : t; };
-const bkProfPlaats = p => [...new Set([placeName(p.bp), placeName(p.dp)].filter(Boolean))].join(" · ");
-const bkBronLabel = s => String(s[0] || "").replace(/\s*·\s*Tresoar, toegang.*$/, "").replace(/\s*\((?:graftombe|online-begraafplaatsen)\.nl[^)]*\)/, "");
-/* een kort profiel: naam, jaren, plaats, de zin uit KORT en het label; voor wie boven de gekozen diepte staat */
-function bkKort(p, l) {
-  const g = gen(p.kw), base = `data-kw="${p.kw}" data-gen="${g}" data-gen-naam="${esc(GEN_NAME[g] || "voorouders")}" data-lijn="${l || ""}" id="bk-kw-${p.kw}"`;
-  if (p.living) return `<article class="bk-kortprof bk-levend" ${base}><h3 class="bk-naam">${esc(p.n)}</h3></article>`;
-  const kort = kortZin(p).replace('<p class="kort">', '<p class="bk-kort">');
-  return `<article class="bk-kortprof" ${base} data-st="${p.st || ""}"><p class="bk-rel">${esc(relTerm(p.kw))} · kw ${p.kw}</p><h3 class="bk-naam">${esc(p.n)}</h3>
-    <p class="bk-jaren">${esc(bkLeefJaren(p))} <span class="bk-st">${esc(p.st || "")}</span></p>${bkProfPlaats(p) ? `<p class="bk-plaats">${esc(bkProfPlaats(p))}</p>` : ""}${kort}</article>`;
-}
-/* een volledig profiel: van levenden alleen de naam; anders portret, levensloop, KORT, notities, gezin, bewijs en (naar keuze) bronnen */
-function bkProfiel(p, l, B, eerste, kop) { /* kop: de generatiekop, als dit het eerste profiel is; die blijft bij naam en gegevens */
-  const g = gen(p.kw), gn = GEN_NAME[g] || "voorouders", base = `data-kw="${p.kw}" data-gen="${g}" data-gen-naam="${esc(gn)}" data-lijn="${l || ""}" id="bk-kw-${p.kw}"`;
-  if (p.living) return `${kop ? `<div class="bk-gen-begin">${kop}` : ""}<article class="bk-prof bk-levend" ${base}><h3 class="bk-naam">${esc(p.n)}</h3></article>${kop ? "</div>" : ""}`;
-  const rij = (t, v) => v ? `<div><dt>${t}</dt><dd>${v}</dd></div>` : "";
-  const dp = (d, pl) => [fmt(d), placeName(pl) ? "in " + esc(placeName(pl)) : ""].filter(Boolean).join(" ");
-  const port = B.beeld !== "geen" ? portraitOf(p.kw) : null;
-  const extra = B.beeld === "veel" ? (bkHaak("boekBeelden", B, { soort: "profiel", kw: p.kw, lijn: l }) || []).filter(im => !port || im.id !== port.id).slice(0, 1) : [];
-  const kort = kortZin(p).replace('<p class="kort">', '<p class="bk-kort">');
-  const notes = (p.notes || []).map(noteObj).filter(n => !(B.hyp === "weg" && n.k === "hypothese"));
-  const kids = (p.kids || []).filter(k => !/\bkinderen in totaal\b/.test(k));
-  const src = (p.src || []).filter(s => s && s[0]);
-  const bronnen = !src.length ? "" : B.bron === "profiel" ? `<ol class="bk-bronnen">${src.map(s => `<li>${esc(bkBronLabel(s))}</li>`).join("")}</ol>`
-    : B.bron === "noten" ? `<p class="bk-bronref"><span class="bk-lbl">Bronnen</span> ${src.length} in de <a class="bk-ref" href="#bk-noot-${p.kw}">noten</a></p>` : "";
-  return `${kop ? `<div class="bk-gen-begin">${kop}` : ""}<article class="bk-prof" ${base} data-st="${p.st || ""}">
-    ${port ? bkBeeld(port, "kwart", "bk-portret") : ""}
-    <div class="bk-prof-kop"><header><p class="bk-rel">${esc(relTerm(p.kw))} · kw ${p.kw}</p><h3 class="bk-naam">${esc(p.n)}</h3><p class="bk-jaren">${esc(lifeYears(p))} <span class="bk-st" title="${esc(STATUS[p.st] ? STATUS[p.st].long : "")}">${esc(p.st || "")}</span></p></header>
-    ${kort}
-    <dl class="bk-feiten">${rij("Geboren", dp(p.b, p.bp))}${rij("Gedoopt", p.bapt ? esc(p.bapt) : "")}${rij("Getrouwd", p.m && p.m.w ? [p.m.d ? fmt(p.m.d) : "", p.m.p ? "in " + esc(placeName(p.m.p)) : "", "met " + esc(p.m.w)].filter(Boolean).join(" ") : "")}${rij("Overleden", dp(p.d, p.dp))}${rij("Begraven", p.bur ? esc(p.bur) : "")}${rij("Beroep", p.occ ? esc(p.occ) : "")}${rij("Geloof", p.rel ? esc(p.rel) : "")}</dl></div>
-    ${notes.length ? `<div class="bk-noten">${notes.map((n, j) => `<p${n.k || (eerste && !j) ? ` class="${[n.k ? "bk-" + n.k : "", eerste && !j ? "bk-ini" : ""].filter(Boolean).join(" ")}"` : ""}>${esc(n.t)}${n.k ? ` <span class="bk-soort">${esc(n.k)}</span>` : ""}</p>`).join("")}</div>` : ""}
-    ${extra.map(im => bkBeeld(im, "half", "bk-tijdbeeld")).join("")}
-    ${kids.length ? `<p class="bk-gezin"><span class="bk-lbl">Kinderen</span> ${kids.map(k => esc(k.replace(/\s*·\s*kw\s*\d+/, ""))).join("; ")}</p>` : ""}
-    ${p.stNote ? `<p class="bk-bewijs"><span class="bk-lbl">Bewijs</span> ${esc(p.stNote)}</p>` : ""}
-    ${bronnen}
-  </article>${kop ? "</div>" : ""}`;
-}
-/* noten van een familie: per voorouder de bronnen, kort (een label, geen lange url); aan het eind een verwijzing naar de site */
-function bkNoten(B, l, ps) {
-  const met = ps.filter(p => !p.living && gen(p.kw) <= B.detail && (p.src || []).some(s => s && s[0])); /* alleen de volledige profielen; de korte verwijzen naar de site */
-  if (B.bron === "site") return `<p class="bk-siteref">Bij elke voorouder staan de bronnen op de site, met de links naar de akten en scans: <span class="bk-url">${esc(bkSiteUrl("lijn-" + l))}</span></p>`;
-  if (B.bron !== "noten" || !met.length) return "";
-  return `<section class="bk-eindnoten" data-lijn="${l}" data-kop-l="${esc(LINES[l].name)}" data-kop-r="Bronnen"><h2 class="bk-h2">Bronnen bij de familie ${esc(LINES[l].name)}</h2>
-    <p class="bk-uitleg">Per voorouder de bronnen waarop het profiel rust. De links naar de akten en scans staan op de site: <span class="bk-url">${esc(bkSiteUrl("lijn-" + l))}</span></p>
-    <div class="bk-noten-kol">${met.map(p => `<div class="bk-noot" id="bk-noot-${p.kw}"><h4><a class="bk-ref" href="#bk-kw-${p.kw}">${esc(p.n)}</a> <span class="bk-kw">kw ${p.kw}</span></h4><ol>${p.src.filter(s => s && s[0]).map(s => `<li>${esc(bkBronLabel(s))}</li>`).join("")}</ol></div>`).join("")}</div>
-  </section>`;
-}
-/* de verste voorouder van een familie: de oudste met een bewezen keten (A of B), anders de oudste die er is */
-function bkVerste(ps) {
-  const jaar = p => yr(p.b) || (yr(p.d) ? yr(p.d) - 40 : null) || 9999;
-  const kand = ps.filter(p => !p.living && jaar(p) < 9999);
-  const ab = kand.filter(p => bkKeten(p.kw) <= 1);
-  return (ab.length ? ab : kand).sort((a, b) => jaar(a) - jaar(b) || gen(b.kw) - gen(a.kw))[0] || null;
-}
-function bkVerstePagina(B, l, p) {
-  if (!p) return "";
-  const eigen = bkHaak("boekVerste", B, l, p); if (eigen) return eigen;
-  const j = yr(p.b) || yr(p.d), kort = kortZin(p).replace('<p class="kort">', '<p class="bk-kort">');
-  return `<section class="bk-verste" data-lijn="${l}" data-kw="${p.kw}" data-kop-l="${esc(LINES[l].name)}" data-kop-r="De verste voorouder">
-    <p class="bk-eyebrow">De verste voorouder · familie ${esc(LINES[l].name)}</p>
-    <p class="bk-verste-jaar">${j ? (isApprox(p.b) ? "ca. " : "") + j : ""}</p>
-    <h2 class="bk-h1">${esc(p.n)}</h2><p class="bk-sub">${esc(relTerm(p.kw))} · generatie ${ROMAN[gen(p.kw)]} · ${esc(lifeYears(p))}</p>
-    ${kort}${p.stNote ? `<p class="bk-bewijs">${esc(p.stNote)}</p>` : ""}
-    <p class="bk-uitleg">Verder terug gaat deze lijn nog niet met bewijs. <a class="bk-ref" href="#bk-kw-${p.kw}">Het profiel</a> staat bij generatie ${ROMAN[gen(p.kw)]}.</p>
-  </section>`;
-}
-/* een familie: opening (89), stamlijn, verhaal, de verste voorouder, en de voorouders van jong naar oud per generatie */
-function bkFamilie(B, l) {
-  const L = LINES[l]; if (!L) return "";
-  const ps = bkMensen(bkState).filter(p => lineOf(p.kw) === l).sort((a, b) => gen(a.kw) - gen(b.kw) || a.kw - b.kw);
-  const stem = (L.stem || []).map(person).filter(Boolean);
-  const sts = STORIES.filter(s => s.line === l);
-  const open = bkHaak("boekOpening", B, l) || `<div class="bk-open" data-lijn="${l}"><p class="bk-eyebrow">Familie · lijn ${l}</p><h1 class="bk-h1">${esc(L.name)}</h1>${L.sub ? `<p class="bk-sub">met ${esc(L.sub)}</p>` : ""}${L.region ? `<p class="bk-regio">${esc(L.region)}</p>` : ""}</div>`;
-  const gens = [...new Set(ps.map(p => gen(p.kw)))];
-  const gkop = g => `Generatie ${ROMAN[g]} · ${esc(GEN_NAME[g] || "voorouders")}`;
-  return `<section class="bk-hfst bk-fam" data-bk="familie" data-lijn="${l}" style="--lc:var(--l${l})" id="bk-lijn-${l}" data-kop-l="${esc(L.name)}">
-    ${open}
-    <div class="bk-intro" data-kop-l="${esc(L.name)}" data-kop-r="Familie"><p class="bk-lede">${esc(L.intro || "")}</p>
-      ${stem.length ? `<div class="bk-stamlijn"><h2 class="bk-h2">Stamlijn, van jong naar oud</h2><ol>${stem.map(p => `<li><a class="bk-ref" href="#bk-kw-${p.kw}"><span class="bk-g">${ROMAN[gen(p.kw)]}</span> ${esc(p.n)}</a> <span class="bk-jaren">${esc(lifeYears(p))}</span></li>`).join("")}</ol></div>` : ""}</div>
-    ${sts.map(s => bkVerhaal(s, B)).join("")}
-    ${gens.map(g => { const kort = g > B.detail, gp = ps.filter(p => gen(p.kw) === g);
-      return `<div class="bk-gen${kort ? " bk-gen-kort" : ""}" data-gen="${g}" data-kop-l="${esc(L.name)}" data-kop-r="${gkop(g)}">${(() => { /* de kop blijft bij het begin van de generatie: bij korte profielen de eerste twee, anders naam en gegevens van het eerste profiel */
-        const kop = `<div class="bk-genkop"><p class="bk-eyebrow">${esc(L.name)}</p><h2 class="bk-h2">Generatie ${ROMAN[g]}</h2><p class="bk-gen-naam">${esc(GEN_NAME[g] || "voorouders")} · ${gp.length} ${gp.length === 1 ? "voorouder" : "voorouders"}</p></div>`;
-        if (kort) { const k = gp.map(p => bkKort(p, l)); return `<div class="bk-gen-begin">${kop}${k.slice(0, 2).join("")}</div>${k.slice(2).join("")}`; }
-        const e = gp.findIndex(q => !q.living); return gp.map((p, j) => bkProfiel(p, l, B, j === e, j ? "" : kop)).join(""); })()}</div>`; }).join("")}
-    ${B.delen.has("verst") ? bkVerstePagina(B, l, bkVerste(ps)) : ""}
-    ${bkNoten(B, l, ps)}
-  </section>`;
-}
-/* losse hoofdstukken na de families */
-function bkAndereVerhalen(B) {
-  const sts = STORIES.filter(s => !s.line); if (!sts.length) return "";
-  return `<section class="bk-hfst" data-bk="verhalen" id="bk-verhalen" data-kop-l="Verhalen" data-kop-r="Verhalen"><h1 class="bk-h1">Verhalen</h1><p class="bk-lede">Verhalen die over meer families gaan.</p>${sts.map(s => bkVerhaal(s, B)).join("")}</section>`;
-}
-function bkTijd(B) {
-  const ht = T.HISTORY_TOUCH || [], ctx = CONTEXT.slice().sort((a, b) => a.y - b.y);
-  return `<section class="bk-hfst" data-bk="tijd" id="bk-tijd" data-kop-l="Hun tijd" data-kop-r="Hun tijd"><h1 class="bk-h1">Hun tijd</h1><p class="bk-lede">De grote geschiedenis om de families heen.</p>
-    ${ht.length ? `<h2 class="bk-h2">Geraakt door de grote geschiedenis</h2><dl class="bk-tijdlijst">${ht.map(h => { const p = person(h.kw); return `<div><dt>${esc(h.y)}</dt><dd><b>${esc(h.t)}</b> ${esc(h.d)}${p && !p.living ? ` <a class="bk-ref" href="#bk-kw-${p.kw}">${esc(p.n)}</a>` : ""}</dd></div>`; }).join("")}</dl>` : ""}
-    <h2 class="bk-h2">Wat er gebeurde</h2><dl class="bk-tijdlijst">${ctx.map(c => `<div><dt>${c.y}${c.y2 ? "–" + c.y2 : ""}</dt><dd><b>${esc(c.t)}</b> ${esc(c.d)}</dd></div>`).join("")}</dl>
-  </section>`;
-}
-function bkKwartierstaat(B) {
-  const ps = bkMensen(bkState).filter(p => p.kw < 8 || B.deel.lijnen.includes(lineOf(p.kw))).sort((a, b) => a.kw - b.kw), gens = [...new Set(ps.map(p => gen(p.kw)))];
-  return `<section class="bk-hfst" data-bk="kwartierstaat" id="bk-kwartierstaat" data-kop-l="Kwartierstaat" data-kop-r="Kwartierstaat"><h1 class="bk-h1">Kwartierstaat</h1>
-    <p class="bk-lede">Alle voorouders genummerd. De vader van nummer n heeft nummer 2n, de moeder 2n + 1. Achter elke naam het bewijs: A in een akte, B sterk onderbouwd, C uit een online stamboom, D een hypothese.</p>
-    ${gens.map(g => `<h2 class="bk-h2">Generatie ${ROMAN[g]} <span class="bk-gen-naam">${esc(GEN_NAME[g] || "voorouders")}</span></h2><ol class="bk-kwlijst">${ps.filter(p => gen(p.kw) === g).map(p => `<li value="${p.kw}"><a class="bk-ref" href="#bk-kw-${p.kw}">${esc(p.n)}</a>${p.living ? "" : ` <span class="bk-jaren">${esc(bkLeefJaren(p))}</span> <span class="bk-st">${esc(p.st || "")}</span>`}</li>`).join("")}</ol>`).join("")}
-  </section>`;
-}
-function bkOpen(B) {
-  const cf = CONFLICTS, oq = OPEN_QUESTIONS.slice().sort((a, b) => a.pri - b.pri);
-  return `<section class="bk-hfst" data-bk="open" id="bk-open" data-kop-l="Open vragen" data-kop-r="Open vragen"><h1 class="bk-h1">Wat nog open is</h1>
-    <p class="bk-lede">Waar bronnen elkaar tegenspreken, en wat nog uitgezocht moet worden. Weet je meer? Vertel het Harrie of Alies, of kijk op <span class="bk-url">${esc(bkSiteUrl("zoeken"))}</span>.</p>
-    ${cf.length ? `<h2 class="bk-h2">Tegenstrijdigheden</h2><dl class="bk-tegen">${cf.map(c => { const p = person(c.kw); return `<div><dt>${esc(c.topic)}${p && !p.living ? ` <a class="bk-ref" href="#bk-kw-${p.kw}">kw ${p.kw}</a>` : ""}</dt><dd>${esc(c.now)}</dd></div>`; }).join("")}</dl>` : ""}
-    ${oq.length ? `<h2 class="bk-h2">Open vragen</h2><ol class="bk-vragen">${oq.map(o => `<li>${esc(o.q)}${o.where ? ` <span class="bk-waar">${esc(o.where)}</span>` : ""}</li>`).join("")}</ol>` : ""}
-  </section>`;
-}
-function bkBronnenHfst(B) {
-  return `<section class="bk-hfst" data-bk="bronnen" id="bk-bronnen" data-kop-l="Bronnen" data-kop-r="Bronnen"><h1 class="bk-h1">Bronnen</h1>
-    <p class="bk-lede">Elk gegeven in dit boek komt uit een bron, met een label voor de sterkte van het bewijs. Alle links naar akten en scans staan op de site: <span class="bk-url">${esc(BK_SITE)}</span></p>
-    <h2 class="bk-h2">Archieven</h2><dl class="bk-tijdlijst">${[...new Map(ARCHIVES.map(a => [a.n, a])).values()].map(a => `<div><dt>${esc(a.n)}</dt><dd>${esc(a.d)} <span class="bk-url">${esc(bkUrl(a.u))}</span></dd></div>`).join("")}</dl>
-    ${SOURCE_GROUPS.length ? `<h2 class="bk-h2">Genealogieën en naslag</h2>${SOURCE_GROUPS.map(g => `<h3 class="bk-h3">${esc(g[0])}</h3><ul class="bk-bronlijst">${g[1].map(s => `<li>${esc(s[0])}</li>`).join("")}</ul>`).join("")}` : ""}
-  </section>`;
-}
-const bkUrl = u => { try { const x = new URL(u); return (x.hostname.replace(/^www\./, "") + x.pathname).replace(/\/$/, ""); } catch (e) { return ""; } };
-/* het hele boek als HTML-body: de volgorde uit boek_markup.md */
-function bkInhoud(B) {
-  const fams = B.deel.lijnen, eerste = B.deel.nr === 1, laatste = B.deel.nr === B.deel.aantal;
-  const html = [
-    bkHaak("boekOmslag", B) || "",
-    bkHaak("boekVoorwerk", B) || `<section class="bk-hfst bk-titel" data-bk="titel"><h1 class="bk-h1">De voorouders van ${esc(T.rootFull || T.root)}</h1><p class="bk-sub">${esc(T.brand || "")}</p><p class="bk-versie">${esc(VERSION)}</p><ul class="bk-keuzes-tekst">${B.keuzes.map(k => `<li>${esc(k)}</li>`).join("")}</ul></section>`,
-    bkHaak("boekInhoud", B) || "",
-    B.lijn || !eerste ? "" : bkHaak("boekWaaier", B) || "",
-    B.delen.has("fam") ? fams.map(l => bkFamilie(B, l)).join("") : "",
-    B.delen.has("verh") && !B.lijn && laatste ? bkAndereVerhalen(B) : "",
-    B.delen.has("tijd") && laatste ? bkTijd(B) : "",
-    B.delen.has("kw") ? bkKwartierstaat(B) : "",
-    B.delen.has("open") && laatste ? bkOpen(B) : "",
-    B.delen.has("bron") && laatste ? bkBronnenHfst(B) : "",
-    bkHaak("boekNawerk", B) || ""
-  ].join("\n");
-  /* compact: de kleinere hoofdstukken krijgen bk-los en beginnen dan op de volgende pagina in plaats van rechts */
-  const los = B.compact ? html.replace(/<section class="bk-hfst((?: [\w-]+)*)"(?=[^>]*data-bk="(?:tijd|kwartierstaat|open|bronnen|register)")/g, '<section class="bk-hfst$1 bk-los"') : html;
-  return typeof window.boekZetwerk === "function" ? window.boekZetwerk(los) : los; /* typografische aanhalingstekens (19) */
-}
-/* een schatting van het aantal pagina's per onderdeel (A4), vóór het opbouwen; daarna telt Paged.js het echte aantal */
-const bkTekstLen = p => [p.stNote, p.bapt, ...(p.notes || []).map(n => noteObj(n).t), ...(p.kids || [])].join(" ").length + 300;
-function bkSchat(S, deel) {
-  const dl = bkDelenVan(S), D = deel || dl[Math.min(S.deelNr, dl.length) - 1], eerste = D.nr === 1, laatste = D.nr === D.aantal;
-  const ps = bkMensen(S), fams = D.lijnen;
-  const tekst = s => s.parts.reduce((n, pt) => n + pt.h.length + pt.p.reduce((m, q) => m + noteObj(q).t.length, 0), (s.lede || "").length);
-  const inFam = ps.filter(p => fams.includes(lineOf(p.kw)));
-  const vol = inFam.filter(p => gen(p.kw) <= S.detail), kort = inFam.filter(p => gen(p.kw) > S.detail);
-  const bronn = vol.reduce((n, p) => n + (p.src || []).length, 0);
-  const gensN = fams.reduce((n, l) => n + new Set(inFam.filter(p => lineOf(p.kw) === l && gen(p.kw) <= S.detail).map(p => gen(p.kw))).size, 0);
-  const fmtF = { a4: 1, foto: 1.08, vierkant: .78, trade: 1.25 }[S.formaat] || 1;
-  const r = {
-    fam: fams.length * 3 + gensN * .5 + vol.reduce((n, p) => n + (p.living ? .06 : .12 + bkTekstLen(p) / 2600 + (S.beeld !== "geen" && portraitOf(p.kw) ? .12 : 0) + (S.beeld === "veel" ? .3 : 0)), 0) + kort.length / 8
-      + fams.reduce((n, l) => n + STORIES.filter(s => s.line === l).reduce((m, s) => m + tekst(s) / 3600 + .5, 0), 0) + (S.bron === "noten" ? bronn / 40 + fams.length * .5 : S.bron === "profiel" ? bronn / 60 : 0),
-    verst: fams.length, verh: S.lijn || !laatste ? 0 : STORIES.filter(s => !s.line).reduce((m, s) => m + tekst(s) / 3600 + .5, 1),
-    tijd: laatste ? 1 + ((T.HISTORY_TOUCH || []).length + CONTEXT.length) / 9 : 0, kw: 1 + (inFam.length + 6) / 42,
-    open: laatste ? 1 + CONFLICTS.length / 11 + OPEN_QUESTIONS.length / 16 : 0, bron: laatste ? 1 + ARCHIVES.length / 18 + SOURCE_GROUPS.reduce((n, g) => n + g[1].length, 0) / 35 : 0 };
-  const vast = 6 + (eerste && !S.lijn ? 4 : 0); /* omslag, titel, colofon, inhoud, register; in deel 1 ook de inleiding en de waaier */
-  Object.keys(r).forEach(k => r[k] = r[k] ? Math.max(1, Math.round(r[k] * fmtF)) : 0);
-  const totaal = vast + Math.round(BK_DELEN.filter(d => S.delen.has(d[0])).reduce((n, d) => n + r[d[0]], 0));
-  const k = Math.min(2.5, Math.max(.6, bkKal[T.key] || 1)); /* bijgesteld met het echte aantal van het laatste voorbeeld in deze boom */
-  Object.keys(r).forEach(x => r[x] = r[x] ? Math.max(1, Math.round(r[x] * k)) : 0);
-  return { delen: r, totaal: Math.ceil(totaal * k / 2) * 2, ruw: totaal };
-}
+const bkCoreCache = {};
+const bkCore = () => bkCoreCache[T.key] || (bkCoreCache[T.key] = Products.book.forTree(bkBookData(), bkHooks()));
+/* het boek in het register van de productmotor: de hash-vorm van het boek (bv. "preset-compact--omslag-a"), via de kern van de huidige boom */
+if (Products.setCodec && Products.products && Products.products.book && !Products.products.book.codec)
+  Products.setCodec("book", { parse: t => bkCore().parse("boek--" + t), format: S => bkCore().format(S).replace(/^boek-?-?/, "") });
+/* dunne laag over de kern, met de huidige keuzes (bkState) */
+function bkFromToken(t) { Object.assign(bkState, bkCore().parse(t)); }
+const bkToken = S0 => bkCore().format(S0 || bkState);
+const bkStartAan = S => bkCore().startOn(S);
+const bkStartLijnen = S => bkCore().startLines(S);
+const bkBasis = () => bkCore().base(bkState);
+const bkGen = kw => bkCore().genOf(bkState, kw);
+const bkStartNaam = () => bkCore().startName(bkState);
+const bkGenNaam = g => bkCore().genName(bkState, g);
+const bkRel = kw => bkCore().rel(bkState, kw);
+const bkKeten = kw => bkCore().chain(kw);
+const bkMensen = S => bkCore().members(S);
+const bkDelenVan = S => bkCore().partsOf(S);
+let bkCurB = null; /* de keuzes van het boek dat nu wordt opgebouwd */
+const bkB = () => bkCore().options(bkState);
+const bkInhoud = B => bkCore().build(B);
+const bkBeeld = (im, maat, cls) => bkCore().figure(im, maat, cls, bkCurB || bkB());
+const bkSchat = (S, deel) => bkCore().estimate(S, deel, bkKal[T.key]);
 const bkKal = (() => { try { return JSON.parse(localStorage.getItem("stamboom-boek-kal") || "{}"); } catch (e) { return {}; } })();
 /* het iframe-document: eigen stijlen, de familiekleuren van de site en Paged.js */
-function bkKleuren() { const cs = getComputedStyle(document.documentElement); return LINE_KEYS.map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";") + `;--bk-scherm:${cs.getPropertyValue("--sunk").trim() || "#e8e4da"}`; } /* --bk-scherm: de achtergrond rond de pagina's in het voorbeeld, in licht en donker */
-function bkPagina(B) { const f = BK_FORMAAT.find(x => x[0] === B.formaat) || BK_FORMAAT[0], [w, h] = f[3].split(" "); return { f, css: (typeof window.boekPaginaCss === "function" ? window.boekPaginaCss(B.formaat) || "" : "") + `:root{${bkKleuren()};--bk-w:${w};--bk-h:${h};--bk-pw:${w};--bk-ph:${h}}@page{size:${f[3]}${B.afloop && B.afloop !== "0" ? `;bleed:${B.afloop === "blurb" ? "3.175mm" : "3mm"}` : ""}}` }; }
+function bkKleuren() { const cs = getComputedStyle(document.documentElement); return LINE_KEYS.map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";") + `;--bk-scherm:${cs.getPropertyValue("--bg").trim() || "#f1efe9"}`; } /* --bk-scherm: de achtergrond rond de pagina's in het voorbeeld, in licht en donker */
+function bkPagina(B) { const f = BK_FORMAAT.find(x => x[0] === B.formaat) || BK_FORMAAT[0], [w, h] = f[3].split(" "); return { f, css: (typeof window.boekPaginaCss === "function" ? window.boekPaginaCss(B.formaat) || "" : "") + `.bk-hfst.bk-los{break-before:always}${B.druk ? "" : ".bk-scherm{break-before:always}"}` /* als laatste: in Paged.js wint de laatste breekregel */
+    + `:root{${bkKleuren()};--bk-w:${w};--bk-h:${h};--bk-pw:${w};--bk-ph:${h}}@page{size:${f[3]}${B.afloop && B.afloop !== "0" ? `;bleed:${B.afloop === "blurb" ? "3.175mm" : "3mm"}` : ""}}` }; }
 const BK_FONTS = ["Libre+Caslon+Display", "Libre+Caslon+Text:ital,wght@0,400;0,700;1,400", "IBM+Plex+Sans:wght@400", "IBM+Plex+Sans:wght@500", "IBM+Plex+Sans:wght@600",
   "IBM+Plex+Sans:ital,wght@1,400", "IBM+Plex+Mono:wght@400", "IBM+Plex+Mono:wght@500"].map(f => `https://fonts.googleapis.com/css2?family=${f}&display=swap`); /* één aanvraag per gewicht: dan levert Google vaste fonts; een variabele font wordt in de pdf Type 3 */
 /* in het voorbeeld-iframe: de voortgang per pagina naar de site, en daarna één spread tegelijk, geschaald op het vak (geen tweede scrollbalk) */
@@ -4480,18 +4997,20 @@ if(window.Paged&&Paged.registerHandlers)Paged.registerHandlers(class extends Pag
 function bkBlad(){var P=[].slice.call(document.querySelectorAll(".pagedjs_page")),c=document.querySelector(".pagedjs_pages"),cur=[0];if(!P.length||!c)return;
 var su=document.createElement("style");su.media="screen";su.textContent=".pagedjs_page.bk-uit{position:absolute!important;left:-300vw!important;top:0!important;visibility:hidden}.pagedjs_page.bk-uit>.pagedjs_sheet{content-visibility:hidden}";document.head.appendChild(su);
 var i0=2;(function stuk(){var tot=Math.min(P.length,i0+30);for(;i0<tot;i0++)P[i0].classList.add("bk-uit");if(i0<P.length)bkGeef().then(stuk);else bkGeef().then(bkBladStart)})();
-function bkBladStart(){var st=document.createElement("style");st.media="screen";st.textContent="html,body{overflow:hidden!important;height:100%;background:var(--bk-scherm,#d8d4cb)!important}.pagedjs_pages{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:center!important;align-items:flex-start!important;gap:0!important;padding:0!important;transform-origin:top center}.pagedjs_page{background:var(--bk-papier,#fff);box-shadow:0 2px 14px rgba(0,0,0,.25)}";document.head.appendChild(st);
-function smal(){return innerWidth<560}
+function bkBladStart(){var st=document.createElement("style");st.media="screen";st.textContent="html,body{overflow:hidden!important;height:100%;background:var(--bk-scherm,#d8d4cb)!important}.pagedjs_pages{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:center!important;align-items:flex-start!important;gap:0!important;padding:0!important;transform-origin:top center}.pagedjs_page{background:var(--bk-papier,#fff);box-shadow:0 6px 24px rgba(0,0,0,.18),0 1px 3px rgba(0,0,0,.12)}.pagedjs_blank_page{filter:brightness(.965)}";document.head.appendChild(st);
+var modus="auto";function smal(){if(modus==="1")return true;if(modus==="2")return false;var p=P[0],k=Math.min((innerWidth-24)/(2*p.offsetWidth),(innerHeight-24)/p.offsetHeight);return p.offsetWidth*k<300} /* automatisch: één pagina als een spread te klein wordt (pagina < 300 px) */
 function sp(i){if(i<=0||smal())return[Math.max(0,i)];var a=i%2?i:i-1;return P[a+1]?[a,a+1]:[a]}
 function schaal(){var p=P[cur[0]],w=p.offsetWidth*(smal()?1:2),h=p.offsetHeight,k=Math.min((innerWidth-24)/w,(innerHeight-24)/h,1.6);c.style.transform="scale("+k+")";c.style.marginTop="12px"}
-function toon(i){i=Math.max(0,Math.min(P.length-1,i));cur=sp(i);P.forEach(function(p,j){var weg=cur.indexOf(j)<0;p.classList.toggle("bk-uit",weg);if(!weg)p.classList.remove("bk-klaar")});schaal();try{parent.postMessage({boek:"blad",van:cur[0]+1,tot:cur[cur.length-1]+1,totaal:P.length},"*")}catch(e){}}
+function toon(i){i=Math.max(0,Math.min(P.length-1,i));cur=sp(i);P.forEach(function(p,j){var weg=cur.indexOf(j)<0;p.classList.toggle("bk-uit",weg);if(!weg)p.classList.remove("bk-klaar")});schaal();try{parent.postMessage({boek:"blad",van:cur[0]+1,tot:cur[cur.length-1]+1,totaal:P.length,spread:!smal()},"*")}catch(e){}}
 function stap(r){toon(r==="+"?cur[cur.length-1]+1:r==="-"?cur[0]-1:+r-1)}
-addEventListener("resize",function(){toon(cur[0])});addEventListener("message",function(e){if(e.data&&e.data.bkBlad!=null)stap(e.data.bkBlad)});
+addEventListener("resize",function(){toon(cur[0])});addEventListener("message",function(e){if(!e.data)return;if(e.data.bkModus){modus=e.data.bkModus;toon(cur[0]);return}if(e.data.bkBlad!=null)stap(e.data.bkBlad)});
 addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key==="PageDown"){stap("+");e.preventDefault()}else if(e.key==="ArrowLeft"||e.key==="PageUp"){stap("-");e.preventDefault()}});
 addEventListener("click",function(e){if(e.target.closest("a"))return;stap(e.clientX>innerWidth/2?"+":"-")});
 document.addEventListener("click",function(e){var a=e.target.closest("a[href^='#']");if(!a)return;var t=document.querySelector(a.getAttribute("href"))||document.querySelector("[data-id='"+a.getAttribute("href").slice(1)+"']");var pg=t&&t.closest(".pagedjs_page");if(pg){e.preventDefault();e.stopPropagation();toon(P.indexOf(pg))}},true);
 toon(0)}}`;
-function bkDocument(B) {
+/* leeg: het voorbeeld; het document laadt zonder inhoud en meldt "geladen"; de site voegt de hoofdstukken één voor één toe (bkVulVoorbeeld)
+   en roept dan bkStart aan. Zo is er nooit één lange taak om het hele boek in één keer te lezen. */
+function bkDocument(B, leeg) {
   bkCurB = B;
   const { f, css } = bkPagina(B), base = new URL(".", location.href).href;
   return `<!doctype html><html lang="nl"><head><meta charset="utf-8"><base href="${esc(base)}"><title>${esc(B.titel)}</title>
@@ -4501,9 +5020,10 @@ ${BK_FONTS.map(u => `<link rel="stylesheet" data-pagedjs-ignore href="${u}">`).j
 <script>window.PagedConfig={auto:false,hyphenGlyph:"-"};function bkKlaar(flow){var np=(flow&&flow.total)||document.querySelectorAll(".pagedjs_page").length;document.documentElement.dataset.boek="klaar";window.BOEK_INFO={paginas:np,beelden:[].map.call(document.querySelectorAll(".bk-beeld img"),function(i){return {id:i.closest("figure").dataset.img,src:i.getAttribute("src"),w:i.naturalWidth,h:i.naturalHeight}})};try{parent.postMessage({boek:"klaar",paginas:np},"*")}catch(e){}}<\/script>
 <scr${""}ipt src="src/vendor/paged.polyfill.min.js"><\/script>
 <script>${BK_BLAD}<\/script>
-<script>addEventListener("load",function(){if(!window.PagedPolyfill||!window.BOEK_CSS){try{parent.postMessage({boek:"fout"},"*")}catch(e){}return}bkVoortgang();(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){return window.PagedPolyfill.preview()}).then(function(f){bkKlaar(f);bkBlad()})})<\/script></head>
+<script>window.bkStart=function(){bkVoortgang();(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){return window.PagedPolyfill.preview()}).then(function(f){bkKlaar(f);bkBlad()})};
+addEventListener("load",function(){if(!window.PagedPolyfill||!window.BOEK_CSS){try{parent.postMessage({boek:"fout"},"*")}catch(e){}return}${leeg ? `try{parent.postMessage({boek:"geladen"},"*")}catch(e){}return;` : ""}bkVoortgang();(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){return window.PagedPolyfill.preview()}).then(function(f){bkKlaar(f);bkBlad()})})<\/script></head>
 <body data-formaat="${f[2]}" data-boom="${T.key}"${B.compact ? " data-compact" : ""}${B.afloop ? ` data-druk="" data-afloop="${B.afloop}"` : ""}>
-${bkInhoud(B)}
+${leeg ? "" : bkInhoud(B)}
 </body></html>`;
 }
 /* drukmodus: het boek vervangt de hele pagina. Eerst alle stijlen en inhoud van de site weg, dan de boekstijlen, het boek en
@@ -4533,6 +5053,77 @@ function bkZuiver(B) {
       document.documentElement.dataset.boek = "klaar";
     }).catch(e => { document.documentElement.dataset.boek = "fout"; window.BOEK_FOUT = String(e && e.message || e); });
 }
+/* de productkeuze bovenaan (Boek · Poster), met het beginpunt in de route; later uit de hub "Laten maken" */
+const bkVanafTok = S => bkStartAan(S) ? "--" + (S.paar ? "vanaf-paar-" : "vanaf-") + S.start : "";
+const bkProducten = S => [{ id: "book", label: "Boek", go: "boek" + bkVanafTok(S), href: T.prefix + "boek" + bkVanafTok(S), current: true },
+  ...(RENDER.poster ? [{ id: "poster", label: "Poster", go: "poster" + bkVanafTok(S), href: T.prefix + "poster" + bkVanafTok(S) }] : [])];
+const bkPosterTok = S => "poster" + (bkStartAan(S) ? "--" + (S.paar ? "vanaf-paar-" : "vanaf-") + S.start : "");
+let bkSprong = ""; /* na een keuze: waar het voorbeeld naartoe springt (omslag, titel, of een familie "lijn-N") */
+/* "Voor wie is het boek?" (BK5): eerst de voor de hand liggende beginpunten met namen, dan een zoekveld voor iedereen in de boom */
+/* de teksten van "Voor wie" (19 maakt ze definitief); {namen}, {n}, {zijn} en {wie} worden uit de data ingevuld */
+const BK_VOORWIE_TEKST = {
+  heel: "Hele stamboom", kinderen: "{kinderen}", kinderenSub: "{namen} · {n} voorouders",
+  kant: "De kant van {wie}", kantSub: "Ook voor {zijn} broers en zussen · {n} voorouders",
+  tak: "Eén familietak", takSub: "Vanaf {wie} · ook voor neven en nichten · {n} voorouders",
+  zoek: "Iemand anders…", zoekSub: "Iemand uit de stamboom, of een paar: dan het boek voor hun kinderen." };
+/* de vaste lijst, gelijk in alle bomen: de hele stamboom van de kinderen, de kant van Harrie, de kant van Alies, en de vier
+   grootouderparen als familietak. Elke optie zegt in welke boom hij hoort; kiezen wisselt zo nodig de boom. Alleen uit de data. */
+function voorWieOpties() {
+  const fill = (s, o) => s.replace("{kinderen}", o.kinderen || "").replace("{namen}", o.namen || "").replace("{n}", o.n ?? "").replace("{zijn}", o.zijn || "zijn").replace("{wie}", o.wie || "");
+  const P = k => { const m = new Map((TREES[k] ? TREES[k].PEOPLE : []).filter(p => !p.alias).map(p => [p.kw, p])); return kw => m.get(kw) || null; };
+  const sur = p => { const s = p ? splitName(p.n).sur : ""; return s ? s[0].toUpperCase() + s.slice(1) : ""; };
+  const roep = p => p ? p.roep || firstName(p) : "";
+  /* het aantal voorouders van een beginpunt in een boom (positie in de deelboom; zonder levenden en aliassen) */
+  const tel = (k, start, paar) => { const r = paar ? [start, start + 1] : [start];
+    return (TREES[k] ? TREES[k].PEOPLE : []).filter(p => !p.alias && !p.living && (start === 1 && !paar || r.some(w => gen(p.kw) >= gen(w) && p.kw >> (gen(p.kw) - gen(w)) === w))).length; };
+  const X = BK_VOORWIE_TEKST, heel = [], tak = [];
+  if (TREES.s) { const ps = P("s"); heel.push({ v: "s:1", tree: "s", start: 1, paar: false, label: fill(X.kinderen, { kinderen: TREES.s.rootFull || TREES.s.root }), sub: fill(X.kinderenSub, { namen: [4, 5, 6, 7].map(k => sur(ps(k))).filter(Boolean).join(" · "), n: tel("s", 1, false) }) }); }
+  ["h", "a"].filter(k => TREES[k]).forEach(k => heel.push({ v: k + ":1", tree: k, start: 1, paar: false, label: fill(X.kant, { wie: TREES[k].root }), sub: fill(X.kantSub, { zijn: TREES[k].rootMale === false ? "haar" : "zijn", n: tel(k, 1, false) }) }));
+  ["h", "a"].filter(k => TREES[k]).forEach(k => { const ps = P(k); [4, 6].forEach(m => { const v = ps(m), w = ps(m + 1); if (!v && !w) return;
+    tak.push({ v: k + ":p" + m, tree: k, start: m, paar: true, label: [sur(v), sur(w)].filter(Boolean).join(" · "), sub: fill(X.takSub, { wie: [roep(v), roep(w)].filter(Boolean).join(" en "), n: tel(k, m, true) }) }); }); });
+  return { heel, tak };
+}
+const bkStartWaarde = S => S.paar ? "p" + S.start : String(S.start);
+/* "Voor wie" als gedeeld onderdeel (het boek en de hub #maak): voorWieHtml geeft de opmaak, voorWieBind koppelt hem in een host.
+   st = { start, paar, lijn }; o = { id (voorvoegsel voor ids en name), open (de lijst uitgeklapt), zoekOpen, aantal (voorouders) } */
+function voorWieHtml(st, o = {}) {
+  const id = o.id || "vw", tree = st.tree || T.key, v = tree + ":" + (st.paar ? "p" + st.start : String(st.start || 1)), L = voorWieOpties(), alle = [...L.heel, ...L.tak];
+  const cur = alle.find(x => x.v === v), zoekAan = !st.lijn && (!cur || o.zoekOpen), takOpen = o.takOpen || (cur && L.tak.includes(cur));
+  const S = Object.assign(Products.book.empty(), { start: st.start || 1, paar: !!st.paar }), C = bkCore(), aan = C.startOn(S);
+  const naam = tree === T.key ? (aan ? C.startName(S) : T.rootFull || T.root) : cur ? cur.label : "";
+  const radio = (x, on) => `<label class="bk-radio"><input type="radio" name="${id}Voor" value="${x.v}"${on ? " checked" : ""}><span>${esc(x.label)}${x.sub ? `<small>${esc(x.sub)}</small>` : ""}</span></label>`;
+  const regel = st.lijn || !naam ? "" : `<p class="bk-uitleg">Begint bij ${esc(naam)}${tree === T.key ? ` · ${o.aantal ?? C.members(S).length} voorouders` : ""}</p>`;
+  const zoek = zoekAan ? `<div class="bk-zoek">${vwPick(id + "StartZoek", "Begin bij", aan && !S.paar ? S.start : null, "Naam of kwartiernummer")}
+      <label class="bk-paar"><input type="checkbox" id="${id}StartPaar"${S.paar ? " checked" : ""}> samen met de partner (het boek begint bij het paar)</label>
+      <p class="bk-uitleg">${esc(BK_VOORWIE_TEKST.zoekSub)}</p></div>` : "";
+  if (!o.open && !zoekAan && !st.lijn) /* ingeklapt: de keuze op één regel, met "wijzig" */
+    return `<div class="op-f bk-voorwie-dicht" role="group" aria-labelledby="${id}L-voorwie"><span class="op-l" id="${id}L-voorwie">Voor wie</span><div><p class="bk-voorwie-regel"><b>${esc(cur ? cur.label : naam)}</b> <button type="button" class="link" data-voorwie="open" aria-expanded="false">wijzig</button></p>${regel}</div></div>`;
+  return `<fieldset class="bk-groep-f bk-voorwie"><legend class="op-l">Voor wie</legend><div class="bk-radios">
+      <p class="bk-radio-kop">${esc(BK_VOORWIE_TEKST.heel)}</p>${L.heel.map(x => radio(x, !st.lijn && !zoekAan && x === cur)).join("")}
+      ${L.tak.length ? `<details class="bk-tak" data-voorwie-tak${takOpen ? " open" : ""}><summary class="bk-radio-kop">${esc(BK_VOORWIE_TEKST.tak)} <span class="mono small">(${L.tak.length})</span></summary>${L.tak.map(x => radio(x, !st.lijn && !zoekAan && x === cur)).join("")}</details>` : ""}
+      ${radio({ v: "zoek", label: BK_VOORWIE_TEKST.zoek }, zoekAan)}</div>${zoek}${regel}</fieldset>`;
+}
+/* onChange({ tree, start, paar }) bij een keuze (tree kan een andere boom zijn); o.onOpen() bij "wijzig", o.onZoek() bij "Iemand anders…" */
+function voorWieBind(host, o, onChange) {
+  const id = o.id || "vw";
+  host.addEventListener("click", e => { if (e.target.closest("[data-voorwie=open]")) o.onOpen && o.onOpen(); });
+  host.addEventListener("change", e => {
+    const r = e.target.closest(`input[name="${id}Voor"]`); if (!r) return;
+    if (r.value === "zoek") { o.onZoek && o.onZoek(); return; }
+    const [tree, w] = r.value.split(":"); onChange({ tree, start: +w.replace("p", ""), paar: w[0] === "p" });
+  });
+  const inp = $("#" + id + "StartZoek", host); if (!inp) return;
+  const zet = (kw, paar) => { const k = fanKw(kw); if (!person(k)) return; if (paar && k >= 2) { /* kw 1 heeft geen partner in de boom */ const v = k & ~1; if (!person(v) && !person(v + 1)) return; onChange({ tree: T.key, start: v, paar: true }); } else onChange({ tree: T.key, start: k, paar: false }); };
+  vwBind(id + "StartZoek", false, kw => /* ook levenden als beginpunt: in het boek staat van hen alleen de naam */ { if (kw) zet(kw, $("#" + id + "StartPaar", host).checked); });
+  const pc = $("#" + id + "StartPaar", host); if (pc) pc.onchange = e => { const v = o.current && o.current(); if (v && (v.paar || v.start > 1)) zet(v.start, e.target.checked); };
+}
+const bkVoorWie = (S, B) => voorWieHtml({ start: S.start, paar: S.paar, lijn: S.lijn }, { id: "bk", open: bkVoorWieOpen, zoekOpen: bkZoekOpen, aantal: B.mensen.length });
+let bkZoekOpen = false, bkVoorWieOpen = false;
+/* link "Maak een boek vanaf hier" voor het profiel (de regel "Vanaf hier:", fb); "" als er boven deze persoon niemand in de boom staat */
+function bookFromHereLink(kw) {
+  const k = fanKw(kw); if (!person(fanKw(2 * k)) && !person(fanKw(2 * k + 1))) return "";
+  return `<a class="link" href="#${T.prefix}boek--vanaf-${k}" data-go="boek--vanaf-${k}">Maak een boek vanaf hier →</a>`;
+}
 /* de pagina #boek: drie voorinstellingen, wat erin komt, en de overige keuzes ingeklapt; daaronder het voorbeeld, één spread tegelijk */
 const bkEcht = {}; /* het echte aantal pagina's per keuze, na het opbouwen van het voorbeeld */
 const bkGroepOpen = new Set(); /* welke ingeklapte groepen open staan */
@@ -4544,58 +5135,79 @@ const bkTal = (S, deel) => { const e = !deel && bkEcht[bkSleutel(S)]; return e ?
 function bkTellingen() {
   const S = bkState, host = $("#v-boek"); if (!host) return;
   $$(".bk-preset", host).forEach(b => { const s = $(".bk-pp", b); if (s) s.textContent = bkTal(bkMet(S, BK_PRESET[b.dataset.bv])); });
-  const est = bkSchat(S), mx = Math.max(1, ...BK_DELEN.map(d => est.delen[d[0]]));
-  $$(".bk-deel-keuze", host).forEach(l => { const k = $("input", l).dataset.bkdeel, i = $(".bk-maat i", l), w = $(".bk-maat", l); if (i) i.style.width = Math.round(est.delen[k] / mx * 100) + "%"; if (w) w.title = `± ${est.delen[k]} pagina's`; });
-  const t = $("#bkTel"), e = bkEcht[bkSleutel(S)]; if (t && e) t.textContent = `${t.dataset.n} voorouders · ${e} pagina's`;
+  const est = bkSchat(S);
+  $$(".bk-pp-deel", host).forEach(x => { const k = x.dataset.deel; x.textContent = est.delen[k] ? `± ${est.delen[k]} p.` : ""; });
+  const t = $("#bkTel"), e = bkEcht[bkSleutel(S)]; if (t && e) t.textContent = `${e} pagina's · ${t.dataset.n} voorouders`;
   const pb = $("#bkPast"); if (pb) pb.textContent = S.afloop ? bkHaak("boekPastBij", e || est.totaal) || "" : "";
   const z = $(".bk-eigen .bk-pp", host); if (z) z.textContent = bkTal(S);
 }
 function renderBoek() {
   const S = bkState, B = bkB(), host = $("#v-boek");
   if (S.zuiver) { bkZuiver(B); return; }
-  const est = bkSchat(S), maxG = Math.max(...ancestors.map(p => gen(p.kw))), dl = bkDelenVan(S), max = BK_MAX[S.afloop] || null;
-  const n = S.lijn ? B.mensen.filter(k => lineOf(k) === S.lijn).length : B.mensen.length, echt = bkEcht[bkSleutel(S)];
+  const est = bkSchat(S), maxG = Math.max(...B.mensen.map(bkGen)), dl = bkDelenVan(S), max = BK_MAX[S.afloop] || null;
+  const n = B.mensen.length, echt = bkEcht[bkSleutel(S)];
   const eigen = !Object.keys(BK_PRESET).some(k => bkZelfde(S, k));
-  const keuze = (grp, lst, cur) => lst.map(([k, l]) => `<button type="button" class="chip" data-bk="${grp}" data-bv="${k}" aria-pressed="${cur(k)}">${esc(l)}</button>`).join("");
+  const keuze = (grp, lst, cur, tip) => lst.map(([k, l]) => `<button type="button" class="chip" data-bk="${grp}" data-bv="${k}" aria-pressed="${cur(k)}"${tip ? ` title="${esc(tip(k))}" aria-label="${esc(tip(k))}"` : ""}>${esc(l)}</button>`).join("");
   const rij = (label, uitleg, chips) => { const id = "bkL-" + label.toLowerCase().replace(/[^a-z]+/g, "-"); return `<div class="op-f" role="group" aria-labelledby="${id}"><span class="op-l"><span id="${id}">${label}</span>${uitleg ? `<button type="button" class="bk-help" aria-expanded="false" aria-controls="${id}-u" aria-label="Uitleg bij ${esc(label.toLowerCase())}">?</button>` : ""}</span><div><div class="chips">${chips}</div>${uitleg ? `<p class="bk-help-t" id="${id}-u" hidden>${uitleg}</p>` : ""}</div></div>`; };
-  const groep = (id, titel, sub, inhoud, dwing) => `<details class="bk-groep" data-groep="${id}"${dwing || bkGroepOpen.has(id) ? " open" : ""}><summary><b>${titel}</b> <span>${sub}</span></summary><div class="bk-keuzes">${inhoud}</div></details>`;
   const te = dl.filter(d => max && bkSchat(S, d).totaal > max[1]);
-  const mx = Math.max(1, ...BK_DELEN.map(d => est.delen[d[0]]));
-  host.innerHTML = `<div class="eyebrow">Stamboom</div><h1 class="page-title">Het boek</h1>
-    <p class="lede">Niemand valt weg: tot en met de verste voorouder staat iedereen erin.</p>${bkHaak("boekNaLede") || ""}
-    <div class="bk-presets" role="group" aria-label="Voorinstelling">${Object.entries(BK_PRESET).map(([k, P]) => `<button type="button" class="bk-preset" data-bk="preset" data-bv="${k}" aria-pressed="${bkZelfde(S, k)}"><b>${esc(P.naam)}</b><span class="bk-pp">${bkTal(bkMet(S, P))}</span><small>${esc(P.uitleg)}</small></button>`).join("")}</div>
-    ${eigen ? `<p class="bk-eigen"><b>Eigen keuze</b> <span class="bk-pp">${bkTal(S)}</span> <button type="button" class="link" data-bk="preset" data-bv="standaard">Terug naar Standaard</button></p>` : ""}
-    <fieldset class="bk-delen"><legend>Wat komt erin</legend>${BK_DELEN.map(([k, l, u]) => `<label class="bk-deel-keuze"><input type="checkbox" data-bkdeel="${k}"${S.delen.has(k) ? " checked" : ""}><span><b>${esc(l)}</b><small>${esc(u)}</small></span><span class="bk-maat" title="± ${est.delen[k]} pagina's" aria-hidden="true"><i style="width:${Math.round(est.delen[k] / mx * 100)}%"></i></span></label>`).join("")}</fieldset>
-    <div class="bk-keuzes">${rij("Omslag", "", BK_OMSLAG.map(([k, l, u]) => `<button type="button" class="chip bk-omslag-k" data-bk="omslag" data-bv="${k}" aria-pressed="${S.omslag === k}" title="${esc(u)}">${typeof window.boekOmslagMini === "function" ? `<span class="bk-mini" aria-hidden="true">${window.boekOmslagMini(k)}</span>` : ""}<span>${esc(l)}</span></button>`).join(""))}
-      ${rij("Families", "", keuze("lijn", [["0", "Alle families"], ...LINE_KEYS.filter(l => LINES[l]).map(l => [String(l), LINES[l].name])], k => String(S.lijn) === k))}</div>
-    ${groep("meer", "Meer keuzes", "profielen, hypotheses, bronnen en beelden",
-      rij("Profielen", "Tot en met de gekozen generatie een volledig profiel; wie verder terug ligt, staat er kort in.", keuze("detail", [...[5, 7, 9].filter(g => g < maxG).map(g => [String(g), "Volledig t/m generatie " + ROMAN[g]]), ["99", "Iedereen volledig"]], k => String(S.detail >= 99 ? 99 : S.detail) === k))
-      + rij("Hypotheses", "", keuze("hyp", BK_HYP, k => S.hyp === k))
-      + rij("Bronnen", "", keuze("bron", BK_BRON, k => S.bron === k))
-      + rij("Beelden", "", keuze("beeld", BK_BEELD, k => S.beeld === k)))}
-    ${groep("druk", "Voor de drukker", "formaat, afloop en het boek in delen",
-      rij("Formaat", "", keuze("formaat", BK_FORMAAT, k => S.formaat === k))
-      + rij("Afdrukken", "Een drukker snijdt een rand van ongeveer 3 mm weg: de afloop. Die is nodig als beelden tot de rand van de bladzijde lopen.", keuze("afloop", BK_AFLOOP, k => S.afloop === k))
-      + rij("In delen", "Elk deel krijgt een eigen omslag, titelpagina en register.", keuze("split", BK_SPLIT, k => S.split === k))
-      + (dl.length > 1 ? rij("Deel", "", dl.map(d => { const e = bkSchat(S, d).totaal, t = max && e > max[1]; return `<button type="button" class="chip${t ? " bk-te" : ""}" data-bk="deel" data-bv="${d.nr}" aria-pressed="${d.nr === B.deel.nr}">${d.nr}. ${esc(d.naam)} <span class="mono">± ${e} p.</span>${t ? " ⚠" : ""}</button>`; }).join("")) : "")
-      + `<div class="bk-drukker" id="bkDrukker">${bkHaak("boekDrukKnoppen", B) || ""}<p class="bk-uitleg" id="bkControle" aria-live="polite"></p></div>`
-      + (te.length ? `<p class="bk-waarschuwing">${te.length === dl.length && dl.length === 1 ? "Het boek" : te.length === 1 ? "Eén deel" : te.length + " delen"} ${te.length === 1 ? "komt" : "komen"} boven de ${max[1]} pagina's die ${esc(max[0])} kan drukken. Kies minder onderdelen, Compact, of het boek in delen.</p>` : ""),
-      S.afloop || S.formaat !== "a4" || S.split !== "een")}
-    <div class="bk-keuzes"><div class="op-f op-bar"><span class="small" id="bkTel" data-n="${n}" aria-live="polite">${n} voorouders · ${echt ? `${echt} pagina's` : `± ${est.totaal} pagina's`}</span>
-        <span class="small" id="bkPast">${S.afloop ? esc(bkHaak("boekPastBij", echt || est.totaal) || "") : ""}</span>
-        <button type="button" class="btn primary" id="bkPdf" disabled>Even geduld…</button>
-        <details class="bk-hoe"><summary>Hoe sla ik het op als pdf?</summary><ol><li>Kies als printer ‘Opslaan als pdf’.</li><li>Marges: geen · Achtergrond: aan · Schaal: 100 %.</li><li>De paginamaat${S.afloop ? ", met afloop," : ""} staat al goed.</li></ol></details></div></div>
-    <div class="bk-voorbeeld">
+  const delenAan = !S.lijn && (!bkStartAan(S) || bkStartLijnen(S).length > 1);
+  const DRUKKER = { "": "Thuis of kantoor", "3": "Fotoboek (Saal, 3 mm)", blurb: "Blurb", "0": "Peecho (zonder afloop)" };
+  const P0 = Object.entries(BK_PRESET).find(([k]) => bkZelfde(S, k));
+  /* 1 Welk boek: voor wie, één familie, in delen */
+  const welk = bkVoorWie(S, B)
+    + rij("Families", "", keuze("lijn", [["0", "Alle families"], ...LINE_KEYS.filter(l => LINES[l] && (!bkStartAan(S) || bkStartLijnen(S).includes(l))).map(l => [String(l), LINES[l].name])], k => String(S.lijn) === k))
+    + (delenAan ? rij("In delen", "Elk deel krijgt een eigen omslag, titelpagina en register.", keuze("split", BK_SPLIT, k => S.split === k)) : "")
+    + (dl.length > 1 ? rij("Deel", "", dl.map(d => { const e = bkSchat(S, d).totaal, t = max && e > max[1]; return `<button type="button" class="chip${t ? " bk-te" : ""}" data-bk="deel" data-bv="${d.nr}" aria-pressed="${d.nr === B.deel.nr}">${d.nr}. ${esc(d.naam)} <span class="mono">± ${e} p.</span>${t ? " ⚠" : ""}</button>`; }).join("")) : "")
+    + (te.length ? `<p class="bk-waarschuwing">${te.length === dl.length && dl.length === 1 ? "Het boek" : te.length === 1 ? "Eén deel" : te.length + " delen"} ${te.length === 1 ? "komt" : "komen"} boven de ${max[1]} pagina's die ${esc(max[0])} kan drukken. Kies minder onderdelen, Compact, of het boek in delen.</p>` : "");
+  /* 2 Hoe uitgebreid: voorinstellingen, met daaronder ingeklapt wat erin komt */
+  const omvang = `<div class="bk-presets" role="group" aria-label="Voorinstelling">${Object.entries(BK_PRESET).map(([k, P]) => `<button type="button" class="bk-preset" data-bk="preset" data-bv="${k}" aria-pressed="${bkZelfde(S, k)}"><b>${esc(P.naam)}</b><span class="bk-pp">${bkTal(bkMet(S, P))}</span></button>`).join("")}</div>
+    ${eigen ? `<p class="bk-eigen"><b>Eigen keuze</b> <span class="bk-pp">${bkTal(S)}</span> <button type="button" class="link" data-bk="preset" data-bv="standaard">Terug naar Standaard</button></p>` : `<p class="bk-uitleg">${esc(P0 ? P0[1].uitleg : "")}</p>`}
+    <details class="bk-hoe bk-wat" data-groep="wat"${bkGroepOpen.has("wat") ? " open" : ""}><summary>Wat komt erin</summary>
+    <fieldset class="bk-delen"><legend class="sr-only">Wat komt erin</legend>${BK_DELEN.filter(([k]) => k !== "kruis" || (T.key === "s" && !S.lijn && !bkStartAan(S))).map(([k, l, u]) => `<label class="bk-deel-keuze"><input type="checkbox" data-bkdeel="${k}"${S.delen.has(k) ? " checked" : ""}><span><b>${esc(l)}</b><small>${esc(u)}</small></span><span class="bk-pp bk-pp-deel" data-deel="${k}">${est.delen[k] ? `± ${est.delen[k]} p.` : ""}</span></label>`).join("")}</fieldset></details>`;
+  /* 3 Omslag */
+  const omslag = `<div class="chips" role="group" aria-label="Omslag">${BK_OMSLAG.map(([k, l, u]) => `<button type="button" class="chip bk-omslag-k" data-bk="omslag" data-bv="${k}" aria-pressed="${S.omslag === k}" title="${esc(u)}">${typeof window.boekOmslagMini === "function" ? `<span class="bk-mini" aria-hidden="true">${window.boekOmslagMini(k)}</span>` : ""}<span>${esc(l)}</span></button>`).join("")}</div>`;
+  /* 4 Details en drukker (ingeklapt) */
+  const detG = [...[5, 7, 9].filter(g => g < maxG).map(g => [String(g), "t/m " + ROMAN[g]]), ["99", "Iedereen"]];
+  const details = rij("Volledige profielen", "Tot en met deze generatie een volledig profiel; wie verder terug ligt, staat er kort in.", keuze("detail", detG, k => String(S.detail >= 99 ? 99 : S.detail) === k, k => k === "99" ? "Iedere voorouder een volledig profiel" : `Volledig tot en met generatie ${ROMAN[+k]}; daarboven kort`))
+    + rij("Hypotheses", "", keuze("hyp", BK_HYP, k => S.hyp === k))
+    + rij("Bronnen", "", keuze("bron", BK_BRON, k => S.bron === k))
+    + rij("Beelden", "", keuze("beeld", BK_BEELD, k => S.beeld === k))
+    + rij("Formaat", "", keuze("formaat", BK_FORMAAT, k => S.formaat === k))
+    + rij("Drukker", "Een drukker snijdt een rand van ongeveer 3 mm weg: de afloop. Die is nodig als beelden tot de rand van de bladzijde lopen.", keuze("afloop", BK_AFLOOP.map(([k]) => [k, DRUKKER[k] || k]), k => S.afloop === k))
+    + (bkHaak("bookPrintFields", B) || "") + `<div class="bk-controle-lang" id="bkControleLang"></div>`;
+  const samen = [(BK_FORMAAT.find(f => f[0] === S.formaat) || BK_FORMAAT[0])[1], DRUKKER[S.afloop] || "", S.detail >= 99 ? "iedereen volledig" : "volledig t/m " + ROMAN[S.detail]].filter(Boolean).join(" · ");
+  const tel = echt ? `${echt} pagina's` : `± ${est.totaal} pagina's`;
+  const root = Products.ui.configurator(host, {
+    title: "Het boek", lede: "",
+    steps: [{ id: "welk", title: "Welk boek", html: welk }, { id: "omvang", title: "Hoe uitgebreid", html: omvang }, { id: "omslag", title: "Omslag", html: omslag },
+      { id: "details", title: "Details en drukker", collapsed: true, open: bkGroepOpen.has("details") || !!S.afloop || S.formaat !== "a4", summary: samen, html: details }],
+    preview: `<div class="bk-voorbeeld" style="${(() => { const [w, h] = (BK_FORMAAT.find(f => f[0] === S.formaat) || BK_FORMAAT[0])[3].split(" ").map(parseFloat); return `--bk-spread:${2 * w + 20}/${h + 20};--bk-page:${w + 20}/${h + 20}`; })()}">
       <div class="bk-bezig" id="bkBezig" role="status"><p>Opbouwen … <span id="bkBezigN">0</span> / ± ${echt || est.totaal}</p><div class="bk-balk"><i id="bkBalk"></i></div><button type="button" class="btn" data-bkstop="stop">Stoppen</button></div>
       <iframe id="bkFrame" title="Voorbeeld van het boek, per spread"></iframe>
-      <div class="bk-blad" id="bkBlad" hidden><button type="button" class="btn" data-bkblad="-">‹ Vorige</button><span class="mono small" id="bkBladNr"></span><button type="button" class="btn" data-bkblad="+">Volgende ›</button>${document.fullscreenEnabled ? `<button type="button" class="btn" data-bkblad="groot">Hele scherm</button>` : ""}</div>
-    </div>`;
+      <div class="bk-omslag-vak" id="bkOmslagVak" hidden></div>
+      <div class="bk-blad" id="bkBlad" hidden><button type="button" class="btn bk-pijl" data-bkblad="-" aria-label="Vorige pagina">‹</button><span class="mono small" id="bkBladNr"></span><button type="button" class="btn bk-pijl" data-bkblad="+" aria-label="Volgende pagina">›</button>
+        <label class="bk-hfst-kies"><span class="sr-only">Hoofdstuk</span><select id="bkHfst" aria-label="Hoofdstuk"></select></label><span class="bk-modus" role="group" aria-label="Pagina's naast elkaar"><button type="button" class="btn bk-pijl" data-bkmodus="1" aria-pressed="false" title="Eén pagina">1</button><button type="button" class="btn bk-pijl" data-bkmodus="2" aria-pressed="false" title="Twee pagina's naast elkaar">2</button></span>${typeof window.bookCoverDoc === "function" ? `<button type="button" class="btn bk-omslag-knop" data-bkblad="omslag" aria-pressed="false">Omslag</button>` : ""}${document.fullscreenEnabled ? `<button type="button" class="btn bk-pijl" data-bkblad="groot" aria-label="Hele scherm" title="Hele scherm">⤢</button>` : ""}</div>
+    </div>`,
+    actions: {
+      status: `<span id="bkTel" data-n="${n}" aria-live="polite">${tel} · ${n} voorouders</span><span id="bkControle" class="bk-controle"></span><span class="small" id="bkPast">${S.afloop ? esc(bkHaak("boekPastBij", echt || est.totaal) || "") : ""}</span>`,
+      buttons: `<button type="button" class="btn primary" id="bkPdf" aria-label="Maak pdf om zelf te laten drukken" disabled>Even geduld…</button>${S.afloop ? bkHaak("bookPrintActions", B) || "" : ""}`,
+      help: `<details class="bk-hoe bk-hoe-pdf"><summary aria-label="Hoe sla ik het op als pdf?">?</summary><div class="bk-hoe-t"><b>Opslaan als pdf</b><ol><li>${esc(Products.PRINT_HELP || "Kies in het afdrukvenster ‘Opslaan als pdf’, marges ‘geen’, achtergrond aan.")}</li><li>Schaal: 100 %. De paginamaat${S.afloop ? ", met afloop," : ""} staat al goed.</li></ol>${S.afloop ? `<p>Voor de drukker: dit is het binnenwerk; de omslag maak je los met "Maak omslag-pdf".</p>` : `<p>Het hele boek, met voor- en achterkant. In een pdf uit Chrome of Edge zijn de inhoud en het register klikbaar; in Safari niet altijd.</p>`}</div></details>`
+    }
+  });
   const fr = $("#bkFrame"); fr.dataset.totaal = echt || est.totaal;
-  setTimeout(() => { if (fr.isConnected) fr.srcdoc = bkDocument(B); }, 30); /* eerst het paneel tonen, dan in een eigen taak de tekst van het boek */
+  /* eerst het paneel tekenen, dan (na een frame en een pauze) in een eigen taak de tekst van het boek: zo zitten er nooit twee lange taken achter elkaar */
+  requestAnimationFrame(() => setTimeout(() => bkLaadVoorbeeld(fr, B), 60));
   $("#bkPdf").onclick = () => { try { /* de browser stelt de titel van het document voor als bestandsnaam (en zet hem in de pdf): tijdens het afdrukken de nette titel zonder verboden tekens */
-    const d = fr.contentDocument, t = d.title; d.title = B.bestand.replace(/\.pdf$/, ""); fr.contentWindow.addEventListener("afterprint", () => { d.title = t; }, { once: true });
+    const d = fr.contentDocument, t = d.title; d.title = B.bestand.replace(/\.pdf$/, "") + (B.druk ? " – binnenwerk" : ""); fr.contentWindow.addEventListener("afterprint", () => { d.title = t; }, { once: true });
     fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { } };
-  $$(".bk-groep", host).forEach(d => d.addEventListener("toggle", () => d.open ? bkGroepOpen.add(d.dataset.groep) : bkGroepOpen.delete(d.dataset.groep)));
+  $$("details[data-groep], details.pc-step", root).forEach(d => d.addEventListener("toggle", () => { const g = d.dataset.groep || d.dataset.step; d.open ? bkGroepOpen.add(g) : bkGroepOpen.delete(g); }));
+  $("#bkHfst").onchange = e => { const v = e.target.value; if (v) bkBlader(v); };
+  voorWieBind(root, { id: "bk", current: () => ({ start: S.start, paar: S.paar }),
+    onOpen: () => { bkVoorWieOpen = true; rendered.boek = false; renderBoek(); setTimeout(() => { const r = $('#v-boek input[name="bkVoor"]:checked') || $('#v-boek input[name="bkVoor"]'); if (r) r.focus(); }, 30); },
+    onZoek: () => { bkZoekOpen = true; rendered.boek = false; renderBoek(); setTimeout(() => { const i = $("#bkStartZoek"); if (i) i.focus(); }, 30); } },
+    ({ tree, start, paar }) => { bkGekozen = true; bkSprong = ""; bkVoorWieOpen = false; bkZoekOpen = false;
+      if (tree && tree !== T.key && TREES[tree]) { const S2 = Object.assign({}, S, { delen: new Set(S.delen), start, paar, lijn: 0, deelNr: 1, split: "een" }); location.hash = "#" + TREES[tree].prefix + bkToken(S2); return; }
+      S.start = start; S.paar = paar; S.lijn = 0; S.deelNr = 1; if (bkStartLijnen(S).length < 2) S.split = "een"; go(bkToken(), { keepScroll: true }); });
 }
 RENDER.boek = renderBoek;
 /* weg van #boek: het voorbeeld opruimen, zodat Paged.js niet doorrekent in een verborgen iframe; terug op #boek bouwt het opnieuw */
@@ -4604,21 +5216,74 @@ addEventListener("message", e => {
   const t = $("#bkTel"), b = $("#bkPdf"), fr = $("#bkFrame"); if (!e.data || !t || !fr || e.source !== fr.contentWindow) return;
   const d = e.data;
   if (d.boek === "fout") { t.textContent = "Het boek kan alleen in de volledige site worden gemaakt, niet in deze losse versie."; $("#bkBezig").hidden = true; if (b) b.textContent = "Maak pdf om zelf te laten drukken"; return; }
+  if (d.boek === "geladen") { bkVulVoorbeeld(fr); return; }
   if (d.boek === "bezig") { const n = $("#bkBezigN"), i = $("#bkBalk"); if (n) n.textContent = d.paginas; if (i) i.style.width = Math.min(100, d.paginas / (+fr.dataset.totaal || 1) * 100) + "%"; return; }
-  if (d.boek === "blad") { const nr = $("#bkBladNr"); if (nr) nr.textContent = d.van === d.tot ? `pagina ${d.van} van ${d.totaal}` : `pagina ${d.van}–${d.tot} van ${d.totaal}`;
+  if (d.boek === "blad") { $$("[data-bkmodus]").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.bkmodus === (d.spread ? "2" : "1")))); if (!fr.dataset.geopend) { fr.dataset.geopend = "1"; const tp = +fr.dataset.sprong || 0; bkSprong = ""; if (tp > 1) { bkBlader(String(tp)); return; } } /* openen op de omslag, of waar de laatste keuze over ging */
+    const nr = $("#bkBladNr"); if (nr) nr.textContent = d.van === d.tot ? `pagina ${d.van} van ${d.totaal}` : `pagina ${d.van}–${d.tot} van ${d.totaal}`;
     $$("#bkBlad [data-bkblad]").forEach(x => { if (x.dataset.bkblad === "-") x.disabled = d.van <= 1; if (x.dataset.bkblad === "+") x.disabled = d.tot >= d.totaal; }); return; }
   if (d.boek === "klaar") {
     const ruw = bkSchat(bkState).ruw; if (ruw > 20) { bkKal[T.key] = d.paginas / ruw; try { localStorage.setItem("stamboom-boek-kal", JSON.stringify(bkKal)); } catch (x) { } }
     bkEcht[bkSleutel(bkState)] = d.paginas; bkTellingen(); try { bkPaginaNrs(fr.contentDocument); } catch (x) { }
+    if (bkGekozen) { bkGekozen = false; const tt = t.textContent; t.textContent = "Voorbeeld bijgewerkt"; setTimeout(() => { if (t.isConnected && t.textContent === "Voorbeeld bijgewerkt") t.textContent = tt; }, 1500); }
     if (b) { b.disabled = true; b.textContent = "Even geduld…"; }
     /* na de opmaak: de waaier als vector en de platen op lege pagina's (boekNaKlaar, sectie omslag en beeld); pas daarna afdrukken */
     Promise.resolve(typeof window.boekNaKlaar === "function" ? window.boekNaKlaar(fr.contentDocument, bkCurB || bkB()) : null).catch(() => { })
-      .then(() => { bkLeegVullen(fr); if (b && b.isConnected) { b.disabled = false; b.textContent = "Maak pdf om zelf te laten drukken"; } });
+      .then(() => { bkLeegVullen(fr); if (b && b.isConnected) { b.disabled = false; b.innerHTML = `Maak pdf<span class="bk-lang">&nbsp;om zelf te laten drukken</span>`; } });
     /* de controle vooraf voor de drukker (beelden, fonts, pagina's): van de sectie omslag en beeld */
-    const ctl = $("#bkControle"); if (ctl && typeof window.boekControle === "function") Promise.resolve(window.boekControle(fr.contentDocument, bkCurB || bkB())).then(h => { if (ctl.isConnected) ctl.innerHTML = h || ""; }).catch(() => { });
+    const ctl = $("#bkControle"), lang = $("#bkControleLang"), chk = window.bookPrintCheck || window.boekControle;
+    if (ctl && typeof chk === "function") Promise.resolve(chk(fr.contentDocument, bkCurB || bkB(), { short: true })).then(h => { h = !bkState.afloop ? String(h || "").replace("Klaar voor de drukker", "Klaar om af te drukken") : h; if (ctl.isConnected) ctl.textContent = h || ""; ctl.classList.toggle("bk-let-op", /^Let op/.test(h || "")); }).catch(() => { });
+    if (lang && typeof chk === "function") Promise.resolve(chk(fr.contentDocument, bkCurB || bkB())).then(h => { if (lang.isConnected) lang.innerHTML = h || ""; }).catch(() => { });
     $("#bkBezig").hidden = true; $("#bkBlad").hidden = false;
+    try { bkHoofdstukken(fr); bkOmslagMinis(); } catch (x) { }
   }
 });
+/* de omslag in het voorbeeld (89: bookCoverDoc), als geschaalde iframes; book-css heeft @page-regels, dus een eigen document */
+function bkOmslagIframe(doc, breedte, titel) {
+  const pxW = doc.wMm * 96 / 25.4, pxH = doc.hMm * 96 / 25.4, k = breedte / pxW;
+  return `<div class="bk-omslag-blad" style="width:${Math.round(pxW * k)}px;height:${Math.round(pxH * k)}px"><iframe title="${esc(titel)}" tabindex="-1" style="width:${pxW}px;height:${pxH}px;transform:scale(${k})" srcdoc="${esc(doc.html)}"></iframe></div>`;
+}
+function bkOmslagTonen(aan) {
+  const fr = $("#bkFrame"), vak = $("#bkOmslagVak"); if (!fr || !vak) return;
+  fr.hidden = aan; $$("#bkBlad [data-bkblad='-'], #bkBlad [data-bkblad='+'], #bkBladNr, .bk-hfst-kies").forEach(x => x.hidden = aan); vak.hidden = !aan;
+  if (!aan) { vak.innerHTML = ""; return; }
+  const B = bkCurB || bkB(), S = bkState, pages = bkEcht[bkSleutel(S)] || bkSchat(S).totaal, w = vak.parentElement.clientWidth || 600;
+  const o = { spineMm: typeof window.bookSpineMm === "function" ? window.bookSpineMm(pages) : 0, bleedMm: S.afloop ? (S.afloop === "blurb" ? 3.175 : S.afloop === "0" ? 0 : 3) : 0, pages };
+  try {
+    vak.innerHTML = innerWidth < 1024
+      ? bkOmslagIframe(window.bookCoverDoc(B, Object.assign({ part: "front" }, o)), Math.min(w, 420), "Voorkant van de omslag") + `<p class="bk-uitleg">Achterkant</p>` + bkOmslagIframe(window.bookCoverDoc(B, Object.assign({ part: "back" }, o)), Math.min(w * .45, 200), "Achterkant van de omslag")
+      : bkOmslagIframe(window.bookCoverDoc(B, Object.assign({ part: "spread" }, o)), w, "De hele omslag: achterkant, rug en voorkant") + `<p class="bk-uitleg">Achterkant · rug (${String(Math.round(o.spineMm * 10) / 10).replace(".", ",")} mm, bij ${pages} pagina's) · voorkant</p>`;
+  } catch (e) { vak.innerHTML = `<p class="bk-uitleg">De omslag kan hier niet worden getoond.</p>`; }
+}
+/* echte kleine omslagen bij de keuze, pas als het voorbeeld klaar is (in rust, één tegelijk) */
+function bkOmslagMinis() {
+  if (typeof window.bookCoverDoc !== "function") return;
+  const chips = $$(".bk-omslag-k"); let i = 0;
+  const volgende = () => { const c = chips[i++]; if (!c || !c.isConnected) return; const k = c.dataset.bv, m = $(".bk-mini", c);
+    try { const B = bkCore().options(Object.assign({}, bkState, { delen: new Set(bkState.delen), omslag: k })); if (m) m.innerHTML = bkOmslagIframe(window.bookCoverDoc(B, { part: "front" }), 72, ""); } catch (e) { }
+    later(volgende); };
+  const later = f => window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 200);
+  later(volgende);
+}
+/* het voorbeeld laden: eerst een leeg document, dan per hoofdstuk een eigen taak, dan Paged.js */
+function bkLaadVoorbeeld(fr, B) { if (!fr.isConnected) return; fr._delen = bkCore().build(B, { lazy: true }); fr.srcdoc = bkDocument(B, true); }
+function bkVulVoorbeeld(fr) {
+  let doc; try { doc = fr.contentDocument; } catch (e) { return; }
+  const delen = fr._delen || (fr._delen = bkCore().build(bkCurB || bkB(), { lazy: true })); let i = 0;
+  const stap = () => { if (!fr.isConnected || fr.contentDocument !== doc) return; if (i < delen.length) { const h = delen[i++](); if (h) doc.body.insertAdjacentHTML("beforeend", h + "\n"); setTimeout(stap, 0); } else fr.contentWindow.bkStart(); };
+  stap();
+}
+/* de keuzelijst "Hoofdstuk" onder het voorbeeld: titelpagina, inhoud, elke familie en de losse hoofdstukken, met hun pagina */
+function bkHoofdstukken(fr) {
+  let doc; try { doc = fr.contentDocument; } catch (e) { return; } const sel = $("#bkHfst"); if (!doc || !sel) return;
+  const P = [...doc.querySelectorAll(".pagedjs_page")], pag = el => { const pg = el && el.closest(".pagedjs_page"); return pg ? P.indexOf(pg) + 1 : 0; };
+  const titel = doc.querySelector(".bk-titelblad, .bk-titel"), omslag = doc.querySelector(".bk-omslag"), fam = /^lijn-(\d+)$/.exec(bkSprong);
+  /* standaard op de voorkant (pagina 1), anders de titelpagina; na een familiekeuze haar opening */
+  fr.dataset.sprong = fam && doc.getElementById("bk-lijn-" + fam[1]) ? pag(doc.getElementById("bk-lijn-" + fam[1])) : omslag ? 1 : pag(titel);
+  const lijst = [[titel, "Titelpagina"], [doc.querySelector(".bk-inhoud, #bk-inhoud"), "Inhoud"],
+    ...[...doc.querySelectorAll(".bk-hfst[id]")].filter(h => !h.matches(".bk-titelblad, .bk-titel, .bk-inhoud")).map(h => [h, h.classList.contains("bk-fam") ? "Familie " + (h.dataset.kopL || "") : h.dataset.kopL || (h.querySelector("h1") || {}).textContent || ""])]
+    .filter(([el, t]) => el && t).map(([el, t]) => [pag(el), t.trim()]).filter(([p], i, a) => p && a.findIndex(x => x[0] === p && x[1] === a[i][1]) === i);
+  sel.innerHTML = `<option value="">Hoofdstuk …</option>` + lijst.map(([p, t]) => `<option value="${p}">${esc(t)} · p. ${p}</option>`).join("");
+}
 /* paginanummers in inhoud en register (.bk-pn[href]) na de opmaak: het nummer van de pagina waar het doel begint */
 function bkPaginaNrs(doc) {
   $$(".bk-pn[href]", doc).forEach(e => {
@@ -4648,7 +5313,7 @@ document.addEventListener("click", e => {
   } else {
     bz.innerHTML = `<p>Opbouwen … <span id="bkBezigN">0</span> / ± ${esc(fr.dataset.totaal || "")}</p><div class="bk-balk"><i id="bkBalk"></i></div><button type="button" class="btn" data-bkstop="stop">Stoppen</button>`;
     const b = $("#bkPdf"); if (b) b.textContent = "Even geduld…";
-    fr.removeAttribute("src"); fr.srcdoc = bkDocument(bkB());
+    fr.removeAttribute("src"); bkLaadVoorbeeld(fr, bkB());
   }
   ($("button", bz) || bz).focus();
 });
@@ -4656,16 +5321,19 @@ document.addEventListener("click", e => {
 const bkBlader = r => { const fr = $("#bkFrame"); if (fr && fr.contentWindow) fr.contentWindow.postMessage({ bkBlad: r }, "*"); };
 document.addEventListener("click", e => {
   const c = e.target.closest("#v-boek [data-bkblad]"); if (!c) return;
+  if (c.dataset.bkblad === "omslag") { const aan = c.getAttribute("aria-pressed") !== "true"; c.setAttribute("aria-pressed", String(aan)); bkOmslagTonen(aan); return; }
   if (c.dataset.bkblad === "groot") { const v = $(".bk-voorbeeld"); document.fullscreenElement ? document.exitFullscreen() : v.requestFullscreen && v.requestFullscreen(); return; }
   bkBlader(c.dataset.bkblad);
 });
+document.addEventListener("click", e => { const c = e.target.closest("#v-boek [data-bkmodus]"); if (!c) return; const fr = $("#bkFrame"); if (fr && fr.contentWindow) fr.contentWindow.postMessage({ bkModus: c.dataset.bkmodus }, "*"); });
 document.addEventListener("keydown", e => {
   if (route.view !== "boek" || !$("#bkBlad") || $("#bkBlad").hidden || /INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || "")) return;
   if (e.key === "ArrowRight" || e.key === "PageDown") { bkBlader("+"); e.preventDefault(); } else if (e.key === "ArrowLeft" || e.key === "PageUp") { bkBlader("-"); e.preventDefault(); }
 });
+let bkGekozen = false; /* een keuze gemaakt: na het opbouwen kort "Voorbeeld bijgewerkt" */
 document.addEventListener("click", e => {
   const c = e.target.closest("#v-boek [data-bk]"); if (!c) return;
-  const S = bkState, g = c.dataset.bk, v = c.dataset.bv;
+  const S = bkState, g = c.dataset.bk, v = c.dataset.bv; bkGekozen = true; bkSprong = g === "lijn" && +v ? "lijn-" + v : "";
   if (g === "preset") { const P = BK_PRESET[v]; Object.assign(S, { detail: P.detail, beeld: P.beeld, bron: P.bron, hyp: P.hyp, delen: new Set(P.delen) }); }
   else if (g === "detail") S.detail = +v;
   else if (g === "formaat") S.formaat = v;
@@ -4674,7 +5342,7 @@ document.addEventListener("click", e => {
   else if (g === "bron") S.bron = v;
   else if (g === "hyp") S.hyp = v;
   else if (g === "afloop") S.afloop = v;
-  else if (g === "lijn") S.lijn = +v;
+  else if (g === "lijn") { S.lijn = +v; if (S.lijn) { S.start = 1; S.paar = false; } }
   else if (g === "split") { S.split = v; S.deelNr = 1; if (v !== "een") S.lijn = 0; }
   else if (g === "deel") S.deelNr = +v;
   go(bkToken(), { keepScroll: true });
@@ -4685,143 +5353,46 @@ document.addEventListener("change", e => {
   go(bkToken(), { keepScroll: true });
 });
 
-/* ---------- boek: voorwerk en nawerk ---------- */
-/* De haken boekVoorwerk, boekInhoud en boekNawerk:
-   titelpagina, colofon met de gekozen opties, uitleg van de bewijslabels, inhoudsopgave en register met paginanummers. */
-/* zetwerk voor het boek: rechte aanhalingstekens in de tekst (niet in de opmaak) worden typografische ('x' wordt ‘x’, Boersma's wordt Boersma’s),
-   en tekens die niet in Caslon of Plex staan krijgen een eigen vorm, anders valt de pdf terug op een systeemletter: de pijl in een pad
-   wordt ›, ⅓ en ⅔ worden 1⁄3 en 2⁄3, ✩ (geboren) wordt *, ♀ en ♂ worden (vrouw) en (man). Alleen in het boek; de site houdt de tekens. */
-const BK_TEKENS = [[/\u2192/g, "\u203A"], [/\u2153/g, "1\u20443"], [/\u2154/g, "2\u20443"], [/[\u2729\u2605\u2606]/g, "*"], [/\u2640/g, "(vrouw)"], [/\u2642/g, "(man)"]];
-window.boekZetwerk = html => String(html).replace(/>([^<]*)</g, (m, t) => ">" + BK_TEKENS.reduce((x, [re, v]) => x.replace(re, v), t)
-  .replace(/&#39;(?=(t|s|k|n)\b)/g, "\u2019").replace(/(^|[\s(\[\u2014\u2013])&#39;/g, "$1\u2018").replace(/&#39;/g, "\u2019")
-  .replace(/(^|[\s(\[\u2014\u2013])&quot;/g, "$1\u201C").replace(/&quot;/g, "\u201D") + "<");
-/* marges per formaat (binnen, buiten, boven, onder in mm): één leeskolom van ±13–15 cm met ruim wit; de binnenmarge voor de binding.
-   bkDocument voegt dit na de stijlen toe; @page kan niet van een attribuut op body afhangen. */
-const BK_MARGE = { a4: [28, 46, 24, 30], foto: [26, 40, 22, 28], vierkant: [30, 26, 26, 30], trade: [24, 32, 20, 26] };
-window.boekPaginaCss = formaat => { const [bi, bu, bo, on] = BK_MARGE[formaat] || BK_MARGE.a4;
-  return `@page{margin:${bo}mm ${bu}mm ${on}mm ${bi}mm}@page :right{margin:${bo}mm ${bu}mm ${on}mm ${bi}mm}@page :left{margin:${bo}mm ${bi}mm ${on}mm ${bu}mm}`; };
-/* bij het paginatal: bij welke drukker het boek in één band past (maxima uit research/sitewerk/boek_onderzoek.md) */
-window.boekPastBij = n => n <= 160 ? "Past als fotoboek bij Saal Digital (tot 160 pagina's), en als boek bij Blurb of Peecho."
-  : n <= 480 ? "Te dik voor een fotoboek (Saal: tot 160 pagina's); past als gebonden boek bij Blurb (tot 480) of Peecho (tot 504)."
-  : n <= 504 ? "Past alleen nog bij Peecho (hardcover tot 504 pagina's)."
-  : "Te dik voor één band (meer dan 504 pagina's). Kies Standaard, minder generaties volledig, of één familie per boek.";
-/* namen bij elkaar houden: "Harrie de Groot" breekt niet tussen "de" en "Groot"; de rest mag gewoon breken (afbreken staat uit in titels) */
-const bkNbsp = s => esc(s).replace(/ (de|van|der|den|ten|ter|te) (\S+)$/i, " $1\u00a0$2");
-/* welke hoofdstukken er in dit boek staan, in de volgorde van bkInhoud; [id, titel, sub] */
-const bkFams = B => B.deel && B.deel.lijnen ? B.deel.lijnen : B.lijn ? [B.lijn] : LINE_KEYS.filter(l => LINES[l]);
-const bkEersteDeel = B => !B.deel || B.deel.nr === 1, bkLaatsteDeel = B => !B.deel || B.deel.nr === B.deel.aantal;
-function bkHoofdstukken(B) {
-  const fams = bkFams(B), h = [], laatste = bkLaatsteDeel(B);
-  if (B.delen.has("fam")) fams.forEach(l => h.push(["bk-lijn-" + l, "Familie " + LINES[l].name, LINES[l].sub ? "met " + LINES[l].sub : ""]));
-  if (B.delen.has("verh") && !B.lijn && laatste) h.push(["bk-verhalen", "Verhalen", "De rode draden door de families"]);
-  if (B.delen.has("tijd") && laatste) h.push(["bk-tijd", "Hun tijd", "De grote geschiedenis om de families heen"]);
-  if (B.delen.has("kw")) h.push(["bk-kwartierstaat", "Kwartierstaat", "Alle voorouders genummerd"]);
-  if (B.delen.has("open") && laatste) h.push(["bk-open", "Tegenstrijdigheden en open vragen", ""]);
-  if (B.delen.has("bron") && laatste) h.push(["bk-bronnen", "Bronnen", "Archieven en genealogieën"]);
-  h.push(["bk-register", "Register van namen", ""]);
-  return h;
+/* ---------- book: front and back matter (site layer) ---------- */
+/* The title page, colophon, "Over dit boek", table of contents, appendices, index of names, back cover text, surname block and the
+   typesetting pass are pure, in src/products/book/front.js (Products.bookFront). Here only what the site derives for them, as plain
+   values (bkFrontData → data.front), and the hooks the book calls. */
+function bkFrontData() {
+  const H = honestStats(), jaar = H.yearProven < 9999 ? H.yearProven : "", surnames = {};
+  anNamen().filter(x => x.lijnen).forEach(x => anLijnen(x).forEach(l => {
+    const bron = (x.bronnen || []).map(b => b[0]); if (x.cbg && !bron.some(b => /CBG/.test(b))) bron.push("CBG Familienamen");
+    (surnames[l] = surnames[l] || []).push({ naam: x.naam, soort: x.soort, verklaring: x.verklaring, st: x.st, familie: x.familie, familie_st: x.familie_st, n1947: x.n1947, n2007: x.n2007, bron });
+  }));
+  const S = STATS || (STATS = computeStats()), A = ancestors.filter(p => !p.living && !p.aliasOf);
+  const top = S.months.slice().sort((a, b) => b.v - a.v)[0], fam = S.bigFamily && S.bigFamily[0], who = x => x ? { n: x.p.n, v: Math.floor(x.v) } : null;
+  const numbers = {
+    lifeM: { avg: meanOf(S.lifeM), n: S.lifeM.length }, lifeF: { avg: meanOf(S.lifeF), n: S.lifeF.length },
+    oldest: S.oldest.slice(0, 3).map(x => ({ n: x.p.n, age: (x.exact ? "" : "ca. ") + Math.floor(x.v) })),
+    ageM: { avg: meanOf(S.ageM.map(x => x.v)) }, ageF: { avg: meanOf(S.ageF.map(x => x.v)) },
+    topMonth: top && S.nDated ? { name: MONTHS[S.months.indexOf(top)], v: top.v, n: S.nDated } : null,
+    bigFamily: fam ? { m: fam.m.n, f: fam.f.n, kids: fam.kids } : null, genAvg: S.genAvg, youngMother: who(S.youngMother), oldFather: who(S.oldFather),
+    status: Object.fromEntries(["A", "B", "C", "D"].map(k => [k, A.filter(p => p.st === k).length])), nDead: A.length,
+    namesM: S.namesM.slice(0, 6), namesF: S.namesF.slice(0, 6), occ: S.occ.slice(0, 6).map(o => [o.l, o.v]), nOcc: S.nOcc,
+    places: S.topPlaces.slice(0, 6).map(([k, v]) => [placeName(k), v]), moves: S.moves.length, moveMedian: medianOf(S.moves.map(x => x.v)), within20: S.within20 };
+  return { lede: heroLedeTekst(jaar), honest: { n: H.n, genProven: H.genProven, yearProven: H.yearProven }, surnames,
+    glossary: GLOSSARY.map(g => [g[0], g[1], g[2] && g[2][0]]), wage: typeof WAGE !== "undefined" ? WAGE : null, numbers };
 }
-/* a title that breaks well: "de Groot" stays together, and "·" between family names never ends a line ("De Groot · Kingma") */
-const bkTitelHtml = s => bkNbsp(s).replace(/ (De|Van|Ter|Ten|Der|Den) (?=[A-Z])/g, " $1\u00a0").replace(/ \u00b7 /g, "\u00a0\u00b7\u00a0");
-/* the book's own title, subtitle and years (B.titel from the choice: the whole tree, one family or a part); the whole tree keeps its proven years */
-function bkTitel(B) {
-  const H = honestStats(), heel = bkBereik(B).heel, jaar = H.yearProven < 9999 ? H.yearProven : "";
-  return { titel: B.titel || `De voorouders van ${T.rootFull || T.root}`, sub: B.ondertitel || "", jaren: heel ? (jaar ? `${jaar} \u2013 ${new Date().getFullYear()}` : "") : (B.jaren || "").replace(" - ", " \u2013 "), heel };
-}
-/* what this book covers, when it is not the whole tree: its families, the number of ancestors in it, and the oldest year */
-function bkBereik(B) {
-  const fams = bkFams(B), alle = LINE_KEYS.filter(l => LINES[l]).length, n = new Set((B.mensen || []).filter(kw => fams.includes(lineOf(kw)))).size;
-  const namen = fams.map(l => LINES[l].name), lijst = namen.length > 1 ? namen.slice(0, -1).join(", ") + " en " + namen[namen.length - 1] : namen[0] || "";
-  return { fams, heel: fams.length >= alle && !B.lijn, n, lijst,
-    zin: `Dit boek volgt ${fams.length > 1 ? "de families " : "de familie "}${lijst}: ${nl(n)} voorouders${B.oudste ? `, terug tot ${B.oudste}` : ""}.` };
-}
-window.boekVoorwerk = B => {
-  const { titel, sub, jaren, heel } = bkTitel(B);
-  return `
-<section class="bk-hfst bk-titelblad" data-bk="titel">
-  <p class="bk-eyebrow">Stamboom</p>
-  <h1 class="bk-titel-h">${bkTitelHtml(titel)}</h1>
-  ${sub ? (() => { /* "Deel 2 van 8" on its own line, then the rest on one line; the years only once, under the ornament */
-    const seg = sub.split(" \u00b7 "), deel = seg.filter(x => /^Deel \d/.test(x)), rest = seg.filter(x => !/^Deel \d/.test(x) && !/^\d{4}\s*[\u2013-]/.test(x));
-    return `<p class="bk-titel-deel">${deel.map(x => `<span>${esc(x)}</span>`).join("")}${rest.length ? `<span${deel.length ? ' class="bk-titel-na"' : ""}>${bkNbsp(rest.join(" \u00b7 ")).replace(/ \u00b7 /g, " \u00b7\u00a0")}</span>` : ""}</p>`; })() : ""}
-  ${heel && T.brand ? `<p class="bk-titel-fam">${esc(T.brand)}</p>` : ""}
-  <p class="bk-orn" aria-hidden="true"><span class="bk-ruit"></span></p>
-  ${jaren ? `<p class="bk-titel-jaren">${jaren}</p>` : ""}
-</section>
-<section class="bk-hfst bk-colofon" data-bk="colofon">
-  <p><i>${esc(titel)}</i>${sub ? `<br>${esc(sub)}` : ""}</p>
-  <p>Samengesteld uit akten, registers, bidprentjes en kranten in openbare archieven. Bij elk gegeven staat hoe sterk het bewijs is, en waar het vandaan komt.</p>
-  <p>Van levende familieleden staan in dit boek alleen de namen.</p>
-  ${B.keuzes && B.keuzes.length ? `<p class="bk-lbl">In deze uitgave</p><ul class="bk-colofon-keuzes">${B.keuzes.map(k => `<li>${esc(k)}</li>`).join("")}</ul>` : ""}
-  <p>Gezet in Libre Caslon en IBM Plex.<br>${esc(VERSION)}.</p>
-</section>`;
-};
-function bkInleiding(B) {
-  const H = honestStats(), jaar = H.yearProven < 9999 ? H.yearProven : "", { titel } = bkTitel(B), R = bkBereik(B);
-  const lede = R.heel ? heroLedeTekst(jaar) : R.zin;
-  const st = ["A", "B", "C", "D"].map(k => `<div><dt><span class="bk-st">${k}</span> ${esc(STATUS[k].label)}</dt><dd>${esc(STATUS[k].long)}</dd></div>`).join("");
-  return `
-<section class="bk-hfst bk-inleiding" data-bk="inleiding" id="bk-inleiding" data-kop-l="${esc(titel)}" data-kop-r="Over dit boek">
-  <h2 class="bk-h2">Over dit boek</h2>
-  ${lede ? `<p class="bk-lede bk-ini">${esc(lede)}</p>` : ""}
-  <div class="bk-kern">${R.heel ? `
-    <div><b>${nl(H.n)}</b><span>voorouders</span></div>
-    <div><b>${H.genProven}</b><span>generaties bewezen</span></div>
-    ${jaar ? `<div><b>${jaar}</b><span>oudste bewezen jaar</span></div>` : ""}` : `
-    <div><b>${nl(R.n)}</b><span>voorouders in dit boek</span></div>
-    <div><b>${R.fams.length}</b><span>${R.fams.length === 1 ? "familie" : "families"}</span></div>
-    ${B.oudste ? `<div><b>${B.oudste}</b><span>oudste bewezen jaar</span></div>` : ""}`}
-  </div>
-  <h3 class="bk-h3">Zo lees je dit boek</h3>
-  <p>${R.heel ? "Het boek volgt de families van het kwartier: elke overgrootouder opent een eigen familie, en daarin" : R.fams.length > 1 ? "Het boek volgt de families een voor een; in elke familie" : "In de familie"} staan de voorouders van jong naar oud, generatie na generatie. Wie verder terug ligt dan het volledige deel, staat er kort in; niemand valt weg.</p>
-  <p>Elke voorouder heeft een <b>kwartiernummer</b> (kw). De vader van nummer <i>n</i> heeft 2<i>n</i>, de moeder 2<i>n</i>&nbsp;+&nbsp;1. Zo is elk nummer één plek in de stamboom, en kom je met halveren altijd terug bij het begin.</p>
-  <p>Bij elke voorouder staat een <b>bewijslabel</b>: hoe sterk het bewijs is dat deze persoon bestond en de ouder is van wie eronder staat. Een zin die niet letterlijk in een bron staat, maar uit de gegevens is afgeleid, heeft het woord <span class="bk-soort">afgeleid</span>; een vermoeden heet <span class="bk-soort">hypothese</span>.</p>
-  <dl class="bk-labels">${st}</dl>
-</section>`;
-}
-/* de achterkant van de omslag: de inleidende tekst van de voorpagina, één zin over het boek en de kerncijfers (voor boekOmslagSpread) */
-window.boekAchterflap = B => {
-  B = B || { delen: new Set() };
-  const H = honestStats(), jaar = H.yearProven < 9999 ? H.yearProven : "", R = bkBereik(B), { jaren } = bkTitel(B);
-  const lede = R.heel ? heroLedeTekst(jaar) : R.fams.length === 1 && LINES[R.fams[0]].intro ? LINES[R.fams[0]].intro : R.zin;
-  return `<div class="bk-flap"><p class="bk-flap-lede">${esc(lede)}</p>
-  <p class="bk-flap-zin">${R.fams.length === 1 ? "De verhalen en alle voorouders van de familie" : "Per familie de verhalen en alle voorouders"}, van jong naar oud. Bij elk gegeven staat waar het vandaan komt, en hoe zeker het is.</p>
-  <p class="bk-flap-kern">${nl(R.heel ? H.n : R.n)} voorouders \u00b7 ${R.fams.length} ${R.fams.length === 1 ? "familie" : "families"}${jaren ? ` \u00b7 ${jaren}` : ""}</p></div>`;
-};
-window.boekInhoud = B => `
-<section class="bk-hfst bk-inhoud" data-bk="inhoud" id="bk-inhoud">
-  <h2 class="bk-h2">Inhoud</h2>
-  <ol class="bk-toc">
-    ${bkEersteDeel(B) ? `<li><a class="bk-ref" href="#bk-inleiding"><span class="bk-toc-t">Over dit boek</span><span class="bk-toc-pn bk-pn" href="#bk-inleiding"></span></a></li>` : ""}
-    ${bkHoofdstukken(B).map(([id, t, sub]) => `<li><a class="bk-ref" href="#${id}"><span class="bk-toc-t">${esc(t)}${sub ? `<small>${esc(sub)}</small>` : ""}</span><span class="bk-toc-pn bk-pn" href="#${id}"></span></a></li>`).join("")}
-  </ol>
-</section>
-${bkEersteDeel(B) ? bkInleiding(B) : ""}`;
-window.boekNawerk = B => {
-  const fams = bkFams(B);
-  const inBoek = new Set(B.mensen.filter(kw => fams.includes(lineOf(kw))));
-  const sleutel = p => { const sn = splitName(p.n), sur = sn.sur, m = sur ? PREFIX.exec(sur) : null, voor = [].concat(sn.given || []).join(" ");
-    return sur ? (m ? m[2] + ", " + voor + " " + m[1].trim() : sur + ", " + voor) : p.n; };
-  const rij = [...inBoek].map(person).filter(Boolean).map(p => [sleutel(p), p]).sort((a, b) => norm(a[0]).localeCompare(norm(b[0]), "nl") || a[1].kw - b[1].kw);
-  const groep = {}; rij.forEach(([k, p]) => { const L = (norm(k)[0] || "?").toUpperCase(); (groep[L] = groep[L] || []).push([k, p]); });
-  const item = ([k, p]) => `<a class="bk-ref bk-reg" href="#bk-kw-${p.kw}"><span class="bk-reg-n">${esc(k)}</span>${p.living ? "" : `<span class="bk-reg-j">${esc(lifeYears(p))}</span>`}<span class="bk-reg-pn bk-pn" href="#bk-kw-${p.kw}"></span></a>`;
-  return `
-<section class="bk-hfst bk-register" data-bk="register" id="bk-register" data-kop-l="Register" data-kop-r="Register van namen">
-  <h2 class="bk-h2">Register van namen</h2>
-  <p class="bk-reg-uitleg">Achternaam, voornaam; vóór 1811 vaak het patroniem. Het getal is de pagina van het profiel.</p>
-  ${Object.keys(groep).map(L => `<div class="bk-reg-l"><span class="bk-reg-begin"><h3 class="bk-reg-letter">${L}</h3>${groep[L].slice(0, 2).map(item).join("")}</span>${groep[L].slice(2).map(item).join("")}</div>`).join("")}
-</section>
-<section class="bk-hfst bk-slot" data-bk="slot">
-  <h2 class="bk-h2">Voor wie na ons komt</h2>
-  <p class="bk-slot-uitleg">Ruimte voor de namen, data en verhalen die na dit boek komen.</p>
-  <div class="bk-lijnen">${"<i></i>".repeat(18)}</div>
-</section>`;
-};
+const bkFrontCache = {};
+const bkFront = () => bkFrontCache[T.key] || (bkFrontCache[T.key] = Products.bookFront(bkBookData()));
+const bkTitel = B => bkFront().title(B), bkTitelHtml = s => Products.bookFront ? Products.bookFront.titleHtml(s) : esc(s); /* read late: a missing front.js must not stop the site */
+window.boekVoorwerk = B => bkFront().voorwerk(B);
+window.boekInhoud = B => bkFront().inhoud(B);
+window.boekNawerk = B => bkFront().nawerk(B);
+window.boekZetwerk = html => bkFront().zetwerk(html);
+window.boekAchterflap = B => bkFront().achterflap(B);
+window.bookSurnameBlock = (B, l) => bkFront().surname(B, l);
+window.boekPaginaCss = f => Products.bookFront ? Products.bookFront.pageCss(f) : "";
+window.boekPastBij = n => Products.bookFront ? Products.bookFront.fitsPrinter(n) : "";
 
 /* ---------- boek: omslag en beeld ---------- */
 /* Haken voor het boek (zie de sectie "boek"): omslag (voorkant in het boek; de hele omslag met rug en achterkant voor de drukker),
    de waaier als dubbele pagina in vector, de openingsspread per familie met een historisch beeld over de hele pagina, de beeldkeuze
-   per hoofdstuk en de bron van elk beeld. Met B.hires (alleen lokaal, tools/boek.py) komen de beelden uit de originelen in
+   per hoofdstuk en de bron van elk beeld. Met B.hires (alleen lokaal, voor de drukker) komen de beelden uit de originelen in
    beelden/originelen/; lukt dat niet, dan valt het beeld terug op de webversie. Van levenden nooit een beeld. */
 const BKB_ORIG = id => "beelden/originelen/" + String(id).replace(/^omslag-/, "") + ".jpg";
 window.boekSrc = (im, B) => {
@@ -4857,12 +5428,17 @@ function bkbWaaierSvg(o = {}) {
   svg.removeAttribute("width"); svg.removeAttribute("height"); svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
   $$("[tabindex]", svg).forEach(n => n.removeAttribute("tabindex"));
   if (o.kaal) $$("text", svg).forEach(n => n.remove()); /* alleen de vlakken, geen namen */
+  if (o.centerText) { /* a fixed centre (a couple: their children are not in the book): replace the centre name */
+    $$("text", svg).filter(t => !t.closest("g[transform]") && !t.querySelector("textPath") && Math.hypot(+t.getAttribute("x") || 0, +t.getAttribute("y") || 0) < 55).forEach(t => t.remove());
+    o.centerText.forEach((x, i, a) => { const t = document.createElementNS("http://www.w3.org/2000/svg", "text"); t.setAttribute("x", 0); t.setAttribute("y", 5 + (i - (a.length - 1) / 2) * 15);
+      t.setAttribute("text-anchor", "middle"); t.setAttribute("font-size", 13); t.setAttribute("font-weight", 600); t.setAttribute("fill", "var(--accent-ink)"); t.textContent = x; svg.appendChild(t); });
+  }
   if (o.vol) { /* omslag: familiekleuren voller (zoals in de legenda), kwartierverlies als dunne goudlijn, het midden als rustige ring */
     $$("path[fill-opacity]", svg).forEach(n => { const v = +n.getAttribute("fill-opacity"); if (v) n.setAttribute("fill-opacity", Math.min(0.92, v * o.vol).toFixed(2)); });
     $$('path[stroke="var(--gold)"]', svg).forEach(n => { n.setAttribute("stroke-width", "1"); n.setAttribute("stroke-opacity", "0.85"); });
     const c = svg.querySelector("circle"); if (c) { c.setAttribute("stroke", "var(--gold)"); c.setAttribute("stroke-width", "1.5"); }
     $$("text", svg).filter(t => /^(vaders|moeders) kant$|^(vader|moeder) van /.test(t.textContent)).forEach(t => t.remove()); /* geen kantlabels aan de rand van de omslag */
-    if (c && !$$("text", svg).some(t => Math.abs(+t.getAttribute("x") || 0) < 1 && Math.abs(+t.getAttribute("y") || 0) < 40)) { /* het midden altijd bij naam */
+    if (c && !o.centerText && !$$("text", svg).some(t => !t.querySelector("textPath") && Math.abs(+t.getAttribute("x") || 0) < 1 && Math.abs(+t.getAttribute("y") || 0) < 40)) { /* het midden altijd bij naam */
       const ls = T.rootLines || [T.root], f = Math.min(16, 100 / (Math.max(...ls.map(x => x.length)) * 0.56));
       ls.forEach((x, i) => { const t = document.createElementNS("http://www.w3.org/2000/svg", "text"); t.setAttribute("x", 0); t.setAttribute("y", 5 + (i - (ls.length - 1) / 2) * f * 1.1);
         t.setAttribute("text-anchor", "middle"); t.setAttribute("font-size", f); t.setAttribute("font-weight", 600); t.setAttribute("fill", "var(--accent-ink)"); t.textContent = x; svg.appendChild(t); });
@@ -4870,10 +5446,10 @@ function bkbWaaierSvg(o = {}) {
   }
   return svg.outerHTML;
 }
-/* drie omslagen om uit te kiezen (Harrie): A "linnen en goud" (donker, goud), B "papier en waaier" (licht, de waaier groot over de
-   onderrand), C "archief" (een oude kaart van de streek als grond, waaier en titel in een kader). Keuze: B.omslag, anders
+/* drie omslagen om uit te kiezen (Harrie): A "linnen en goud" (donker, goud), B "papier en waaier" (licht, de hele waaier
+   onder de titel), C "archief" (een oude kaart van de streek als grond, waaier en titel in een kader). Keuze: B.omslag, anders
    window.BKB_OMSLAG, anders B (de standaard). Overal de volledige waaier met namen, tekst ≥ 6 pt in druk; van levenden in het midden alleen de naam. */
-const BKB_OMSLAGEN = { a: { vol: 2.6, breedte: 0.9 }, b: { vol: 1.7, breedte: 1.18 }, c: { vol: 2.2, breedte: 0.74 } };
+const BKB_OMSLAGEN = { a: { vol: 2.6, breedte: 0.9 }, b: { vol: 1.7, breedte: 0.84 }, c: { vol: 2.2, breedte: 0.78 } }; /* breedte = the real width of the fan on the page (C: 98 % of the frame) */
 /* Harrie (8-10-2026): B is de standaard, A en C zijn een keuze op #boek (token omslag-a, omslag-c) */
 const bkbOmslagKeuze = B => { const k = String((B && B.omslag) || window.BKB_OMSLAG || "b").toLowerCase(); return BKB_OMSLAGEN[k] ? k : "b"; };
 /* een klein voorbeeld van een omslag voor het keuzepaneel op #boek: de grond, de waaier zonder namen en een titelstreep (inline stijlen,
@@ -4922,7 +5498,8 @@ function bkbTitelblok(B, k) {
     ${sub ? `<p class="bkb-om-sub">${esc(sub)}</p>` : ""}${t.jaren ? `<p class="bkb-om-jaren"><i></i><span>${esc(t.jaren)}</span><i></i></p>` : ""}${famsInSub ? "" : bkbFamRegel(B)}</div>`;
 }
 /* the fan on the cover: from B.kern (the whole tree, a family or one side) and only the people in this book (B.mensen) */
-const bkbOmslagWaaier = (B, o) => bkbWaaierSvg(Object.assign({ root: (B && B.kern) || 1, keep: B && B.mensen ? new Set(B.mensen) : null }, o));
+const bkbOmslagWaaier = (B, o) => bkbWaaierSvg(Object.assign({ root: (B && B.kern) || 1, keep: B && B.mensen ? new Set(B.mensen) : null,
+  centerText: B && B.start && B.start.paar ? [] : undefined }, o)); /* a couple: an empty centre, not the name of one of their children */
 function bkbVoorkant(B) {
   const k = bkbOmslagKeuze(B), cfg = BKB_OMSLAGEN[k], [pw] = bkbFormaatMm(B), lijnen = bkbLijnen(B);
   const waaier = bkbOmslagWaaier(B, { labelGen: 7, minPx: 6, breedtePt: Math.round(pw * cfg.breedte * 72 / 25.4), vol: cfg.vol });
@@ -4935,24 +5512,53 @@ function bkbVoorkant(B) {
   </section>`;
 }
 window.boekOmslag = B => bkbVoorkant(B);
-/* the choices of the book being built (tools/boek.py renders the full cover from them) */
+/* the choices of the book being built (a local print run renders the full cover from them) */
 window.boekHuidig = () => bkCurB || bkB();
-/* de hele omslag voor de drukker: achterkant · rug · voorkant op één vel, met afloop. rugMm uit het aantal pagina's (tools/boek.py) */
+/* de hele omslag voor de drukker: achterkant · rug · voorkant op één vel, met afloop. rugMm uit het aantal pagina's */
 /* the branches of a fan with another centre (fanBranchColors, shared with the site): colour and name, for the legends on the back
    cover and the family opening; empty for the whole tree (there the eight families are the legend) */
 const bkbTakken = kern => kern > 1 ? fanBranchColors(kern).legend.map(x => { const j = x.person.living ? "" : lifeYears(x.person); return { kleur: x.color, naam: x.person.n, jaren: /\d/.test(j) ? j : "" }; }) : []; /* no "jaartallen onbekend" in a legend */
 const bkbTakLijst = (tk, cls) => `<ul class="${cls}">${tk.map(t => `<li style="--lc:${t.kleur}"><i></i>${esc(t.naam)}${t.jaren ? ` <span>${esc(t.jaren)}</span>` : ""}</li>`).join("")}</ul>`;
-window.boekOmslagSpread = (B, rugMm, wMm, hMm, afloopMm = 3) => {
-  const k = bkbOmslagKeuze(B), fams = bkbLijnen(B), n = ancestors.filter(p => !p.living).length;
-  const W = 2 * wMm + rugMm + 2 * afloopMm, H = hMm + 2 * afloopMm, t = bkbTitelDelen(B), tk = bkbTakken(B && B.kern);
-  const tekst = T.TXT && T.TXT.heroLede ? T.TXT.heroLede : `Dit boek volgt de voorouders van ${T.rootFull || T.root} terug langs ${fams.length} families, met ${n} overleden voorouders. Elk gegeven heeft een bron en een label voor de sterkte van het bewijs.`;
-  const B2 = Object.assign({}, B, { formaat: (BK_FORMAAT.find(f => { const m = /([\d.]+)mm\s+([\d.]+)mm/.exec(f[3]); return m && +m[1] === wMm && +m[2] === hMm; }) || [B && B.formaat])[0] });
-  return `<div class="bk-spread bkb-sp-${k}" style="--w:${wMm}mm;--h:${hMm}mm;--rug:${rugMm}mm;--af:${afloopMm}mm;width:${W}mm;height:${H}mm">
-    <div class="bk-sp-achter">${typeof window.boekAchterflap === "function" ? window.boekAchterflap(B) : `<p class="bk-sp-tekst">${esc(tekst)}</p>`}
+/* the back of the cover: the blurb (boekAchterflap), the families or the branches of the fan, and how to read the fan */
+function bkbAchterInhoud(B) {
+  const fams = bkbLijnen(B), tk = bkbTakken(B && B.kern);
+  return `<div class="bk-sp-achter">${typeof window.boekAchterflap === "function" ? window.boekAchterflap(B) : ""}
       ${tk.length ? `<div><p class="bk-sp-kop">De takken van de waaier</p>${bkbTakLijst(tk, "bk-sp-fam")}</div>`
         : `<ul class="bk-sp-fam">${fams.map(l => `<li style="--lc:var(--l${l})"><i></i>${esc(LINES[l].name)}${LINES[l].region ? ` <span>${esc(LINES[l].region)}</span>` : ""}</li>`).join("")}</ul>`}
       <p class="bk-sp-uitleg">De waaier: elke ring is een generatie verder terug; de kleur is ${tk.length ? "de tak" : "de familie"}, hoe voller het vak, hoe sterker het bewijs. Een dunne goudlijn: dezelfde voorouder via twee lijnen.</p>
-      </div>
+    </div>`;
+}
+/* the back as one page in the book (the last page of the pdf for reading on a screen): book size, no spine, no bleed */
+window.boekAchterkant = B => { const k = bkbOmslagKeuze(B); return `<section class="bk-omslag bkb-achterkant bkb-sp-${k}" data-bk="achterkant" data-omslag="${k}" style="--af:0mm">${bkbAchterInhoud(B)}</section>`; };
+/* the estimated spine width: 0.1 mm per leaf of standard paper (0.13 thick, 0.08 thin) plus 2 mm for the cover board */
+window.bookSpineMm = (pages, paper) => Math.round(((pages || 0) / 2 * ({ dik: 0.13, dun: 0.08 }[paper] || 0.1) + 2) * 10) / 10;
+/* one cover renderer for the preview, the miniatures and the pdf: part "front" | "back" (one page, book size) or "spread"
+   (back · spine · front, with spineMm and bleedMm) */
+window.bookCover = (B, o = {}) => {
+  const [w0, h0] = bkbFormaatMm(B), w = o.wMm || w0, h = o.hMm || h0;
+  if (o.part === "back") return window.boekAchterkant(B);
+  if (o.part === "spread") return window.boekOmslagSpread(B, o.spineMm ?? window.bookSpineMm(o.pages || 200), w, h, o.bleedMm ?? 0);
+  return bkbVoorkant(B);
+};
+/* the same as a whole document (fonts, book styles, colours) for an iframe: the book styles hold @page rules that must not reach the
+   site. o.print: print as soon as the fonts are there. Returns { html, wMm, hMm } (the size of the sheet). */
+window.bookCoverDoc = (B, o = {}) => {
+  const [w0, h0] = bkbFormaatMm(B), w = o.wMm || w0, h = o.hMm || h0, af = o.part === "spread" ? (o.bleedMm ?? 0) : 0;
+  const rug = o.part === "spread" ? (o.spineMm ?? window.bookSpineMm(o.pages || 200)) : 0;
+  const W = o.part === "spread" ? 2 * w + rug + 2 * af : w, H = h + 2 * af, cs = getComputedStyle(document.documentElement);
+  const kl = Object.keys(LINES).map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";");
+  const titel = esc(B.bestand ? B.bestand.replace(/\.pdf$/, "") + " – omslag" : "Omslag");
+  const html = `<!doctype html><html lang="nl"><head><meta charset="utf-8"><base href="${new URL(".", location.href).href}"><title>${titel}</title>${(typeof BK_FONTS !== "undefined" ? BK_FONTS : []).map(u => `<link rel="stylesheet" href="${u}">`).join("")}
+<scr${""}ipt src="src/book-css.js"><\/script><script>document.write("<style>"+(window.BOEK_CSS||"")+"<\/style>")<\/script>
+<style>@page{size:${W}mm ${H}mm;margin:0}html,body{margin:0;background:none}:root{${kl};--bk-pw:${w}mm;--bk-ph:${h}mm}.bk-omslag{break-before:auto;break-after:auto}</style></head>
+<body>${window.bookCover(B, Object.assign({}, o, { wMm: w, hMm: h, spineMm: rug, bleedMm: af }))}${o.print ? `<script>addEventListener("load",function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(function(){window.focus();window.print()},300)})})<\/script>` : ""}</body></html>`;
+  return { html, wMm: W, hMm: H };
+};
+window.boekOmslagSpread = (B, rugMm, wMm, hMm, afloopMm = 3) => {
+  const k = bkbOmslagKeuze(B), W = 2 * wMm + rugMm + 2 * afloopMm, H = hMm + 2 * afloopMm, t = bkbTitelDelen(B);
+  const B2 = Object.assign({}, B, { formaat: (BK_FORMAAT.find(f => { const m = /([\d.]+)mm\s+([\d.]+)mm/.exec(f[3]); return m && +m[1] === wMm && +m[2] === hMm; }) || [B && B.formaat])[0] });
+  return `<div class="bk-spread bkb-sp-${k}" style="--w:${wMm}mm;--h:${hMm}mm;--rug:${rugMm}mm;--af:${afloopMm}mm;width:${W}mm;height:${H}mm">
+    ${bkbAchterInhoud(B)}
     <div class="bk-sp-rug">${rugMm >= 6 ? `<span><b>${esc(t.titel)}</b>${t.jaren && rugMm >= 9 ? `<small>${esc(t.jaren.replace(/\s+/g, ""))}</small>` : ""}</span>` : ""}</div>
     <div class="bk-sp-voor">${bkbVoorkant(B2).replace('class="bk-omslag ', 'class="bk-omslag bk-omslag-los ')}</div>
   </div>`;
@@ -4986,7 +5592,7 @@ window.boekWaaier = B => {
   const heel = bkbWaaierSvg({ labelGen: 7 }), vb = (/viewBox="([^"]+)"/.exec(heel) || [, "-540 -540 1080 1080"])[1].split(/\s+/).map(Number), V = -vb[0];
   /* elke helft is hetzelfde SVG met een eigen viewBox, als <img>: Paged.js breekt een losse inline SVG op, een beeld niet.
      De fonts gaan als data-URI mee in de SVG (bkbFontCss), zodat de pdf echte, ingebedde fonts heeft en geen Type 3. */
-  /* in het boek een <img> per helft (Paged.js breekt een inline SVG op); tools/boek.py vervangt die twee pagina's daarna door
+  /* in het boek een <img> per helft (Paged.js breekt een inline SVG op); een lokale drukrun vervangt die twee pagina's daarna door
      dezelfde helften als echte vector met ingebedde fonts (window.boekWaaierHelften), omdat tekst in een SVG-beeld Type 3 wordt */
   /* de tekening zelf komt er pas ná de opmaak in (boekNaKlaar): Paged.js breekt een hoge inline SVG anders op, en als beeld wordt
      de tekst in de pdf Type 3. Hier alleen een lege houder van de juiste maat. */
@@ -4997,7 +5603,7 @@ window.boekWaaier = B => {
     <div class="bk-wa-blad bk-wa-r" data-bkb-vervang="waaier-r"><div class="bk-wa-svg" data-bkb-helft="r"></div></div>
   </section>`;
 };
-/* voor tools/boek.py: de twee helften van de waaier als inline SVG (met de kleuren in een eigen <style>), plus de kop van de linkerpagina */
+/* voor een lokale drukrun en boekNaKlaar: de twee helften van de waaier als inline SVG (met de kleuren in een eigen <style>), plus de kop van de linkerpagina */
 window.boekWaaierHelften = () => {
   const heel = bkbWaaierSvg({ labelGen: 7 }), V = -(/viewBox="(-?[\d.]+)/.exec(heel) || [, -540])[1];
   const cs = getComputedStyle(document.documentElement), kl = Object.keys(LINES).map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";");
@@ -5006,11 +5612,10 @@ window.boekWaaierHelften = () => {
   const h = links => heel.replace(/viewBox="[^"]+"/, `viewBox="${links ? -V : 0} ${-V} ${V} ${2 * V}"`).replace(/^<svg/, `<svg overflow="hidden" style="${st}"`);
   return { links: h(true), rechts: h(false), kop: `<p class="bk-eyebrow">De waaier</p><h2 class="bk-h2">Alle voorouders in één beeld</h2><p class="bk-wa-uitleg">Het midden is ${esc(T.root)}; elke ring is een generatie verder terug. De kleur is de familie, hoe voller het vak, hoe sterker het bewijs. Goud: dezelfde voorouder via twee lijnen.</p>` };
 };
-/* ---- voor de drukker, in de browser (GitHub Pages, zonder tools/boek.py) ----
+/* ---- voor de drukker, in de browser (GitHub Pages, zonder lokale hulpmiddelen) ----
    boekDrukKnoppen(B): uitleg bij de pdf-knop en een knop voor de omslag als één vel (achterkant · rug · voorkant) met een veld voor de
    rugbreedte; boekControle(doc, B): dpi per geplaatst beeld, fonts geladen, aantal pagina's, en één regel "Klaar voor de drukker". */
 const bkbAfloopMm = B => ({ "3": 3, blurb: 3.175, "0": 0 })[String((B && (B.afloop ?? B.druk)) || "")] ?? 0;
-const bkbRugSchat = n => Math.round((n / 2 * 0.1 + 2) * 10) / 10;
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest(".bk-help");
   document.querySelectorAll(".bk-help[aria-expanded=true]").forEach(o => { if (o !== b) { o.setAttribute("aria-expanded", "false"); const t = document.getElementById(o.getAttribute("aria-controls")); if (t) t.hidden = true; } });
@@ -5018,31 +5623,28 @@ document.addEventListener("click", e => {
   const t = document.getElementById(b.getAttribute("aria-controls")), open = b.getAttribute("aria-expanded") !== "true";
   b.setAttribute("aria-expanded", String(open)); if (t) t.hidden = !open;
 });
-window.boekDrukKnoppen = B => {
+/* the print fields for the step "Afwerking" (the spine width, id bkbRug) and the print action for the action bar (the cover pdf,
+   id bkbOmslagPdf); boekDrukKnoppen keeps both together for the current panel */
+window.bookPrintFields = B => {
   const af = bkbAfloopMm(B);
-  return `<p class="bkb-omslag-rij"><label>Rugbreedte <input type="number" id="bkbRug" min="0" max="80" step="0.1" value="" placeholder="bv. 16,5" title="De rugbreedte die je drukker opgeeft. Leeg: een schatting uit het aantal pagina's${af ? `; met ${String(af).replace(".", ",")} mm afloop` : ""}." style="width:7em"> mm</label>
-      <button type="button" class="btn" id="bkbOmslagPdf">Omslag (achterkant · rug · voorkant)</button></p>`;
+  return `<div class="op-f bkb-rug-rij"><label class="op-l" for="bkbRug">Rugbreedte</label><div><span class="bkb-rug"><input type="text" inputmode="decimal" id="bkbRug" value="" placeholder="bv. 16,5" title="De rugbreedte die je drukker opgeeft. Leeg: een schatting uit het aantal pagina's${af ? `; met ${String(af).replace(".", ",")} mm afloop` : ""}."> mm</span></div></div>`;
 };
+window.bookPrintActions = B => `<button type="button" class="btn" id="bkbOmslagPdf">Maak omslag-pdf</button>`;
+window.boekDrukKnoppen = B => `<div class="bkb-omslag-rij">${window.bookPrintFields(B)}${window.bookPrintActions(B)}</div>`;
 /* de omslag als één vel afdrukken: een verborgen iframe met de spread, de boekfonts en de boekstijlen; afdrukken zodra de fonts er zijn */
 document.addEventListener("click", e => {
   const k = e.target.closest("#bkbOmslagPdf"); if (!k) return;
-  const B = typeof bkB === "function" ? bkB() : {}, [w, h] = bkbFormaatMm(B), af = bkbAfloopMm(B);
+  const B = typeof bkB === "function" ? bkB() : {}, af = bkbAfloopMm(B);
   const n = +((($("#bkTel") || {}).textContent || "").match(/(\d+) pagina/) || [0, 200])[1];
-  const rug = parseFloat((($("#bkbRug") || {}).value || "").replace(",", ".")) || bkbRugSchat(n);
-  const W = 2 * w + rug + 2 * af, H = h + 2 * af, cs = getComputedStyle(document.documentElement);
-  const kl = Object.keys(LINES).map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";");
-  const base = new URL(".", location.href).href;
-  const html = `<!doctype html><html lang="nl"><head><meta charset="utf-8"><base href="${base}"><title>${esc(B.bestand ? B.bestand.replace(/\.pdf$/, "") + " – omslag" : "Omslag")}</title>${(typeof BK_FONTS !== "undefined" ? BK_FONTS : []).map(u => `<link rel="stylesheet" href="${u}">`).join("")}
-<scr${""}ipt src="src/book-css.js"><\/script><script>document.write("<style>"+(window.BOEK_CSS||"")+"<\/style>")<\/script>
-<style>@page{size:${W}mm ${H}mm;margin:0}html,body{margin:0;background:none}:root{${kl};--bk-pw:${w}mm;--bk-ph:${h}mm}</style></head>
-<body>${window.boekOmslagSpread(B, rug, w, h, af)}<script>addEventListener("load",function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(function(){window.focus();window.print()},300)})})<\/script></body></html>`;
+  const rug = parseFloat((($("#bkbRug") || {}).value || "").replace(",", ".")) || window.bookSpineMm(n);
+  const { html } = window.bookCoverDoc(B, { part: "spread", spineMm: rug, bleedMm: af, print: true });
   let fr = $("#bkbOmslagFrame"); if (fr) fr.remove();
   fr = document.createElement("iframe"); fr.id = "bkbOmslagFrame"; fr.title = "Omslag"; fr.style.cssText = "position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0";
   document.body.appendChild(fr); fr.srcdoc = html;
 });
 /* controle vooraf: per beeld de effectieve dpi (pixels tegen de breedte op papier), fonts geladen, pagina's; in stukjes, want verborgen
    pagina's (content-visibility) hebben geen maat: die worden even zichtbaar gemaakt om te meten */
-window.boekControle = async (doc, B) => {
+window.boekControle = window.bookPrintCheck = async (doc, B, o = {}) => {
   if (!doc) return "";
   const pags = [...doc.querySelectorAll(".pagedjs_page")], mmPx = 25.4 / 96, laag = [], midden = [];
   let n = 0;
@@ -5062,18 +5664,188 @@ window.boekControle = async (doc, B) => {
   const fams = ["Libre Caslon Display", "Libre Caslon Text", "IBM Plex Sans", "IBM Plex Mono"], fd = doc.fonts;
   const mis = fd ? fams.filter(f => !fd.check(`12px "${f}"`)) : [];
   const punten = [];
-  if (laag.length) punten.push(`${laag.length} beeld${laag.length > 1 ? "en" : ""} onder 200 dpi (te onscherp): ${laag.slice(0, 6).map(x => `p. ${x[2]} (${x[0]} dpi)`).join(", ")}${laag.length > 6 ? " …" : ""}`);
-  if (mis.length) punten.push(`fonts nog niet geladen: ${mis.join(", ")}`);
+  if (laag.length) punten.push(`${laag.length === 1 ? "één beeld wordt" : laag.length + " beelden worden"} onscherp op papier (${laag.slice(0, 6).map(x => `p. ${x[2]}`).join(", ")}${laag.length > 6 ? " …" : ""})`);
+  if (mis.length) punten.push("de letters zijn nog niet helemaal geladen; wacht even");
   if (pags.length > 400) punten.push(`${pags.length} pagina's: meer dan de meeste drukkers in één band binden; kies "In delen"`);
-  const rest = `${pags.length} pagina's · ${n} beelden${midden.length ? ` · ${midden.length} tussen 200 en 300 dpi (goed, niet scherp)` : ""}`;
-  return punten.length ? `<b>Let op:</b> ${punten.map(esc).join("; ")}. <span class="small">${esc(rest)}</span>` : `<b>Klaar voor de drukker.</b> <span class="small">${esc(rest)} · alle beelden 200 dpi of meer · fonts geladen.</span>`;
+  if (o.short) return laag.length ? `Let op: ${laag.length === 1 ? "één beeld" : laag.length + " beelden"} onscherp` : mis.length ? "Even wachten: de letters laden"
+    : pags.length > 400 ? `Let op: ${pags.length} pagina's, te dik voor één band` : "\u2713 Klaar voor de drukker"; /* one line for the action bar */
+  const rest = `${pags.length} pagina's · ${n} beelden`;
+  return punten.length ? `<b>Let op:</b> ${punten.map(esc).join("; ")}. <span class="small">${esc(rest)}</span>` : `<b>Klaar voor de drukker.</b> <span class="small">${esc(rest)}</span>`;
 };
 /* na de opmaak (Paged.js klaar), in het voorbeeld, bij "Maak pdf" en in de drukmodus: de twee helften van de waaier als inline vector
-   in hun houders, en een plaat op elke lege linkerpagina vóór een familieopening. Werkt in de browser, zonder tools/boek.py. */
+   in hun houders, en een plaat op elke lege linkerpagina vóór een familieopening. Werkt in de browser, zonder lokale hulpmiddelen. */
+/* ---- book: map "Waar ze woonden" (a spread: the map on the left page, the villages per family or branch on the right) ----
+   The map is the site's vector map (drawBase, proj) with the places of the people in this book (B.mensen), coloured by family, or by
+   branch when the book has another centre (fanBranchColors). Like the fan, the drawing goes in after the layout (boekNaKlaar). */
+const BKB_MAP_PAPER = "--land:#f1ecdf;--water:#dfe6e6;--faint:#8a918d;--ink:#1d2320;--surface:#fffdf8;--mono:'IBM Plex Mono',monospace";
+function bkbMapData(B, onlyLine) {
+  const keep = B && B.mensen ? new Set(B.mensen) : null, kern = (B && B.kern) || 1, br = fanBranchColors(kern);
+  const lines = onlyLine ? [onlyLine] : bkbLijnen(B);
+  const ev = EVENTS.filter(e => (!keep || keep.has(e.kw)) && lines.includes(lineOf(e.kw)) && (kern === 1 || br.branch(e.kw) >= 0));
+  /* a group per family (whole tree) or per branch (another centre): its colour, its name and its places */
+  const groupOf = kw => kern > 1 ? br.branch(kw) : lineOf(kw);
+  const places = {};
+  ev.forEach(e => { const a = places[e.p] = places[e.p] || { key: e.p, people: new Set(), years: [], groups: {} }; a.people.add(e.kw); a.years.push(e.y); const g = groupOf(e.kw); a.groups[g] = (a.groups[g] || 0) + 1; });
+  const list = Object.values(places).sort((a, b) => b.people.size - a.people.size);
+  list.forEach(a => { a.group = +Object.entries(a.groups).sort((x, y) => y[1] - x[1])[0][0]; a.color = kern > 1 ? `var(--l${LINE_KEYS[a.group]})` : `var(--l${a.group})`; });
+  const groups = kern > 1 ? br.legend.map((x, b) => ({ id: b, color: x.color, name: x.person.n })) : lines.map(l => ({ id: l, color: `var(--l${l})`, name: LINES[l].name }));
+  return { list, groups };
+}
+/* the map as an SVG string; o.small = a cut-out around the places (for a family opening) */
+function bkbMapSvg(B, o = {}) {
+  const { list } = bkbMapData(B, o.line);
+  const svg = el("svg", { viewBox: `0 0 ${MW} ${MH}`, role: "img", "aria-label": "Kaart met de woonplaatsen", "font-family": "IBM Plex Sans, sans-serif" });
+  drawBase(svg, false, !!o.small);
+  const dots = el("g", {}, svg), labels = el("g", {}, svg), placed = [];
+  const fs = o.small ? 22 : 12.5, rr = o.small ? 2 : 1; /* units: the full map is ±180 mm high, 1 unit ≈ 0.5 pt; labels ≥ 6 pt */
+  list.forEach(a => { const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), r = (3 + 2.2 * Math.sqrt(a.people.size)) * rr;
+    el("circle", { cx: x, cy: y, r, fill: a.color, "fill-opacity": 0.85, stroke: "var(--surface)", "stroke-width": 1.2 * rr }, dots); });
+  list.forEach((a, i) => {
+    if (i > (o.small ? 6 : 40)) return;
+    const P = PLACES[a.key], [x, y] = proj(P.la, P.lo), r = (3 + 2.2 * Math.sqrt(a.people.size)) * rr, nm = placeName(a.key);
+    if (!labelFits(placed, x + r + 3, y + fs / 3, nm, fs)) return;
+    /* a light patch behind the name instead of a stroked halo: stroked text becomes Type 3 in a pdf */
+    el("rect", { x: x + r + 1.5, y: y + fs / 3 - fs * 0.85, width: nm.length * fs * 0.56 + 3, height: fs * 1.1, rx: 2, fill: "var(--surface)", "fill-opacity": 0.72 }, labels);
+    txt(labels, x + r + 3, y + fs / 3, nm, { "font-size": fs, fill: "var(--ink)" });
+  });
+  if (o.small && list.length) { /* cut out the area of the places, with room for the labels */
+    const pts = list.map(a => proj(PLACES[a.key].la, PLACES[a.key].lo)), xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+    let x0 = Math.min(...xs) - 60, x1 = Math.max(...xs) + 170, y0 = Math.min(...ys) - 60, y1 = Math.max(...ys) + 60;
+    const w = Math.max(x1 - x0, 300), h = Math.max(y1 - y0, 220); x0 = Math.max(0, (x0 + x1) / 2 - w / 2); y0 = Math.max(0, (y0 + y1) / 2 - h / 2);
+    svg.setAttribute("viewBox", `${x0.toFixed(0)} ${y0.toFixed(0)} ${Math.min(w, MW - x0).toFixed(0)} ${Math.min(h, MH - y0).toFixed(0)}`);
+  }
+  $$("text", svg).forEach(t => { if (/var\(--mono\)/.test(t.getAttribute("font-family") || "")) t.setAttribute("font-family", "IBM Plex Mono, monospace"); }); /* a var() in an SVG attribute is not resolved in print */
+  svg.setAttribute("style", BKB_MAP_PAPER + ";" + LINE_KEYS.map(l => `--l${l}:${getComputedStyle(document.documentElement).getPropertyValue("--l" + l).trim()}`).join(";"));
+  return svg.outerHTML;
+}
+/* the right page: per family (or branch) its villages, the years and the number of ancestors there */
+function bkbMapList(B) {
+  const { list, groups } = bkbMapData(B);
+  return groups.map(g => {
+    const pl = list.filter(a => a.group === g.id).slice(0, 7); if (!pl.length) return "";
+    return `<div class="bkb-kl-fam" style="--lc:${g.color}"><p class="bkb-kl-naam"><i></i>${esc(g.name)}</p><ul>${pl.map(a => { const y0 = Math.min(...a.years), y1 = Math.max(...a.years);
+      return `<li><span>${esc(placeName(a.key))}</span> <small>${y0 === y1 ? y0 : `${y0}–${y1}`} · ${a.people.size}</small></li>`; }).join("")}</ul></div>`;
+  }).join("");
+}
+window.bookMap = B => {
+  const kern = (B && B.kern) || 1;
+  return `<section class="bk-hfst bkb-kaart" id="bk-kaart" data-bk="kaart" data-kop-l="Waar ze woonden" data-kop-r="">
+    <div class="bkb-ka-blad"><div class="bkb-ka-svg" data-bkb-kaart="1" style="aspect-ratio:${MW}/${MH};width:min(calc(var(--bk-pw,210mm) - 20mm),calc((var(--bk-ph,297mm) - 24mm) * ${(MW / MH).toFixed(4)}))"></div></div>
+    <div class="bkb-ka-tekst"><p class="bk-eyebrow">Kaart</p><h2 class="bk-h2">Waar ze woonden</h2>
+      <p class="bkb-ka-uitleg">Elke stip is een dorp of stad waar een voorouder in dit boek geboren werd, trouwde, woonde of stierf; hoe groter de stip, hoe meer voorouders. De kleur is ${kern > 1 ? "de tak" : "de familie"}. Achter elk dorp: de jaren en het aantal voorouders.</p>
+      <div class="bkb-ka-lijst">${bkbMapList(B)}</div></div>
+  </section>`;
+};
+/* a small map of a family's villages, for its opening */
+window.bookMapSmall = (B, l) => `<div class="bkb-op-kaart">${bkbMapSvg(B, { line: l, small: true })}</div>`;
+/* ---- book: "Waar de families elkaar kruisten" (only the tree of the children, #s-): the places where ancestors of both sides
+   occur within VB_GAP years, as on the site (verbandenData). A zoomed map (filled after the layout) and per place the closest
+   meeting, a time strip and the two ancestors, with a link to their profile in the book. ---- */
+function bkbCrossMap(L, sized) {
+  const svg = el("svg", { viewBox: `0 0 ${MW} ${MH}`, role: "img", "aria-label": "Kaart van de plaatsen waar beide families voorkwamen", "font-family": "IBM Plex Sans, sans-serif" });
+  drawBase(svg, true);
+  const rad = r => 5 + Math.min(10, r.n * 0.8);
+  L.slice().reverse().forEach(r => { const P = PLACES[r.k], [cx, cy] = proj(P.la, P.lo), q = rad(r);
+    el("path", { d: `M${cx} ${cy - q}A${q} ${q} 0 0 0 ${cx} ${cy + q}Z`, fill: "var(--l8)" }, svg);
+    el("path", { d: `M${cx} ${cy - q}A${q} ${q} 0 0 1 ${cx} ${cy + q}Z`, fill: "var(--l12)" }, svg);
+    el("circle", { cx, cy, r: q, fill: "none", stroke: "var(--ink)", "stroke-width": 1.5 }, svg); });
+  const boxes = [], dots = L.map(r => { const P = PLACES[r.k], [cx, cy] = proj(P.la, P.lo), q = rad(r); return [cx - q, cy - q, cx + q, cy + q]; });
+  L.slice(0, 12).forEach(r => {
+    const P = PLACES[r.k], [cx, cy] = proj(P.la, P.lo), d = rad(r) + 3, nm = placeName(r.k), w = nm.length * 6.6;
+    const opts = [[cx + d, cy + 4, "start"], [cx - d, cy + 4, "end"], [cx, cy - d - 2, "middle"], [cx, cy + d + 11, "middle"]];
+    const bx = ([x, y, a]) => { const l = a === "start" ? x : a === "end" ? x - w : x - w / 2; return [l, y - 10, l + w, y + 2]; };
+    const o = opts.find(c => ![...boxes, ...dots].some(q => { const b = bx(c); return b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1]; })); if (!o) return;
+    boxes.push(bx(o)); txt(svg, o[0], o[1], nm, { "font-size": 12, "text-anchor": o[2], fill: "var(--ink)" });
+  });
+  $$("text", svg).forEach(t => { if (/var\(--mono\)/.test(t.getAttribute("font-family") || "")) t.setAttribute("font-family", "IBM Plex Mono, monospace"); });
+  const pts = L.map(r => proj(PLACES[r.k].la, PLACES[r.k].lo)), xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+  const x0 = Math.min(...xs) - 70, x1 = Math.max(...xs) + 70, y0 = Math.min(...ys) - 60, y1 = Math.max(...ys) + 60;
+  const w = Math.max(x1 - x0, 360), h = Math.max(y1 - y0, w * 0.75), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  svg.setAttribute("viewBox", `${(cx - w / 2).toFixed(0)} ${(cy - h / 2).toFixed(0)} ${w.toFixed(0)} ${h.toFixed(0)}`);
+  svg.setAttribute("style", BKB_MAP_PAPER + ";" + LINE_KEYS.map(l => `--l${l}:${getComputedStyle(document.documentElement).getPropertyValue("--l" + l).trim()}`).join(";"));
+  return sized ? { w, h } : svg.outerHTML;
+}
+window.bookCrossings = B => {
+  if (T.key !== "s" || (B && B.lijn) || (B && B.start && B.start.aan)) return ""; /* both sides are needed: the whole book of the children */
+  const L = verbandenData(); if (!L.length) return "";
+  const y0 = Math.floor(Math.min(...L.map(r => Math.min(...r.h.map(e => e.y), ...r.a.map(e => e.y)))) / 50) * 50, y1 = 2000, { w, h } = bkbCrossMap(L, true);
+  const wie = e => `<a class="bk-ref" href="#bk-kw-${e.kw}">${esc(person(e.kw).n)}</a> <span class="bkb-vb-ev">${esc(vbKort(e.t))}, ${e.y}</span>`;
+  return `<section class="bk-hfst bkb-kruis" id="bk-kruis" data-bk="kruis" data-kop-l="Waar de families elkaar kruisten" data-kop-r="">
+    <p class="bk-eyebrow">De twee kanten</p><h2 class="bk-h2">Waar de families elkaar kruisten</h2>
+    <p class="bkb-vb-lede">Harrie en Alies hebben, voor zover bekend, geen gemeenschappelijke voorouders. Toch woonden hun families vaak in dezelfde dorpen. Dit zijn de ${L.length} plaatsen waar voorouders van beide kanten binnen ${VB_GAP} jaar van elkaar voorkomen. Een gedeelde plaats en tijd betekent niet dat ze elkaar kenden.</p>
+    <p class="bkb-vb-leg"><i class="bkb-vb-h"></i>kant van Harrie <i class="bkb-vb-a"></i>kant van Alies</p>
+    <div class="bkb-vb-kaart" data-bkb-kruis="1" style="aspect-ratio:${w.toFixed(0)}/${h.toFixed(0)}"></div>
+    <ol class="bkb-vb-lijst">${L.map(r => `<li><p class="bkb-vb-kop"><b>${esc(placeName(r.k))}</b> <span>${esc(vbAfstand(r.best))}</span> <small>${r.van === r.tot ? r.van : r.van + "–" + r.tot} · ${r.kwH.size + r.kwA.size} voorouders</small></p>
+      ${vbStrook(r, y0, y1).replace(/<title>[^<]*<\/title>/g, "")}
+      <p class="bkb-vb-paar"><i class="bkb-vb-h"></i>${wie(r.best.h)}<br><i class="bkb-vb-a"></i>${wie(r.best.a)}</p></li>`).join("")}</ol>
+    <p class="bkb-vb-as">De tijdstrook loopt van ${y0} tot ${y1}: boven de lijn de kant van Harrie, eronder die van Alies; het vak markeert de dichtste ontmoeting.</p>
+  </section>`;
+};
+/* ---- book: timeline "Hun levens in de tijd" (a spread): every life as a thin bar from birth to death in the colour of its family
+   (or branch), grouped and sorted by birth; only proven years (one known year = a dot, nothing estimated). Behind it the periods and
+   events of "Hun tijd" (CONTEXT). Left page the first half of the families, right page the second (whole tree: father's and
+   mother's side). Drawn after the layout at the exact size of its box, in mm, so every letter is at least 6 pt. ---- */
+function bkbTimeGroups(B) {
+  const kern = (B && B.kern) || 1, br = fanBranchColors(kern), keep = B && B.mensen ? B.mensen : ancestors.map(p => p.kw);
+  const groups = kern > 1 ? br.legend.map((x, b) => ({ id: b, color: x.color, name: x.person.n })) : bkbLijnen(B).map(l => ({ id: l, color: `var(--l${l})`, name: LINES[l].name }));
+  const of = kw => kern > 1 ? br.branch(kw) : lineOf(kw);
+  const lives = [...new Set(keep)].map(person).filter(p => p && !p.living).map(p => ({ p, g: of(p.kw), b: yr(p.b) || yr(p.bapt) || null, d: yr(p.d) || null })).filter(x => x.b || x.d);
+  groups.forEach(g => { g.lives = lives.filter(x => x.g === g.id).sort((a, b) => (a.b || a.d) - (b.b || b.d)); });
+  const all = lives.flatMap(x => [x.b, x.d].filter(Boolean));
+  return { groups: groups.filter(g => g.lives.length), y0: Math.floor(Math.min(...all) / 25) * 25, y1: new Date().getFullYear() };
+}
+function bkbTimelineSvg(B, half, wMm, hMm) {
+  const { groups, y0, y1 } = bkbTimeGroups(B), n = Math.ceil(groups.length / 2), gs = half ? groups.slice(n) : groups.slice(0, n);
+  const PT = 0.3528, fs = 6.4 * PT, top = 9, head = 4.2, X = y => (y - y0) / (y1 - y0) * wMm;
+  const rows = gs.reduce((s, g) => s + g.lives.length, 0), rowH = Math.min(2.2, (hMm - top - 7.5 - gs.length * (head + 1.5)) / Math.max(rows, 1)), bar = Math.max(0.3, rowH * 0.7);
+  let o = `<svg viewBox="0 0 ${wMm} ${hMm}" width="${wMm}mm" height="${hMm}mm" font-family="IBM Plex Sans, sans-serif" role="img" aria-label="Tijdlijn met de levens van de voorouders">`;
+  /* Hun tijd: periods as bands, events as thin lines, short labels under the axis (two rows, no overlap) */
+  const ctx = (typeof CONTEXT !== "undefined" ? CONTEXT : []).filter(c => c.tl !== false && c.y < y1 && (c.y2 || c.y) > y0), used = [[], []]; /* tl: false = not on a timeline */
+  ctx.filter(c => c.y2).forEach(c => { o += `<rect x="${X(Math.max(c.y, y0)).toFixed(2)}" y="${top}" width="${Math.max(0.4, X(Math.min(c.y2, y1)) - X(Math.max(c.y, y0))).toFixed(2)}" height="${hMm - top}" fill="#e8dfc9" fill-opacity="0.55"/>`; });
+  ctx.filter(c => !c.y2 && c.tl !== false).forEach(c => { o += `<line x1="${X(c.y).toFixed(2)}" x2="${X(c.y).toFixed(2)}" y1="${top}" y2="${hMm}" stroke="#b08a3e" stroke-width="0.15" stroke-dasharray="0.6 0.6"/>`; });
+  ctx.filter(c => c.tl !== false).forEach(c => {
+    const t = c.y2 ? c.short : c.t.split(/[,:(]/)[0].trim(), w = t.length * fs * 0.52, x = Math.min(Math.max(X(c.y) + 0.6, 0), wMm - w);
+    const r = [0, 1].find(k => !used[k].some(u => x < u[1] + 1 && x + w > u[0] - 1)); if (r === undefined) return; used[r].push([x, x + w]);
+    o += `<text x="${x.toFixed(2)}" y="${(top + 2.6 + r * 2.7).toFixed(2)}" font-size="${(fs * 0.95).toFixed(2)}" fill="#7a5c26">${esc(t)}</text>`;
+  });
+  /* axis: every 50 years */
+  for (let y = Math.ceil(y0 / 50) * 50; y <= y1; y += 50) { const x = X(y), a = x < 5 ? "start" : x > wMm - 5 ? "end" : "middle"; /* the outer years stay on the page */
+    o += `<line x1="${x.toFixed(2)}" x2="${x.toFixed(2)}" y1="${top - 1}" y2="${hMm}" stroke="#d9d4c7" stroke-width="0.12"/><text x="${x.toFixed(2)}" y="${(top - 2).toFixed(2)}" font-size="${fs.toFixed(2)}" text-anchor="${a}" font-family="IBM Plex Mono, monospace" fill="#5d6661">${y}</text>`; }
+  let y = top + 6.5;
+  gs.forEach(g => {
+    o += `<circle cx="1.2" cy="${(y + head / 2 - 0.6).toFixed(2)}" r="1.1" fill="${g.color}"/><text x="3.4" y="${(y + head / 2 + 0.6).toFixed(2)}" font-size="${(fs * 1.15).toFixed(2)}" font-weight="600" fill="#1d2320">${esc(g.name)} <tspan font-weight="400" fill="#5d6661">${g.lives.length}</tspan></text>`;
+    y += head;
+    g.lives.forEach(l => {
+      const cy = y + rowH / 2;
+      if (l.b && l.d && l.d >= l.b) o += `<rect x="${X(l.b).toFixed(2)}" y="${(cy - bar / 2).toFixed(2)}" width="${Math.max(0.4, X(l.d) - X(l.b)).toFixed(2)}" height="${bar.toFixed(2)}" rx="${(bar / 2).toFixed(2)}" fill="${g.color}" fill-opacity="${({ A: 0.95, B: 0.8, C: 0.5, D: 0.3 })[l.p.st] || 0.8}"/>`;
+      else o += `<circle cx="${X(l.b || l.d).toFixed(2)}" cy="${cy.toFixed(2)}" r="${Math.max(0.35, bar / 2).toFixed(2)}" fill="${g.color}" fill-opacity="0.8"/>`;
+      y += rowH;
+    });
+    y += 1.5;
+  });
+  const cs = getComputedStyle(document.documentElement);
+  return o.replace("<svg ", `<svg style="${LINE_KEYS.map(l => `--l${l}:${cs.getPropertyValue("--l" + l).trim()}`).join(";")}" `) + "</svg>";
+}
+window.bookTimeline = B => {
+  const { groups } = bkbTimeGroups(B); if (!groups.length) return "";
+  const kern = (B && B.kern) || 1, n = Math.ceil(groups.length / 2), kant = h => (kern === 1 && !(B && B.lijn) && groups.length > 4 ? (T.key === "s" ? (h ? "Kant van Alies" : "Kant van Harrie") : h ? "Moederskant" : "Vaderskant") : "");
+  return `<section class="bk-hfst bkb-tijd" id="bk-tijdlijn" data-bk="tijdlijn" data-kop-l="Tijdlijn" data-kop-r="">
+    <div class="bkb-ti-blad"><div class="bkb-ti-kop"><p class="bk-eyebrow">Tijdlijn${kant(0) ? " · " + kant(0) : ""}</p><h2 class="bk-h2">Hun levens in de tijd</h2>
+      <p class="bkb-ti-uitleg">Elke balk is één leven, van geboorte tot overlijden, in de kleur van ${kern > 1 ? "de tak" : "de familie"}; hoe voller de kleur, hoe sterker het bewijs. Een stip: maar één jaar bekend. Op de achtergrond hun tijd: de banden zijn tijdvakken, de stippellijnen gebeurtenissen.</p></div>
+      <div class="bkb-ti-svg" data-bkb-tijd="0"></div></div>
+    ${groups.length > n ? `<div class="bkb-ti-blad"><div class="bkb-ti-kop"><p class="bk-eyebrow">Tijdlijn${kant(1) ? " · " + kant(1) : ""}</p></div><div class="bkb-ti-svg" data-bkb-tijd="1"></div></div>` : ""}
+  </section>`;
+};
 window.boekNaKlaar = (doc, B) => {
   doc = doc || document;
   const h = $$("[data-bkb-helft]", doc).filter(x => !x.firstElementChild);
   if (h.length) { const hv = window.boekWaaierHelften(); h.forEach(x => { x.innerHTML = x.dataset.bkbHelft === "l" ? hv.links : hv.rechts; }); }
+  $$("[data-bkb-kaart]", doc).filter(x => !x.firstElementChild).forEach(x => { x.innerHTML = bkbMapSvg(B || {}); });
+  $$("[data-bkb-tijd]", doc).filter(x => !x.firstElementChild).forEach(x => { /* measured: a page out of view (content-visibility) has no size */
+    const pg = x.closest(".pagedjs_page"), cv = pg ? pg.style.contentVisibility : ""; if (pg) pg.style.contentVisibility = "visible";
+    const r = x.getBoundingClientRect(), mm = 25.4 / 96; if (pg) pg.style.contentVisibility = cv;
+    if (r.width && r.height) x.innerHTML = bkbTimelineSvg(B || {}, +x.dataset.bkbTijd, +(r.width * mm).toFixed(1), +(r.height * mm).toFixed(1)); });
+  const kr = $$("[data-bkb-kruis]", doc).filter(x => !x.firstElementChild); if (kr.length) { const L = verbandenData(); kr.forEach(x => { x.innerHTML = bkbCrossMap(L); }); }
   $$(".pagedjs_blank_page", doc).forEach(pg => {
     const op = pg.nextElementSibling && $(".bk-open[data-lijn]", pg.nextElementSibling), area = $(".pagedjs_area", pg);
     if (!op || !area || area.dataset.plaat) return;
@@ -5154,11 +5926,12 @@ const bkbVersteBeeld = (p, B) => {
 window.boekVersteVoorladen = () => Promise.all(LINE_KEYS.filter(l => LINES[l]).map(l => { const v = bkbVerste(l).bew; return v ? Promise.all([...new Set((lifeArch(v[1]) || []).slice(0, 8).map(a => a.pack).filter(Boolean))].map(loadPack)) : null; }));
 window.boekVerste = (B, l) => {
   const L = LINES[l], v = bkbVerste(l); if (!L || !v.bew) return "";
-  const [jaar, p] = v.bew, g = gen(p.kw) - 1, pl = placeName(p.bp) || placeName(p.dp) || placeName(((p.res || [])[0] || {}).p) || "";
+  /* generations and the end of the line count from the start of the book (B.start: one person or a couple) */
+  const st = B.start || {}, [jaar, p] = v.bew, g = st.aan ? bkGen(p.kw) - (st.paar ? 2 : 1) : gen(p.kw) - 1, pl = placeName(p.bp) || placeName(p.dp) || placeName(((p.res || [])[0] || {}).p) || "";
   const kort = kortZin(p).replace(/<\/?p[^>]*>/g, "");
   const im = B.beeld !== "geen" ? bkbVersteBeeld(p, B) : null, px = im ? bkbPxGebruikt(im, B) : 0;
   const cap = im ? `${esc(bkbTitel(im))}${bkbCredit(im) ? ` <span class="bk-credit">${esc(bkbCredit(im))}</span>` : ""}` : "";
-  const wie = T.key === "s" ? "de kinderen" : T.root;
+  const wie = st.aan ? [person(st.kw), st.paar ? person(st.kw + 1) : null].filter(Boolean).map(firstName).join(" en ") : T.key === "s" ? "de kinderen" : T.root;
   return `<section class="bk-verste" data-lijn="${l}" style="--lc:var(--l${l})" data-kop-l="${esc(L.name)}" data-kop-r="De verste voorouder">
     <p class="bk-eyebrow">De verste voorouder · ${esc(L.name)}</p>
     <p class="bk-vv-jaar">${jaar}</p>
@@ -5172,7 +5945,7 @@ window.boekVerste = (B, l) => {
 };
 /* een lege linkerpagina vóór een familieopening (Paged.js voegt die in om de spread links te laten beginnen) krijgt een rustige plaat
    uit de streek van die familie: de kaart van Schotanus van haar belangrijkste grietenij, anders een ander beeld van haar plaatsen.
-   Alleen beelden die op 150 mm breed minstens 200 dpi halen. Voor tools/boek.py (vult de pagina na het opmaken) en het voorbeeld. */
+   Alleen beelden die op 150 mm breed minstens 200 dpi halen. Voor de drukmodus (vult de pagina na het opmaken) en het voorbeeld. */
 window.boekLeegPlaat = (B, l) => {
   const L = LINES[l]; if (!L || (B && B.beeld === "geen")) return "";
   const open = bkbOpenBeeld(l, B), genoeg = im => im && im.id !== (open && open.id) && bkbPxGebruikt(im, B) >= 1200;
@@ -5244,7 +6017,9 @@ function renderBoom(sub) {
 }
 RENDER.boom = renderBoom;
 /* het midden gaat mee tussen waaier en boom */
-const middenTok = v => { const k = (route.view === "boom" || route.view === "stamboom") && fanRootOk(route.sub) ? route.sub : 1; return (v === "stamboom" || v === "boom") && k > 1 ? v + "-" + k : v; }; /* uit de route: menuSync loopt vóór het tekenen */
+const middenTok = v => { const k = (route.view === "boom" || route.view === "stamboom") && fanRootOk(route.sub) ? route.sub : 1;
+  if (["maak", "boek", "poster"].includes(v) && ["maak", "boek", "poster"].includes(route.view) && typeof makeStartTok === "function") return v + makeStartTok(); /* Maken: het beginpunt gaat mee tussen de tabs */
+  return (v === "stamboom" || v === "boom") && k > 1 ? v + "-" + k : v; }; /* uit de route: menuSync loopt vóór het tekenen */
 
 /* ---------- beroepen ---------- */
 /* Wat de voorouders deden voor de kost: iedereen met een beroep (occ), per soort werk (OCC_CATS, dezelfde indeling als
@@ -5317,7 +6092,7 @@ function renderGrond() {
   const n = E.reduce((a, e) => a + e.n, 0), m2 = E.reduce((a, e) => a + e.m2, 0);
   v.innerHTML = `<div class="eyebrow"><button class="link" data-go="kaart">Plaatsen</button> › Grond in 1832</div>
     <h1 class="page-title">Hun grond in 1832</h1>
-    <p class="lede">In 1832 begon het kadaster: elk stuk land werd opgemeten, op een kaart getekend en met de eigenaar ingeschreven in de oorspronkelijk aanwijzende tafel. ${E.length ? `Daarin staan ${E.length} voorouders, met samen ${n} percelen${m2 ? ` en ${ha(m2)} ha` : ""}.` : "In deze stamboom staan nog geen percelen uit 1832."}</p>
+    <p class="lede">In 1832 werd voor het eerste kadaster elk stuk land opgemeten en met de eigenaar ingeschreven. ${E.length ? `Daarin staan ${E.length} voorouders, met samen ${n} percelen${m2 ? ` en ${ha(m2)} ha` : ""}.` : "In deze stamboom staan nog geen percelen uit 1832."}</p>
     ${E.length ? `<figure class="grond-fig"><div class="pane grond-map" id="grondMap"></div><figcaption class="small">Elke stip is een plaats waar voorouders in 1832 grond hadden: hoe groter de stip, hoe meer hectare. De kleur is die van de familie.</figcaption></figure>
     <ol class="grond-list">${E.map(e => `<li class="grond-it" style="--c:${lineColor(e.p.kw)}"><div class="grond-kop"><button class="link hoofd" data-open="${e.p.kw}">${esc(e.p.n)}</button> <span class="small">${esc(lifeYears(e.p))} · ${esc(relTerm(e.p.kw))}</span><br><span class="small">${esc([...new Set(e.maps.map(k => k.g))].join(", "))}: ${e.n === 1 ? "1 perceel" : e.n + " percelen"}${e.m2 ? `, ${ha(e.m2)} ha` : ""}</span></div>${percelenHtml(e.p.kw).replace(/<h5>[^<]*<\/h5><p class="small"[^>]*>[\s\S]*?<\/p>/, "")}</li>`).join("")}</ol>
     <p class="small">Bron: de oorspronkelijk aanwijzende tafels en minuutplannen van het kadaster van 1832, via <a href="https://hisgis.nl/" target="_blank" rel="noopener">HisGIS</a> en de indexen op Open Archieven; per perceel staat de bron eronder.</p>` : ""}`;
@@ -5393,29 +6168,63 @@ const anLijnen = x => { const o = x.lijnen || x.bij || {}; return (T.key === "s"
 const anNamen = () => ANAMEN.filter(x => T.key === "s" || x.bomen.includes(T.key))
   .sort((p, q) => (p.lijnen ? 0 : 1) - (q.lijnen ? 0 : 1) || ((anLijnen(p)[0] || 99) - (anLijnen(q)[0] || 99)));
 const anGetal = n => n.toLocaleString("nl-NL");
-function anKaart(x) {
+/* wat op meer kaarten letterlijk hetzelfde zou staan (een algemene verklaring, een gedeelde bron) staat één keer boven of onder de
+   lijst; op de kaart zelf alleen wat bij die naam hoort */
+function anGedeeld(L) {
+  const tel = (lijst, sleutel) => { const c = new Map(); lijst.forEach(x => sleutel(x).forEach(k => c.set(k, (c.get(k) || 0) + 1))); return c; };
+  const verkl = tel(L, x => x.verklaring ? [x.verklaring] : []), bron = tel(L, x => (x.bronnen || []).map(b => b[0] + "\u0001" + b[1]));
+  return { verklaring: new Set([...verkl].filter(([, n]) => n > 1).map(([k]) => k)), bronnen: new Set([...bron].filter(([, n]) => n > 2).map(([k]) => k)) };
+}
+const anAchter = naam => (String(naam).match(/(inga|stra|sma|ma|a)$/i) || [])[1];
+function anKaart(x, G) {
   const ls = anLijnen(x), l0 = ls[0];
   const fams = ls.map(l => `<button class="link" data-go="lijn-${l}">familie ${esc(LINES[l].name)}</button>`).join(", ");
   const tel = x.n1947 && x.n2007 ? `In 1947 droegen ${anGetal(x.n1947)} mensen in Nederland deze naam, in 2007 ${anGetal(x.n2007)}.` : x.n2007 ? `In 2007 droegen ${anGetal(x.n2007)} mensen in Nederland deze naam.` : "";
-  return `<article class="an-kaart" id="naam-${esc(norm(x.naam).replace(/[^a-z0-9]+/g, "-"))}" style="--c:${l0 ? `var(--l${l0})` : "var(--accent)"}">
+  const gedeeld = x.verklaring && G.verklaring.has(x.verklaring), eigenBron = (x.bronnen || []).filter(b => !G.bronnen.has(b[0] + "\u0001" + b[1]));
+  /* een algemene verklaring (zie boven de lijst): op de kaart alleen het eigen achtervoegsel */
+  const betekenis = !x.verklaring ? "" : gedeeld ? `<p>${x.soort ? `<span class="tag an-soort">${esc(x.soort)}</span> ` : ""}Een Friese naam${anAchter(x.naam) ? ` op -${esc(anAchter(x.naam).toLowerCase())}` : ""}. ${stTag(x.st)}</p>`
+    : `<p>${x.soort ? `<span class="tag an-soort">${esc(x.soort)}</span> ` : ""}${esc(x.verklaring)} ${stTag(x.st)}</p>`;
+  return `<article class="an-kaart" id="${anId(x.naam)}" style="--c:${l0 ? `var(--l${l0})` : "var(--accent)"}">
     <h2 class="an-naam">${esc(x.naam)}</h2>
     <p class="small an-sub">${x.lijnen ? "Hoofdnaam van de " : "Een naam in de "}${fams || "familie"}${x.varianten && x.varianten.length ? ` · ook gespeld als ${esc(x.varianten.slice(0, 4).join(", "))}` : ""}</p>
-    <h3 class="an-h">Wat de naam betekent</h3>
-    ${x.verklaring ? `<p>${x.soort ? `<span class="tag an-soort">${esc(x.soort)}</span> ` : ""}${esc(x.verklaring)} ${stTag(x.st)}</p>` : `<p class="small">Over de betekenis van deze naam vonden we nog geen betrouwbare bron.</p>`}
+    ${betekenis ? `<h3 class="an-h">Wat de naam betekent</h3>${betekenis}` : ""}
     ${tel ? `<p class="small">${tel}</p>` : ""}
     ${x.familie ? `<h3 class="an-h">In onze familie</h3><p>${esc(x.familie)} ${stTag(x.familie_st)}</p>` : ""}
-    <p class="small an-bron">${[...(x.bronnen || []).map(([lab, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(lab)}</a>`), x.cbg ? `<a href="${esc(x.cbg)}" target="_blank" rel="noopener">Meer bij CBG Familienamen</a>` : ""].filter(Boolean).join(" · ")}</p>
+    <p class="small an-bron">${[...eigenBron.map(([lab, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(lab)}</a>`), x.cbg ? `<a href="${esc(x.cbg)}" target="_blank" rel="noopener">CBG Familienamen</a>` : ""].filter(Boolean).join(" · ")}</p>
   </article>`;
 }
 function renderAchternamen() {
-  const L = anNamen(), v = $("#v-achternamen");
+  const L = anNamen(), v = $("#v-achternamen"), G = anGedeeld(L);
+  const algemeen = [...G.verklaring], zonder = L.filter(x => !x.verklaring).map(x => x.naam);
+  const bron = (L.flatMap(x => x.bronnen || []).find(b => G.bronnen.has(b[0] + "\u0001" + b[1])) && [...G.bronnen].map(k => k.split("\u0001"))) || [];
   v.innerHTML = `<div class="eyebrow"><button class="link" data-go="personen">Mensen</button> › Achternamen</div>
     <h1 class="page-title">Onze achternamen</h1>
-    <p class="lede">Waar komen de namen van de families vandaan? Per naam wat naamkundigen erover zeggen, en wat onze eigen gegevens vertellen over hoe de familie aan de naam kwam. Tot 1811 hadden de meeste voorouders in Friesland geen vaste achternaam; toen moest iedereen er een kiezen.</p>
-    ${L.length ? `<div class="an-lijst">${L.map(anKaart).join("")}</div>
-    <p class="small">De aantallen komen uit de Nederlandse Familienamenbank van het CBG en het Meertens Instituut.</p>` : `<p class="small">Voor deze stamboom is de herkomst van de namen nog niet uitgezocht.</p>`}`;
+    <p class="lede">Per familienaam wat hij betekent en hoe de familie eraan kwam. Tot 1811 hadden de meeste Friezen geen vaste achternaam; toen moest iedereen er een kiezen.</p>
+    ${algemeen.length ? `<p class="an-algemeen">${algemeen.map(esc).join(" ")}</p>` : ""}
+    ${L.length ? `<div class="an-lijst">${L.map(x => anKaart(x, G)).join("")}</div>
+    ${zonder.length ? `<p class="small">Voor ${esc(zonder.join(" en ").replace(/ en (?=.* en )/g, ", "))} vonden we nog geen betrouwbare verklaring van de naam.</p>` : ""}
+    <p class="small">De aantallen komen uit de Nederlandse Familienamenbank van het CBG en het Meertens Instituut.${bron.length ? ` Algemene bron: ${bron.map(([lab, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(lab)}</a>`).join(" · ")}.` : ""}</p>` : `<p class="small">Voor deze stamboom is de herkomst van de namen nog niet uitgezocht.</p>`}`;
 }
 RENDER.achternamen = renderAchternamen;
+/* naar één naam op de pagina: go() en dan de kaart in beeld, kort opgelicht */
+const anId = naam => "naam-" + norm(naam).replace(/[^a-z0-9]+/g, "-");
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-an]"); if (!b) return;
+  e.preventDefault(); const id = anId(b.dataset.an); go("achternamen");
+  let n = 0; const toon = () => { const k = document.getElementById(id); if (!k) { if (++n < 30) requestAnimationFrame(toon); return; }
+    k.scrollIntoView({ block: "start" }); k.classList.add("op-flash"); k.setAttribute("tabindex", "-1"); k.focus({ preventScroll: true }); setTimeout(() => k.classList.remove("op-flash"), 1600); };
+  requestAnimationFrame(toon);
+});
+const anBekend = () => new Map(anNamen().map(x => [norm(x.naam), x.naam]));
+/* namenregister: "herkomst" achter een naam die op de pagina Onze achternamen staat ("Groot, de" → De Groot) */
+{ const nmOud = RENDER.namen; RENDER.namen = (...a) => { nmOud(...a); const bek = anBekend();
+  $$("#v-namen .namereg .nm > b").forEach(b => { const m = /^(.*), (.*)$/.exec(b.textContent), naam = bek.get(norm(m ? m[2] + " " + m[1] : b.textContent));
+    if (naam) b.insertAdjacentHTML("afterend", ` <button type="button" class="link an-naar" data-an="${esc(naam)}">herkomst</button>`); }); }; }
+/* familiepagina: onder de inleiding een regel naar de betekenis van de familienaam */
+{ const famOud = RENDER.families; RENDER.families = sub => { famOud(sub);
+  const lede = sub && LINES[sub] ? $("#v-families .lede") : null; if (!lede || $("#v-families [data-an]")) return; const bek = anBekend();
+  const namen = String(LINES[sub].name).split(" · ").map(n => bek.get(norm(n))).filter(Boolean);
+  if (namen.length) lede.insertAdjacentHTML("afterend", namen.map(n => ovMore(`data-an="${esc(n)}"`, `Wat betekent de naam ${esc(n)}?`)).join("")); }; }
 
 /* ---------- de akte bij het feit ---------- */
 /* In de levensloop van het profiel krijgen geboren, getrouwd en overleden een knopje naar de scan van de eigen akte (bij
@@ -5632,6 +6441,30 @@ function gedcomTekst() {
     const kids = kw === 1 && kinderen ? kinderen.map((_, i) => "K" + (i + 1)) : [ix(kw)];
     kids.forEach(c => { if (F.kids.includes(c)) return; F.kids.push(c); (famc.get(c) || famc.set(c, []).get(c)).push({ F, kw }); });
   });
+  /* huwelijken (p.marriages): elk huwelijk een gezin. Met de partner in de boom is dat hetzelfde gezin als het ouderpaar (of een
+     nieuw gezin bij een tweede huwelijk binnen de boom); een partner buiten de boom wordt een eigen persoon met alleen de naam */
+  const famVan = new Map(); fams.forEach(F => famVan.set(F.f + "|" + F.m, F));
+  const buiten = [];
+  const famsVan = k => fams_.get(k) || fams_.set(k, []).get(k);
+  all.filter(p => !p.living && Array.isArray(p.marriages)).forEach(p => {
+    const ik = id(p.kw), man = p.kw === 1 ? !!T.rootMale : p.kw % 2 === 0;
+    p.marriages.slice().sort((a, b) => (a.order || 0) - (b.order || 0)).forEach(mr => {
+      const pk = mfKwHere(p, mr.kw), pq = pk && person(pk);
+      let F;
+      if (pq && !pq.living) {
+        const f = man ? ik : id(pk), m = man ? id(pk) : ik, key = f + "|" + m;
+        F = famVan.get(key);
+        if (!F) { F = { x: "F" + (fams.size + 1), f, m, kids: [] }; fams.set(key, F); famVan.set(key, F); famsVan(f).push(F); famsVan(m).push(F); }
+      } else if (!pq) {
+        const Q = { x: "P" + (buiten.length + 1), naam: mr.partner || "onbekend", man: !man };
+        F = { x: "F" + (fams.size + 1), f: man ? ik : null, m: man ? null : ik, kids: [], buiten: Q }; Q.F = F; buiten.push(Q);
+        fams.set(F.x, F); famsVan(ik).push(F);
+      } else return; /* een levende partner in de boom: alleen het ouderpaar, zonder huwelijksgegevens */
+      if (!F.marr || (!F.marr.date && mr.date)) F.marr = mr;
+      (F.ord = F.ord || {})[ik] = mr.order || 99;
+      if (mr.kids && mr.kids.length && p.kids) F.kidsNote = mr.kids.map(i => p.kids[i]).filter(Boolean);
+    });
+  });
   /* bronnen: één SOUR-record per bronregel (label + adres), ook bij scans */
   const bronnen = new Map();
   const bron = (label, url) => { const k = label + "\u0001" + (url || ""); if (!bronnen.has(k)) bronnen.set(k, { x: "S" + (bronnen.size + 1), label, url }); return bronnen.get(k).x; };
@@ -5666,7 +6499,7 @@ function gedcomTekst() {
     return r.length ? "Bewijs voor deze ouders: " + r.join("; ") + "." : "";
   };
   const gezinnen = c => (famc.get(c) || []).forEach(({ F, kw }) => { P(1, "FAMC", F.x); L(2, "PEDI", "birth"); const t = ouderNoot(F, kw); if (t) L(2, "NOTE", t); });
-  const partner = k => (fams_.get(k) || []).forEach(F => P(1, "FAMS", F.x));
+  const partner = k => (fams_.get(k) || []).slice().sort((a, b) => ((a.ord || {})[k] || 0) - ((b.ord || {})[k] || 0)).forEach(F => P(1, "FAMS", F.x)); /* in de volgorde van de huwelijken */
   all.forEach(p => {
     if (p.kw === 1 && kinderen) return;
     const x = "I" + p.kw;
@@ -5694,6 +6527,7 @@ function gedcomTekst() {
       if (p.alt) L(1, "NOTE", "Ook geschreven als: " + p.alt);
       (p.notes || []).forEach(n => { const o = noteObj(n); L(1, "NOTE", o.t + (o.k ? ` [${o.k}]` : "")); });
       if (p.kids && p.kids.length) L(1, "NOTE", "Kinderen: " + p.kids.join("; "));
+      if (p.kidsNote) L(1, "NOTE", "Over de kinderen: " + p.kidsNote);
       if (p.sibs && p.sibs.length) L(1, "NOTE", "Broers en zussen: " + p.sibs.join("; "));
       if (p.open && p.open.length) L(1, "NOTE", "Nog uit te zoeken: " + p.open.join(" "));
       const q = QUAY[p.st];
@@ -5703,12 +6537,24 @@ function gedcomTekst() {
     partner(p.kw);
   });
   (kinderen || []).forEach((n, i) => { L(0, "INDI", "", "K" + (i + 1)); L(1, "NAME", n); L(2, "GIVN", n); out.push("1 SEX U"); gezinnen("K" + (i + 1)); });
+  buiten.forEach(Q => { L(0, "INDI", "", Q.x); if (/^onbekend$/i.test(Q.naam)) L(1, "NAME", "onbekend"); else naam(Q.naam); out.push("1 SEX " + (Q.man ? "M" : "F")); P(1, "FAMS", Q.F.x); L(1, "NOTE", "Partner buiten de stamboom; alleen de naam staat in de bronnen van het huwelijk."); });
   /* gezinnen met huwelijk: uit het record van de vader, of van de moeder als daar meer staat; alleen als de partner klopt */
   fams.forEach(F => {
     L(0, "FAM", "", F.x);
-    if (F.f) P(1, "HUSB", "I" + F.f);
-    if (F.m) P(1, "WIFE", "I" + F.m);
+    if (F.f) P(1, "HUSB", "I" + F.f); else if (F.buiten && F.buiten.man) P(1, "HUSB", F.buiten.x);
+    if (F.m) P(1, "WIFE", "I" + F.m); else if (F.buiten && !F.buiten.man) P(1, "WIFE", F.buiten.x);
     F.kids.forEach(c => P(1, "CHIL", c));
+    if (F.marr) { /* het vaste veld marriages: datum, plaats, bewijs per huwelijk, bronnen met QUAY, kinderen uit dit huwelijk */
+      const mr = F.marr;
+      L(1, "MARR"); if (mr.date) L(2, "DATE", gedDatum(mr.date)); if (mr.place) L(2, "PLAC", gedPlaats(mr.place));
+      if (mr.st && mr.st !== "A") L(2, "NOTE", "Bewijs voor dit huwelijk: " + bewijs(mr.st));
+      Object.entries(mr.unc || {}).forEach(([veld, st]) => { if (st && st !== mr.st) L(2, "NOTE", `Bewijs voor ${({ date: "de datum", place: "de plaats", partner: "de partner" })[veld] || veld}: ${bewijs(st)}`); });
+      if (mr.note) L(2, "NOTE", mr.note);
+      (mr.src || []).forEach(sr => { if (!sr || !sr[0]) return; P(2, "SOUR", bron(sr[0], sr[1])); if (QUAY[mr.st] !== undefined) L(3, "QUAY", String(QUAY[mr.st])); });
+      if (F.kidsNote && F.kidsNote.length) L(1, "NOTE", "Kinderen uit dit huwelijk: " + F.kidsNote.join("; "));
+      if (mr.kidsNote) L(1, "NOTE", "Over de kinderen: " + mr.kidsNote);
+      return;
+    }
     const pf = F.f && person(F.f), pm = F.m && person(F.m);
     const past = (q, sp) => q && !q.living && q.m && (q.m.d || q.m.p) && (!sp || (fams_.get(q.kw) || []).length === 1 || norm(q.m.w).split(" ")[0] === norm(sp.n).split(" ")[0]);
     const m = past(pf, pm) ? pf.m : past(pm, pf) ? pm.m : null;
@@ -5720,7 +6566,7 @@ function gedcomTekst() {
   });
   bronnen.forEach(b => { L(0, "SOUR", "", b.x); L(1, "TITL", b.label); if (b.url) L(1, "NOTE", b.url); });
   L(0, "TRLR");
-  return { tekst: out.join("\r\n") + "\r\n", naam: naamBestand, n: { indi: all.length - (kinderen ? 1 : 0) + (kinderen ? kinderen.length : 0), fam: fams.size, sour: bronnen.size } };
+  return { tekst: out.join("\r\n") + "\r\n", naam: naamBestand, n: { indi: all.length - (kinderen ? 1 : 0) + (kinderen ? kinderen.length : 0) + buiten.length, fam: fams.size, sour: bronnen.size } };
 }
 const GED_ICO = '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/>';
 /* the GEDCOM action: one button with the download icon, and a status line next to it */
@@ -5728,7 +6574,7 @@ const gedcomButton = label => `<button type="button" class="btn" data-gedcom tit
 const gedcomNote = () => "GEDCOM is een bestand voor stamboomprogramma's (Gramps, Aldfaer, MyHeritage). Van levenden staat alleen de naam erin.";
 function gedBlok(kop) {
   if (!GEDCOM_KNOP) return "";
-  return `${kop ? `<div class="section-head"><h2>Downloaden</h2></div>` : ""}<div class="ged-blok noprint"><div class="ged-rij">${gedcomButton("Download als GEDCOM")}</div>
+  return `${kop ? `<div class="section-head noprint"><h2>Downloaden</h2></div>` : ""}<div class="ged-blok noprint"><div class="ged-rij">${gedcomButton("Download als GEDCOM")}</div>
     <p class="small">${esc(gedcomNote())}</p></div>`;
 }
 /* the toolbar of the pedigree list: the family choice on the left, two equal actions on the right (print or pdf, GEDCOM), one short note below */
@@ -5805,7 +6651,7 @@ function vlKnoppen() {
   $$(".vl-bar").forEach(b => {
     const p = $(".vl-play", b), s = $(".vl-stop", b), actief = b === VL.bar && VL.rij, wat = b.dataset.wat || "de tekst";
     const [ico, label, aria, druk] = !actief ? ["lees", "Lees voor", `Lees ${wat} voor`, false] : VL.pauze ? ["verder", "Verder", "Ga verder met voorlezen", false] : ["pauze", "Pauze", "Pauzeer het voorlezen", true];
-    p.innerHTML = vlIco(ico) + `<span>${label}</span>`; p.setAttribute("aria-label", aria); p.setAttribute("aria-pressed", String(druk));
+    p.innerHTML = vlIco(ico) + (b.classList.contains("vl-ico") ? "" : `<span>${label}</span>`); p.setAttribute("aria-label", aria); p.setAttribute("aria-pressed", String(druk)); if (b.classList.contains("vl-ico")) p.title = label;
     s.hidden = !actief;
   });
 }
@@ -5841,24 +6687,30 @@ function vlStart(bar, delen) {
   VL.obs.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden"] });
   vlKnoppen();
 }
-/* een balk koppelen: delen() geeft bij de klik de alinea's [{ el, tekst }] */
+/* afspelen, pauzeren of verder gaan; delen() geeft bij de klik de alinea's */
+function vlKlik(bar, delen) {
+  if (VL.bar === bar && VL.rij) { if (VL.pauze) { speechSynthesis.resume(); VL.pauze = false; } else { speechSynthesis.pause(); VL.pauze = true; } vlKnoppen(); return; }
+  vlStart(bar, delen().map(el => ({ el, tekst: vlTekst(el) })).filter(d => d.tekst));
+}
+/* een balk koppelen */
 function vlBind(bar, delen) {
   if (!bar) return;
-  $(".vl-play", bar).onclick = () => {
-    if (VL.bar === bar && VL.rij) { if (VL.pauze) { speechSynthesis.resume(); VL.pauze = false; } else { speechSynthesis.pause(); VL.pauze = true; } vlKnoppen(); return; }
-    vlStart(bar, delen().map(el => ({ el, tekst: vlTekst(el) })).filter(d => d.tekst));
-  };
+  $(".vl-play", bar).onclick = () => vlKlik(bar, delen);
   $(".vl-stop", bar).onclick = () => { vlStop(); $(".vl-play", bar).focus(); };
 }
-addEventListener("pagehide", () => { if (VL.rij) vlStop(); });
-/* in het profiel van een overledene: de naam, de zin over het leven, de gegevens en de weetjes */
-function vlProfiel(p) {
-  if (!VOORLEZEN_AAN || !p || p.living || !vlKan()) return;
-  const body = $("#dBody"), voor = $(".kort", body) || $(":scope > dl.dl", body) || $(".notes", body);
-  if (!voor) return;
-  voor.insertAdjacentHTML("beforebegin", vlBar("dit profiel"));
-  vlBind(voor.previousElementSibling, () => [$("#dName"), $(".kort", body), $(":scope > dl.dl", body), ...$$(".notes > p", body)].filter(Boolean));
+/* wat in het profiel wordt voorgelezen: de naam, de zin over het leven, de gegevens en de weetjes */
+const vlProfielDelen = () => { const body = $("#dBody"); return [$("#dName"), $(".kort", body), $(":scope > dl.dl", body), ...$$(".notes > p", body)].filter(Boolean); };
+/* voor de kop van het profiel: een kleine knop (pictogram), met een stopknop die verschijnt tijdens het voorlezen */
+function vlIcon(p) {
+  if (!VOORLEZEN_AAN || !p || p.living || !vlKan()) return "";
+  return `<span class="vl-bar vl-ico noprint" data-wat="dit profiel"${VL.stem ? "" : " hidden"}><button type="button" class="btn icon vl-play" aria-pressed="false" aria-label="Lees dit profiel voor" title="Lees voor">${vlIco("lees")}</button><button type="button" class="btn icon vl-stop" aria-label="Stop met voorlezen" title="Stop" hidden>${vlIco("stop")}</button></span>`;
 }
+document.addEventListener("click", e => {
+  const bar = e.target.closest(".vl-ico"); if (!bar) return;
+  if (e.target.closest(".vl-stop")) { vlStop(); $(".vl-play", bar).focus(); }
+  else if (e.target.closest(".vl-play")) vlKlik(bar, vlProfielDelen);
+});
+addEventListener("pagehide", () => { if (VL.rij) vlStop(); });
 /* bij een verhaal: titel, inleiding, en per deel de kop en de alinea's (zonder bijschriften en de lijst met mensen) */
 if (RENDER.verhalen) { const eerder = RENDER.verhalen; RENDER.verhalen = sub => { eerder(sub); vlVerhaal(); }; }
 function vlVerhaal() {
@@ -5892,16 +6744,17 @@ async function wjmDeel(tekst, titel, ok) {
   catch (e) { const t = document.createElement("textarea"); t.value = tekst; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select();
     let gelukt = false; try { gelukt = document.execCommand("copy"); } catch (x) {} t.remove(); meld(gelukt ? klaar : "Kopiëren lukte niet in deze browser."); }
 }
-const wjmKnop = () => `<button type="button" class="btn wjm-knop">${navIco("zoeken")}Weet je meer?</button><span class="small wjm-ok" role="status" aria-live="polite"></span>`;
-/* in het profiel van een overledene, vóór "Zoek verder" */
-function wjmProfiel(kw, p) {
-  if (!WEETJEMEER_AAN || !p || p.living) return;
-  const body = $("#dBody"), secs = $$(":scope > section", body), na = secs[secs.length - 1];
-  const h = `<section class="wjm"><h5>Weet je meer?</h5><p class="small">${esc(wjmUitleg())}</p><div class="wjm-rij">${wjmKnop()}</div></section>`;
-  if (na) na.insertAdjacentHTML("beforebegin", h); else body.insertAdjacentHTML("beforeend", h);
-  const s = $(".wjm", body);
-  $(".wjm-knop", s).onclick = () => wjmDeel(wjmBericht(`Over ${p.n} (${lifeYears(p)})`, "kw" + kw), p.n, $(".wjm-ok", s));
+const wjmKnop = () => `<button type="button" class="btn wjm-knop">Weet je meer?</button><span class="small wjm-ok" role="status" aria-live="polite"></span>`;
+/* voor de opbouw van het profiel: het blok als html (leeg bij levenden); de klik loopt via [data-wjm] */
+function wjmBlock(kw, p) {
+  if (!WEETJEMEER_AAN || !p || p.living) return "";
+  return `<section class="wjm"><h5>Weet je meer?</h5><p class="small">${esc(wjmUitleg())}</p><div class="wjm-rij">${wjmKnop().replace('class="btn wjm-knop"', `class="btn wjm-knop" data-wjm="${kw}"`)}</div></section>`;
 }
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-wjm]"); if (!b) return;
+  const kw = +b.dataset.wjm, p = person(kw); if (!p || p.living) return;
+  wjmDeel(wjmBericht(`Over ${p.n} (${lifeYears(p)})`, "kw" + kw), p.n, b.parentElement.querySelector(".wjm-ok"));
+});
 /* bij elke vraag onder "Help mee zoeken" */
 function wjmZoeken(host, list) {
   if (!WEETJEMEER_AAN) return;
@@ -5921,7 +6774,7 @@ function wjmZoeken(host, list) {
 VIEWS.push("stamreeks");
 { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-stamreeks"; sec.hidden = true; $("main").appendChild(sec); }
 NAV_PATH.stamreeks = '<circle cx="12" cy="4.5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19.5" r="2.2"/><path d="M12 6.7v3.1M12 14.2v3.1"/>';
-const STAMREEKS_KNOP = false; /* knop "Stamreeks vanaf hier" in het profiel */
+const STAMREEKS_KNOP = true; /* knop "Stamreeks vanaf hier" in het profiel */
 const srState = { kw: 1, naam: false, jong: false };
 const srP = k => k === 1 ? person(1) : person(fanKw(k));
 const srOk = k => k === 1 || (Number.isInteger(k) && k > 1 && k < 2 ** 50 && !!srP(k));
@@ -6004,12 +6857,12 @@ function renderStamreeks() {
   const woord = S.naam ? "Naamreeks" : "Stamreeks", viaM = rij.filter(r => r.via === "moeder").length;
   const tot = `${rij.length} generaties, tot ${oudst.n}${oudst.living || !(oudst.b || oudst.d) ? "" : " (" + lifeYears(oudst) + ")"}`;
   const lede = rij.length < 2 ? `Van ${wie} is de vader nog niet gevonden.` : S.naam
-    ? `Van ${wie} terug langs de achternaam: ${tot}. De reeks volgt steeds de ouder van wie de achternaam komt. Meestal is dat de vader; draagt een kind de familienaam van de moeder en niet die van de vader, dan gaat de reeks via haar. ${viaM ? `Hier gebeurt dat ${viaM === 1 ? "één keer" : viaM + " keer"}.` : "Hier is dat steeds de vader."}`
+    ? `Van ${wie} terug langs de achternaam: ${tot}. ${viaM ? `De achternaam komt meestal van de vader, maar ${viaM === 1 ? "één keer" : viaM + " keer"} van de moeder: dan droeg het kind haar familienaam.` : "De achternaam komt hier steeds van de vader, dus de naamreeks is gelijk aan de stamreeks."}`
     : `Van ${wie} terug, steeds naar de vader: ${tot}.`;
   const knop = (attr, v, cur, label) => `<button type="button" class="chip" ${attr}="${v}" aria-pressed="${cur}">${label}</button>`;
   const rijen = (S.jong ? rij : [...rij].reverse()).map(r => srRijHtml(r, rij.indexOf(r), rij, mark, S.jong, false)).join("");
   const naarPoster = "poster--soort-stamreeks" + (S.kw > 1 ? "--vanaf-" + S.kw : "");
-  host.innerHTML = `<div class="eyebrow">Stamboom</div><h1 class="page-title">${woord}</h1>
+  host.innerHTML = `<h1 class="page-title">${woord}</h1>
     <p class="lede">${esc(lede)}</p>
     <div class="sr-kies">
       <div class="op-f" role="group" aria-labelledby="srL1"><span class="op-l" id="srL1">${woord} van</span><div class="chips">${srSnel(S.kw, k => srTok(S.naam, k))}</div></div>
@@ -6019,25 +6872,21 @@ function renderStamreeks() {
     </div>
     <p class="printonly sr-kop">Stamboom van ${esc(T.rootFull || T.root)} · ${woord} van ${esc(wie)} · ${esc(VERSION)}</p>
     <div class="sr-lijst" role="list" aria-label="${woord} van ${esc(wie)}, ${S.jong ? "jongste" : "oudste"} bovenaan">${rijen}</div>
-    <p class="small sr-uitleg">De lijn tussen twee generaties is de koppeling ouder–kind, met haar bewijs: doorgetrokken bij A of B, streepjes bij C (onzeker), puntjes bij D (hypothese). Klik op een naam voor het profiel met alle bronnen.</p>`;
+    <p class="small sr-uitleg">De lijn tussen twee generaties is de koppeling ouder–kind, met haar bewijs: doorgetrokken bij A of B, streepjes bij C (onzeker), puntjes bij D (hypothese).</p>`;
   $$("[data-srmode]", host).forEach(b => b.onclick = () => go(srTok(b.dataset.srmode === "naam", S.kw), { keepScroll: true }));
   $$("[data-srvolg]", host).forEach(b => b.onclick = () => { S.jong = b.dataset.srvolg === "jong"; renderStamreeks(); const n = $(`[data-srvolg="${b.dataset.srvolg}"]`, host); if (n) n.focus(); });
   $("#srPrint", host).onclick = () => window.print();
 }
 RENDER.stamreeks = renderStamreeks;
 NAV_OF.stamreeks = "lijst"; NAV_OF.poster = "boek"; /* geen eigen tab: de subtabs van Stamboom tonen Kwartierstaat of Boek */
-/* op het boek (haak bkHaak("boekNaLede") in renderBoek): één regel naar de poster */
-const POSTER_OP_BOEK = false;
-if (POSTER_OP_BOEK) window.boekNaLede = () => ovMore(`data-go="poster"`, "Liever een poster om op te hangen");
 /* op elke familiepagina (lijn-N) een regel naar de stamreeks van die familie, onder de inleiding */
 if (STAMREEKS_KNOP) { const srFamOud = RENDER.families; RENDER.families = sub => { srFamOud(sub);
   const lede = sub && LINES[sub] && srOk(sub) ? $("#v-families .lede") : null; if (!lede || $("#v-families [data-sr-fam]")) return;
-  lede.insertAdjacentHTML("afterend", ovMore(`data-go="stamreeks-${sub}" data-sr-fam`, `De stamreeks van de familie ${esc(LINES[sub].name)}`)); }; }
-/* profiel: "Stamreeks vanaf hier" als de vader bekend is */
-function srProfielKnop(kw) {
+  lede.insertAdjacentHTML("afterend", ovMore(`data-go="stamreeks-${sub}" data-sr-fam`, `Van vader op vader terug: de stamreeks van de familie ${esc(LINES[sub].name)}`)); }; }
+/* in het profiel, in de regel "Vanaf hier:": een link naar de stamreeks (leeg als de vader niet bekend is) */
+function srLink(kw) {
   if (!STAMREEKS_KNOP || !srP(2 * kw)) return "";
-  const p = srP(kw);
-  return `<button class="btn" data-go="${kw > 1 ? "stamreeks-" + kw : "stamreeks"}" title="${esc(`Van ${p ? firstName(p) : ""} terug, van vader op vader`)}">Stamreeks vanaf hier</button>`;
+  return ovMore(`data-go="${kw > 1 ? "stamreeks-" + kw : "stamreeks"}"`, "Van vader op vader terug: de stamreeks");
 }
 
 /* ---------- poster ---------- */
@@ -6050,10 +6899,10 @@ VIEWS.push("poster");
 { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-poster"; sec.hidden = true; $("main").appendChild(sec); }
 NAV_PATH.poster = '<rect x="4" y="2.5" width="16" height="19" rx="1"/><path d="M7.5 15.5a4.5 4.5 0 0 1 9 0M10 15.5a2 2 0 0 1 4 0M8 6.5h8"/>';
 const PS_FORMAAT = [["a3", "A3", 297, 420], ["a2", "A2", 420, 594], ["a1", "A1", 594, 841], ["40x50", "40 × 50 cm", 400, 500], ["50x70", "50 × 70 cm", 500, 700]];
-const PS_SOORT = [["waaier", "Waaier"], ["stamreeks", "Stamreeks"], ["kwartierstaat", "Kwartierstaat"]];
+const PS_SOORT = [["waaier", "Waaier"], ["stamreeks", "Stamreeks"], ["kwartierstaat", "Kwartierstaat"], ...(typeof Products !== "undefined" && Products.renderers && Products.renderers.map ? [["kaart", "Kaart"]] : [])];
 const PS_R = [0, 58, 126, 192, 268, 344, 412, 460, 498, 530]; /* de ringen van drawFan; zonder boogjes is de rand R + 10 */
 const PS_PT = 25.4 / 72, PS_MIN = 6; /* mm per punt; de kleinste letter op papier */
-const psLeeg = () => ({ formaat: "a2", soort: "waaier", gen: 0, kw: 1, afloop: 0 });
+const psLeeg = () => ({ formaat: "a2", soort: "waaier", gen: 0, kw: 1, paar: false, afloop: 0 }); /* paar: kw is de vader van een paar (kw en kw + 1) */
 const psState = psLeeg();
 function psFromToken(t) {
   const af = psState.afloop; Object.assign(psState, psLeeg(), { afloop: af });
@@ -6063,6 +6912,7 @@ function psFromToken(t) {
     else if ((m = x.match(/^soort-(\w+)$/)) && PS_SOORT.some(f => f[0] === m[1])) psState.soort = m[1];
     else if ((m = x.match(/^gen-(\d{1,2})$/))) psState.gen = +m[1];
     else if ((m = x.match(/^vanaf-(\d+)$/)) && srOk(+m[1])) psState.kw = +m[1];
+    else if ((m = x.match(/^vanaf-paar-(\d+)$/)) && +m[1] >= 2 && (person(fanKw(+m[1] & ~1)) || person(fanKw((+m[1] & ~1) + 1)))) { psState.kw = +m[1] & ~1; psState.paar = true; }
   });
   const r = psGenBereik(psState); if (psState.gen && (psState.gen < r[0] || psState.gen > r[1] || psState.gen === r[2])) psState.gen = 0; /* 0 = het advies voor dit formaat */
 }
@@ -6071,7 +6921,7 @@ function psToken() {
   if (S.formaat !== D.formaat) p.push("formaat-" + S.formaat);
   if (S.soort !== D.soort) p.push("soort-" + S.soort);
   if (S.gen && S.soort !== "stamreeks") p.push("gen-" + S.gen);
-  if (S.kw > 1) p.push("vanaf-" + S.kw);
+  if (S.kw > 1) p.push((S.paar ? "vanaf-paar-" : "vanaf-") + S.kw);
   return p.join("--");
 }
 /* maat van het vel in mm; de kwartierstaat ligt, de rest staat. u = 1 % van de korte zijde (voor de lettergroottes) */
@@ -6094,7 +6944,7 @@ function psKwMaat(S) {
 const psGenBereik = S => S.soort === "waaier" ? [3, 9, psWaaierMaat(S).best] : S.soort === "kwartierstaat" ? (b => [3, b, b])(psKwMaat(S).best) : [0, 0, 0];
 const psGen = S => { const r = psGenBereik(S); return S.gen ? Math.max(r[0], Math.min(r[1], S.gen)) : r[2]; };
 const psUrl = () => (($('meta[property="og:url"]') || {}).content || location.href.split("#")[0]).replace(/^https?:\/\//, "").replace(/\/$/, "");
-const psWie = S => { const p = S.kw > 1 ? srP(S.kw) : null; return p ? p.n : T.rootFull || T.root; };
+const psWie = S => { if (S.paar) return Products.startName(Products.site.treeData(T.key), { kw: S.kw, pair: true }); const p = S.kw > 1 ? srP(S.kw) : null; return p ? p.n : T.rootFull || T.root; };
 /* voet: families in hun lijnkleur, het bewijs A–D zoals in de waaier, de bron en de versie */
 function psVoet(lijnen, goud, metVakken) {
   const vak = (o, da, c) => `<svg viewBox="0 0 16 10" aria-hidden="true"><rect x="1" y="1" width="14" height="8" fill="var(--l8)" fill-opacity="${o}" stroke="${c ? "var(--l8)" : "var(--surface)"}" stroke-width="${c ? 0.8 : 0}"${da ? ` stroke-dasharray="${da}"` : ""}/></svg>`;
@@ -6188,12 +7038,23 @@ function psPasTekst(vel) {
     while (s.length > 2 && t.getComputedTextLength() > max) { s = s.slice(0, -1).trimEnd(); t.textContent = s + "…"; }
   });
 }
+/* de kaart: getekend door de productmotor (renderer "map"), met dezelfde maat en marges als de andere posters */
+/* een vel uit de productmotor: de kaart, en de waaier vanaf een paar (de waaier van de site begint bij één persoon) */
+function psVelKaart(S, vel, product = "poster-map") {
+  const opt = { format: S.formaat, bleed: 0, start: { kw: S.kw, pair: !!S.paar } }; if (product === "poster-fan" && S.gen) opt.gen = S.gen;
+  /* de waaier van een paar: dezelfde titel als het boek ("De familie De Groot · De Vries", "Voorouders van Herman en Mien …") */
+  if (product === "poster-fan" && S.paar && typeof bkCore === "function") { try { const C = bkCore(), B = C.options(C.parse("boek--vanaf-paar-" + S.kw)); if (B && B.titel) { opt.title = B.titel; opt.subtitle = B.ondertitel || ""; } } catch (e) { } }
+  const doc = Products.makeDocument(product, Products.site.treeData(T.key), opt, Products.makePlatform(), { palette: Products.PRINT_PALETTE });
+  vel.style.padding = "0"; vel.innerHTML = doc.pages[0].svg;
+  const svg = vel.firstElementChild; if (svg) { svg.setAttribute("role", "img"); svg.setAttribute("aria-label", doc.meta.title); }
+  return doc.stats && doc.stats.rings ? { m: doc.stats.rings, L: doc.stats.namesUpTo } : { m: 0 };
+}
 function psVel(S, vel) {
   const { w, h, u } = psMaat(S);
   vel.className = "ps-vel ps-" + S.soort;
   Object.assign(vel.style, { width: w + "mm", height: h + "mm", padding: (S.soort === "kwartierstaat" ? 5 : 6) * u + "mm" });
-  vel.style.setProperty("--u", u + "mm");
-  const r = S.soort === "stamreeks" ? psVelStamreeks(S, vel) : S.soort === "kwartierstaat" ? psVelKwartier(S, vel) : psVelWaaier(S, vel);
+  vel.style.setProperty("--u", u + "mm"); vel.style.setProperty("--body", Products.PRINT_BODY); /* vaste gewichten, zodat de pdf geen Type 3-fonts krijgt */
+  const r = S.soort === "kaart" ? psVelKaart(S, vel) : S.soort === "waaier" && S.paar ? psVelKaart(S, vel, "poster-fan") : S.soort === "stamreeks" ? psVelStamreeks(Object.assign({}, S, { paar: false }), vel) : S.soort === "kwartierstaat" ? psVelKwartier(Object.assign({}, S, { paar: false }), vel) : psVelWaaier(S, vel); /* stamreeks en kwartierstaat van een paar: vanaf de vader */
   return r;
 }
 /* het vel past in het kader: schalen met transform (de opmaak blijft op ware grootte) */
@@ -6204,42 +7065,70 @@ function psSchaal() {
 }
 function renderPoster() {
   const S = psState, host = $("#v-poster"), { naam, w, h, lig } = psMaat(S), r = psGenBereik(S);
-  const keuze = (grp, lst, cur) => lst.map(([k, l]) => `<button type="button" class="chip" data-ps="${grp}" data-pv="${k}" aria-pressed="${cur(k)}">${esc(l)}</button>`).join("");
-  const rij = (id, label, chips, uitleg) => `<div class="op-f" role="group" aria-labelledby="psL-${id}"><span class="op-l" id="psL-${id}">${label}</span><div><div class="chips">${chips}</div>${uitleg ? `<p class="ps-uitleg" id="psU-${id}">${uitleg}</p>` : ""}</div></div>`;
-  host.innerHTML = `<div class="eyebrow">Stamboom</div><h1 class="page-title">Poster</h1>
-    <p class="lede">De stamboom van ${esc(T.rootFull || T.root)} als poster om op te hangen. Kies het formaat en wat erop staat; de letters worden op papier minstens ${PS_MIN} punt.</p>
-    ${ovMore(`data-go="boek"`, "Liever een boek met alle verhalen")}
-    <div class="ps-keuzes">
-      ${rij("soort", "Soort", keuze("soort", PS_SOORT, k => S.soort === k), S.soort === "waaier" ? "Alle voorouders in één cirkel, per familie een kleur." : S.soort === "stamreeks" ? "Van vader op vader, van de oudste tot nu: smal en hoog." : "Een kolom per generatie, met namen, jaren en plaatsen.")}
-      ${rij("formaat", "Formaat", keuze("formaat", PS_FORMAAT.map(f => [f[0], f[1]]), k => S.formaat === k), "")}
-      ${S.soort === "stamreeks" ? "" : rij("gen", "Generaties", keuze("gen", Array.from({ length: r[1] - r[0] + 1 }, (_, i) => [String(r[0] + i), String(r[0] + i) + (r[0] + i === r[2] ? " (advies)" : "")]), k => +k === psGen(S)), "")}
-      ${rij("vanaf", "Van", srSnel(S.kw, k => { const o = S.kw; S.kw = k; const x = psToken(); S.kw = o; return x; }), "")}
-      <div class="op-bar"><span class="small">${esc(naam)}, ${lig ? h : w} × ${lig ? w : h} mm, ${lig ? "liggend" : "staand"}</span><button type="button" class="btn primary" id="psPrint">${navIco("print")}Afdrukken / opslaan als pdf</button></div>
-      <p class="ps-uitleg">Het afdrukvenster neemt de maat van de poster over. Zet de marges op ‘geen’ en de achtergrond aan, en kies ‘Opslaan als pdf’ om het bestand naar een drukker te sturen.</p>
-    </div>
-    <div class="ps-kader" id="psKader" style="aspect-ratio:${w} / ${h}"><div id="psVel"></div></div>`;
+  const keuze = (grp, lst, cur) => `<div class="chips">${lst.map(([k, l]) => `<button type="button" class="chip" data-ps="${grp}" data-pv="${k}" aria-pressed="${cur(k)}">${esc(l)}</button>`).join("")}</div>`;
+  const uitleg = (t, id) => t ? `<p class="bk-uitleg"${id ? ` id="${id}"` : ""}>${t}</p>` : "";
+  /* een rij zoals in de andere configuratoren: label links (op de telefoon erboven), de keuzes en een hulpregel rechts */
+  const rij = (id, label, inhoud) => `<div class="op-f" role="group" aria-labelledby="psL-${id}"><span class="op-l" id="psL-${id}">${label}</span><div>${inhoud}</div></div>`;
+  const soortUitleg = S.soort === "waaier" ? "Alle voorouders in één cirkel, per familie een kleur." : S.soort === "kaart" ? "Waar de voorouders woonden: een stip per plaats, zo groot als het aantal voorouders, in de kleur van de familie." : S.soort === "stamreeks" ? "Van vader op vader, van de oudste tot nu: smal en hoog." : "Een kolom per generatie, met namen, jaren en plaatsen.";
+  const gens = S.soort === "stamreeks" || S.soort === "kaart" ? "" : rij("gen", "Generaties", keuze("gen", Array.from({ length: r[1] - r[0] + 1 }, (_, i) => [String(r[0] + i), String(r[0] + i) + (r[0] + i === r[2] ? " (advies)" : "")]), k => +k === psGen(S)));
+  const maat = `${naam}, ${lig ? h : w} × ${lig ? w : h} mm, ${lig ? "liggend" : "staand"}`;
+  const spec = {
+    title: "Poster",
+    lede: "",
+    steps: [
+      { id: "soort", title: "Wat erop staat", html: rij("soort", "Soort", keuze("soort", PS_SOORT, k => S.soort === k) + uitleg(soortUitleg, "psU-soort")) + gens },
+      { id: "vanaf", title: "Voor wie", html: voorWieHtml({ start: S.kw, paar: S.paar }, { id: "ps", open: psVoorWieOpen, zoekOpen: psZoekOpen }) },
+      { id: "formaat", title: "Formaat", html: rij("formaat", "Formaat", keuze("formaat", PS_FORMAAT.map(f => [f[0], f[1]]), k => S.formaat === k) + uitleg(maat)) },
+      { id: "afloop", title: "Voor de drukker", collapsed: true, summary: S.afloop ? `${S.afloop} mm afloop` : "geen afloop",
+        html: rij("afloop", "Afloop", keuze("afloop", [["0", "Geen"], ["3", "3 mm rondom"]], k => +k === (S.afloop || 0)) + uitleg("Een drukker snijdt na het drukken 3 mm rondom af; thuis is dat niet nodig.")) },
+    ],
+    preview: `<div class="ps-kader" id="psKader" style="aspect-ratio:${w} / ${h};--ps-asp:${(w / h).toFixed(4)}"><div id="psVel"></div></div>`,
+    actions: { status: `<span id="psDruk" aria-live="polite"></span>`,
+      buttons: `<button type="button" class="btn primary" id="psPrint" aria-label="Maak pdf om zelf te laten drukken">Maak pdf<span class="bk-lang">&nbsp;om zelf te laten drukken</span></button>`,
+      /* de hulpzin: op een groot scherm als regel onder de knop, op de telefoon achter een "?" zoals in het boek (de vaste balk is daar vol) */
+      help: `<p class="bk-uitleg print-help">${esc(Products.PRINT_HELP)}</p><details class="bk-hoe bk-hoe-pdf print-help-vraag"><summary aria-label="Hoe sla ik het op als pdf?">?</summary><div class="bk-hoe-t">${esc(Products.PRINT_HELP)}</div></details>` },
+  };
+  Products.ui.configurator(host, spec);
+  psDrukKlaar(S.afloop); /* ook Ctrl+P (en een pdf zonder de knop) krijgt de maat van het vel */
   const res = psVel(S, $("#psVel"));
   /* maten en afkortingen hangen af van de echte letter: zijn de fonts nog niet geladen, dan daarna opnieuw opmaken */
-  if (document.fonts && document.fonts.status !== "loaded") document.fonts.ready.then(() => { if (route.view === "poster" && $("#psVel")) { psVel(psState, $("#psVel")); psSchaal(); } });
-  if (S.soort === "waaier") { const u = $("#psU-soort"); if (u) u.textContent += res.L < res.m ? ` Op dit formaat staan de namen tot en met generatie ${ROMAN[res.L]}; de ringen daarbuiten tonen alleen de kleur.` : ` Op dit formaat staan de namen in alle ${res.m} ringen.`; }
+  const meld = () => { const d = $("#psDruk"), v = $("#psVel"); if (d && v) d.innerHTML = Products.printLine(Products.checkElement(v), [], { bleed: psState.afloop > 0 }); };
+  Products.loadPrintFonts().then(() => { if (route.view === "poster" && $("#psVel")) { psVel(psState, $("#psVel")); psSchaal(); meld(); } });
+  if (S.soort === "waaier") { const u = $("#psU-soort"); if (u) u.textContent += res.L < res.m ? ` Op dit formaat passen de namen tot en met generatie ${ROMAN[res.L]}; daarbuiten alleen de kleur.` : ` Op dit formaat passen alle namen.`; }
   psSchaal();
   if (psRO) psRO.disconnect();
   if ("ResizeObserver" in window) { psRO = new ResizeObserver(psSchaal); psRO.observe($("#psKader")); }
   $$("[data-ps]", host).forEach(b => b.onclick = () => {
     const k = b.dataset.ps, v = b.dataset.pv;
+    if (k === "afloop") { S.afloop = +v; psDrukKlaar(S.afloop); $$('[data-ps="afloop"]', host).forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.pv === S.afloop))); const sm = $('[data-step="afloop"] .pc-sum', host); if (sm) sm.textContent = S.afloop ? `${S.afloop} mm afloop` : "geen afloop"; meld(); return; }
     if (k === "gen") S.gen = +v === psGenBereik(S)[2] ? 0 : +v; else { S[k] = v; S.gen = 0; }
     go(psToken(), { replace: true, keepScroll: true });
     const n = $(`[data-ps="${k}"][data-pv="${v}"]`, host); if (n) n.focus();
   });
   $("#psPrint", host).onclick = () => { psDrukKlaar(psState.afloop); window.print(); };
+  /* "Voor wie": hetzelfde onderdeel als het boek en de hub, ingeklapt tot één regel; een andere boom wisselt de boom */
+  const vw = $('[data-step="vanaf"] .pc-body', host) || host;
+  voorWieBind(vw, { id: "ps", current: () => ({ start: S.kw, paar: S.paar }),
+    onOpen: () => { psVoorWieOpen = true; renderPoster(); },
+    onZoek: () => { psZoekOpen = true; renderPoster(); setTimeout(() => { const z = $("#psStartZoek"); if (z) z.focus(); }, 30); } },
+    ({ tree, start, paar }) => { psVoorWieOpen = false; psZoekOpen = false;
+      const S2 = Object.assign({}, S, { kw: start, paar, gen: 0 }), o = Object.assign({}, psState); Object.assign(psState, S2); const tok = psToken(); Object.assign(psState, o);
+      if (tree && tree !== T.key && TREES[tree]) { location.hash = "#" + TREES[tree].prefix + tok; return; }
+      go(tok, { keepScroll: true }); });
 }
+let psVoorWieOpen = false, psZoekOpen = false;
+/* afdrukken vanaf een andere pagina: dan geen postermaat; op de poster altijd de maat van het gekozen vel */
+addEventListener("beforeprint", () => {
+  if (route.view === "poster") psDrukKlaar(psState.afloop);
+  else { document.documentElement.classList.remove("ps-print"); if (psPagina) psPagina.textContent = ""; }
+});
 RENDER.poster = renderPoster;
 /* afdrukken: de maat van het vel (plus afloop) als @page, alleen voor deze pagina */
 let psPagina = null;
 function psDrukKlaar(af = 0) {
   const { w, h } = psMaat(psState);
   if (!psPagina) { psPagina = document.createElement("style"); document.head.appendChild(psPagina); }
-  psPagina.textContent = `@page{size:${w + 2 * af}mm ${h + 2 * af}mm;margin:0}@media print{html.ps-print .ps-kader{padding:${af}mm}}`;
+  psPagina.textContent = `@page{size:${w + 2 * af}mm ${h + 2 * af}mm;margin:0}@media print{html.ps-print .ps-kader{padding:${af}mm}html.ps-print,html.ps-print body{height:${h + 2 * af}mm;overflow:hidden}}`; /* precies één vel: geen lege tweede pagina door afronding */
   document.documentElement.classList.add("ps-print");
 }
 addEventListener("beforeprint", () => { if (route.view === "poster") psDrukKlaar(psState.afloop); });
@@ -6276,6 +7165,159 @@ let sectionGuideFrame = 0;
 new MutationObserver(() => { cancelAnimationFrame(sectionGuideFrame); sectionGuideFrame = requestAnimationFrame(() => { try { placeSectionGuide(); } catch (e) { } }); })
   .observe($("main"), { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
 
+/* ---------- laten maken: brug naar de productmotor ---------- */
+/* De productmotor (src/products/, window.Products) weet niets van deze app. Products.site geeft hem de gegevens van één boom als
+   gewone objecten, al gefilterd zoals de site ze toont: van levenden alleen kw, n, roep en living. Alleen-lezen; de motor filtert
+   per product verder (privacyprofielen in src/products/data.js). */
+if (typeof Products !== "undefined") {
+  const siteTreeCache = {};
+  const siteTreeData = k => {
+    const key = TREES[k] ? k : "h";
+    if (siteTreeCache[key]) return siteTreeCache[key];
+    const t = TREES[key], pre = key === "a" ? "a-" : "", keep = ["kw", "n", "roep", "living"];
+    const lineOfKw = kw => kw < 4 ? null : kw < 8 ? ({ 4: 8, 5: 10, 6: 12, 7: 14 })[kw] : kw >> (gen(kw) - 4);
+    const people = t.PEOPLE.filter(p => !p.alias).map(p => p.living ? Object.fromEntries(keep.filter(f => p[f] !== undefined).map(f => [f, p[f]])) : Object.assign({}, p, { line: lineOfKw(p.kw) }));
+    const aliases = Object.fromEntries(t.PEOPLE.filter(p => p.alias).map(p => [p.kw, p.alias]));
+    /* site key ("38", "a-38") of a person in this tree, and back */
+    const siteKey = p => key === "s" ? (p.side === "a" ? "a-" : "") + p.origKw : pre + p.kw;
+    const kwOfKey = new Map(people.map(p => [siteKey(p), p.kw]));
+    const facts = [];
+    people.filter(p => !p.living).forEach(p => { const z = typeof KORT !== "undefined" && KORT[siteKey(p)]; if (z) facts.push({ kw: p.kw, text: z, st: p.st, kind: "short" }); });
+    (t.FACTS || []).forEach(f => facts.push({ kw: f.kw, text: f.x, title: f.t, year: f.y, st: f.st, kind: "fact" }));
+    const images = IMGS.map(im => {
+      const keys = (im.kws && im.kws.length ? im.kws : [im.key]).map(String), kws = keys.map(x => kwOfKey.get(x)).filter(x => x !== undefined);
+      return { id: im.id, kind: im.soort, keys, kws, place: PLACES[im.key] ? im.key : null, t: im.t, desc: im.desc, src: im.src, thumb: im.thumb, w: im.w, h: im.h, maker: im.maker, lic: im.lic, sourceName: im.bronNaam };
+    }).filter(im => im.kws.length || im.place || !/^\d|^a-\d/.test(im.keys[0]));
+    const places = Object.fromEntries(Object.entries(PLACES).map(([pk, v]) => [pk, { la: v.la, lo: v.lo, name: v.name || pk, seat: v.seat, kind: v.kind, gem: v.gem }]));
+    return (siteTreeCache[key] = { tree: key, root: t.rootFull || t.root, rootLines: t.rootLines || null, siblings: t.sibs || [], brand: t.brand,
+      asOf: (VERSION.split(" · ")[1] || "").replace(/^\d+\s+/, ""), url: (($('meta[property="og:url"]') || {}).content || siteUrl()).replace(/^https?:\/\//, "").replace(/\/$/, ""),
+      people, aliases, lines: t.LINES, places, facts, images, livingKeys: [...LIVING_KEYS], livingNames: people.filter(p => p.living).map(p => p.n),
+      yearFrom: key === T.key ? (h => h.yearProven < 9999 ? h.yearProven : null)(honestStats()) : null, /* het oudste jaar met bewijs, zoals op de voorpagina en in het boek */
+      mapBase: { bounds: B, water: WATER, borders: BORDERS } });
+  };
+  Products.site = Object.freeze({
+    treeData: siteTreeData,
+    currentTree: () => T.key,
+    go: token => go(token),
+    version: VERSION,
+    url: () => siteUrl(),
+  });
+}
+
+/* ---------- laten maken: hub ---------- */
+/* #maak: de enige plek om een product te kiezen. Eerst voor wie (dezelfde snelkeuzes en hetzelfde zoekveld als het boek), dan de
+   producten uit het register van de productmotor, per groep, elk met een klein voorbeeld voor de gekozen persoon. Het beginpunt
+   gaat mee naar het product: maak--vanaf-12 → poster--vanaf-12, maak--vanaf-paar-24 → boek--vanaf-paar-24.
+   Producten zonder eigen pagina staan er als "Binnenkort". */
+if (typeof Products !== "undefined" && Products.list) {
+  VIEWS.push("maak"); NAV_OF.poster = "maak"; NAV_OF.boek = "maak";
+  { const sec = document.createElement("section"); sec.className = "view"; sec.id = "v-maak"; sec.hidden = true; $("main").appendChild(sec); }
+}
+const mkState = { start: 1, paar: false };
+function mkFromToken(t) {
+  const m = String(t).match(/--vanaf-(paar-)?(\d+)/); mkState.paar = !!(m && m[1]); mkState.start = m ? +m[2] : 1;
+  const k = mkState.paar ? mkState.start & ~1 : fanKw(mkState.start);
+  if (mkState.paar ? !(k >= 2 && (person(fanKw(k)) || person(fanKw(k + 1)))) : !person(k)) { mkState.start = 1; mkState.paar = false; } else mkState.start = k;
+}
+const mkStartTok = S => S.paar ? "--vanaf-paar-" + S.start : S.start > 1 ? "--vanaf-" + S.start : "";
+const mkToken = () => "maak" + mkStartTok(mkState);
+/* het beginpunt voor de motor, en de naam erbij */
+const mkStart = S => ({ kw: S.start, pair: !!S.paar });
+const mkNaam = S => Products.startName(Products.site.treeData(T.key), mkStart(S));
+/* de link naar een product, met het beginpunt */
+const mkLink = (p, S) => p.page ? p.page + (p.pageToken ? "--" + p.pageToken : "") + mkStartTok(S) : null;
+/* een klein voorbeeld: uit de motor waar een renderer is, anders een tekening van het product */
+function mkMini(p, S) {
+  try {
+    if (p.layout === "book") return mkBoekMini(p, S);
+    if (p.id === "poster-pedigree") return { vel: "kwartierstaat" }; /* de echte kwartierstaat, na het plaatsen (heeft de dom nodig om te meten) */
+    if (p.renderer === "card") return mkKaartjesMini(p, S);
+    if (!Products.renderers[p.renderer] || p.layout === "book") return "";
+    const opts = { start: mkStart(S) }; if (p.formats.includes("a3")) opts.format = "a3";
+    const d = Products.makeDocument(p.id, Products.site.treeData(T.key), opts, Products.makePlatform(), { palette: Products.PRINT_PALETTE });
+    if (!d.pages || !d.pages[0] || !d.pages[0].svg) return "";
+    return d.pages[0].svg.replace(/^<svg([^>]*)\swidth="[^"]*"\sheight="[^"]*"/, '<svg$1 aria-hidden="true"');
+  } catch (e) { return ""; }
+}
+/* het boek: de echte voorkant (bookCoverDoc), in een geschaald iframe, met de titel van dit boek */
+function mkBoekMini(p, S) {
+  /* een boek dat er nog niet is: een schetsomslag zonder titel (niet de omslag van een ander boek) */
+  if (!p.page || p.status === "planned") return typeof window.boekOmslagMini === "function" ? window.boekOmslagMini(p.id === "book-kids" ? "c" : "a") : "";
+  if (typeof window.bookCoverDoc !== "function" || typeof bkCore !== "function") return typeof window.boekOmslagMini === "function" ? window.boekOmslagMini("b") : "";
+  const C = bkCore(), tok = mkLink(p, S) || "boek" + (p.pageToken ? "--" + p.pageToken : "") + mkStartTok(S);
+  const doc = window.bookCoverDoc(C.options(C.parse(tok)), { part: "front" });
+  return bkOmslagIframe(doc, 150, "Voorkant: " + p.label);
+}
+/* kaartenset en kwartet (nog zonder eigen renderer): drie kaartjes in een waaier, met een dorp en een familiekleur uit de data */
+function mkKaartjesMini(p, S) {
+  const d = Products.site.treeData(T.key), tel = {};
+  d.people.filter(q => !q.living).forEach(q => [q.bp, q.dp].forEach(k => { if (k && PLACES[k] && !isGemeente(k)) tel[k] = (tel[k] || 0) + 1; }));
+  const dorpen = Object.entries(tel).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => placeName(k));
+  const lijnen = LINE_KEYS.filter(l => LINES[l]).slice(0, 3), kwartet = p.id === "game-quartet";
+  return `<svg viewBox="0 0 160 110" aria-hidden="true">${[-14, 0, 14].map((r, i) => `<g transform="rotate(${r} 80 105)"><rect x="56" y="14" width="48" height="70" rx="4" fill="#fff" stroke="var(--rule)"/>
+    <rect x="60" y="18" width="40" height="${kwartet ? 8 : 34}" fill="var(--l${lijnen[i] || 8})" fill-opacity="${kwartet ? 0.9 : 0.28}"/>
+    <text x="80" y="${kwartet ? 50 : 64}" text-anchor="middle" style="font-family:'IBM Plex Sans'" font-size="6.5" fill="var(--ink)">${esc(kwartet ? (LINES[lijnen[i]] || {}).name || "" : dorpen[i] || "")}</text>
+    ${kwartet ? `<text x="80" y="60" text-anchor="middle" style="font-family:'IBM Plex Sans'" font-size="5" fill="var(--muted)">${i + 1} van 4</text>` : ""}</g>`).join("")}</svg>`;
+}
+/* de kwartierstaat als echt vel (zoals op #poster), klein geschaald in het vak */
+function mkVelMini(el, soort, S) {
+  const vel = document.createElement("div"); el.innerHTML = ""; el.appendChild(vel); el.classList.add("mk-mini-vel");
+  const P2 = Object.assign(psLeeg(), { soort, formaat: "a3", kw: S.paar ? S.start : S.start, paar: false });
+  psVel(P2, vel);
+  const wpx = parseFloat(vel.style.width) * 96 / 25.4, hpx = parseFloat(vel.style.height) * 96 / 25.4;
+  const k = Math.min((el.clientWidth - 20) / wpx, (el.clientHeight - 20) / hpx);
+  Object.assign(vel.style, { transform: `scale(${k})`, left: ((el.clientWidth - wpx * k) / 2) + "px", top: ((el.clientHeight - hpx * k) / 2) + "px", background: "#fff", boxShadow: "0 1px 4px color-mix(in srgb,var(--ink) 18%,transparent)" });
+}
+function mkKaart(p, S) {
+  const go = mkLink(p, S), later = !go || p.status === "planned";
+  const fmt = p.layout === "book" ? "Om zelf te printen of te laten drukken" : mkFormaten(p);
+  const binnen = `<div class="mk-mini" data-mini="${esc(p.id)}"></div><div class="mk-tekst"><h3>${esc(p.label)}</h3><p>${esc(p.promise || p.intro)}</p>${later ? `<p class="mk-meta"><span class="tag">Binnenkort</span></p>` : fmt ? `<p class="mk-meta">${esc(fmt)}</p>` : ""}</div>`;
+  return later ? `<div class="mk-kaart mk-later">${binnen}</div>` : `<a class="mk-kaart" href="#${T.prefix}${go}" data-go="${go}">${binnen}</a>`;
+}
+const P_FMT = id => (Products.formats[id] || { label: id }).label;
+/* de maten in één regel: van klein naar groot, en een bijzonder smal formaat apart ("ook als boekenlegger") */
+function mkFormaten(p) {
+  const fs = p.formats.map(id => Products.formats[id]).filter(Boolean), gewoon = fs.filter(f => Math.min(f.w, f.h) >= 200).sort((a, b) => a.w * a.h - b.w * b.h), apart = fs.filter(f => Math.min(f.w, f.h) < 200 && !gewoon.length ? false : Math.min(f.w, f.h) < 200);
+  const basis = gewoon.length ? gewoon[0].label + (gewoon.length > 1 ? " tot " + gewoon[gewoon.length - 1].label : "") : fs.map(f => f.label).join(", ");
+  return basis + (apart.length ? ", ook als " + apart.map(f => f.label.replace(/^([A-Z])/, c => c.toLowerCase())).join(" en ") : "");
+}
+function renderMaak() {
+  const S = mkState, host = $("#v-maak");
+  /* kaarten alleen voor wat je nu echt kunt maken; de rest in één rustige regel onderaan */
+  const kan = p => !!mkLink(p, S) && p.status !== "planned";
+  const groepen = Object.values(Products.categories).sort((a, b) => a.order - b.order).map(c => [c, Products.list({ category: c.id }).filter(kan)]).filter(([, ps]) => ps.length);
+  const later = Products.list().filter(p => !kan(p));
+  host.innerHTML = `<h1 class="page-title">Maken</h1>
+    <p class="lede">Wat je van de stamboom kunt laten maken: een boek, een poster, een kalender of een cadeau. Hier maak je het bestand; bestellen doe je bij een drukker.</p>
+    <div class="mk-voor">${voorWieHtml({ start: S.start, paar: S.paar }, { id: "mk", open: mkVoorWieOpen, zoekOpen: mkZoekOpen })}</div>
+    <div class="mk-producten" data-own-guide>${groepen.map(([c, ps]) => `<section class="mk-groep" aria-labelledby="mk-${esc(c.id)}"><h2 class="mk-kop" id="mk-${esc(c.id)}">${esc(c.label)}</h2><div class="mk-grid">${ps.map(p => mkKaart(p, S)).join("")}</div></section>`).join("")}</div>
+    ${later.length ? `<section class="mk-groep mk-binnenkort" aria-labelledby="mk-later"><h2 class="mk-kop" id="mk-later">Binnenkort</h2><p class="bk-uitleg">Hier werken we nog aan. Zo gaan ze eruitzien.</p><div class="mk-grid">${later.map(p => mkKaart(p, S)).join("")}</div></section>` : ""}`;
+  /* de voorbeelden pas na de opbouw, één voor één, zodat de pagina meteen staat */
+  const minis = $$("[data-mini]", host); let i = 0;
+  const volgende = () => { if (route.view !== "maak" || i >= minis.length) return; const el = minis[i++], p = Products.products[el.dataset.mini];
+    if (p && el.isConnected) { const m = mkMini(p, S); if (m && m.vel) mkVelMini(el, m.vel, S); else el.innerHTML = m || ""; }
+    (window.requestIdleCallback || setTimeout)(volgende); };
+  (window.requestIdleCallback || setTimeout)(volgende);
+  /* "Voor wie": hetzelfde onderdeel als het boek; een keuze in een andere boom wisselt de boom */
+  voorWieBind($(".mk-voor", host), { id: "mk", current: () => ({ start: S.start, paar: S.paar }),
+    onOpen: () => { mkVoorWieOpen = true; renderMaak(); },
+    onZoek: () => { mkZoekOpen = true; renderMaak(); setTimeout(() => { const z = $("#mkStartZoek"); if (z) z.focus(); }, 30); } },
+    ({ tree, start, paar }) => { mkVoorWieOpen = false; mkZoekOpen = false;
+      const tok = "maak" + mkStartTok({ start, paar });
+      if (tree && tree !== T.key && TREES[tree]) { location.hash = "#" + TREES[tree].prefix + tok; return; }
+      S.start = start; S.paar = paar; go(tok, { keepScroll: true }); });
+}
+/* het beginpunt van de huidige pagina onder "Maken" ("" / "--vanaf-12" / "--vanaf-paar-4"): de tabs Overzicht, Boek en Poster
+   nemen het mee */
+function makeStartTok() {
+  if (route.view === "maak") return mkStartTok(mkState);
+  if (route.view === "poster") return mkStartTok({ start: psState.kw, paar: psState.paar });
+  if (route.view === "boek" && typeof bkState !== "undefined" && bkStartAan(bkState)) return mkStartTok({ start: bkState.start, paar: bkState.paar });
+  return "";
+}
+let mkZoekOpen = false, mkVoorWieOpen = true; /* op de hub staat de keuze open: daar kies je voor wie */
+if (VIEWS.includes("maak")) RENDER.maak = renderMaak;
+
 /* ---------- hoofdmenu ---------- */
 /* Eén kopregel: links de boomkiezer (tevens het merk), dan de 7 onderdelen, rechts zoeken en weergave. Op smalle schermen
    (zie CSS) blijft links de boomkiezer en komen rechts zoeken en een knop ☰ met een paneel: boomkeuze, alle onderdelen en
@@ -6288,11 +7330,13 @@ new MutationObserver(() => { cancelAnimationFrame(sectionGuideFrame); sectionGui
    de kop, op de telefoon niet). Op de groepspagina zelf vervalt dan de eyebrow bovenaan, want de balk zegt al waar je bent. */
 const MENU = [
   ["Overzicht", [["Overzicht", "overzicht"]]],
-  ["Stamboom", [["Waaier", "stamboom", "Alle voorouders in één beeld"], ["Boom", "boom", "Stap voor stap terug, tak voor tak"], ["De acht families", "families", "Elke familielijn met haar verhaal"], ["Kwartierstaat", "lijst", "Alles als lijst, ook om af te drukken"], ["Boek", "boek", "De stamboom als boek om te laten drukken"]]],
+  ["Stamboom", [["Waaier", "stamboom", "Alle voorouders in één beeld"], ["Boom", "boom", "Stap voor stap terug, tak voor tak"], ["De acht families", "families", "Elke familielijn met haar verhaal"], ["Kwartierstaat", "lijst", "Alles als lijst, ook om af te drukken"]]],
   ["Mensen", [["Personen", "personen", "Een profiel per voorouder"], ["Namenregister", "namen", "Alle achternamen van A tot Z"], ["Achternamen", "achternamen", "Waar de familienamen vandaan komen"], ["Beroepen", "beroepen", "Wat ze deden voor de kost"], ["Hoe zijn we familie?", "verwant", "De verwantschap tussen twee mensen"], ["Bekende verwanten", "verwanten", "Adel, macht en geschiedenis"]]],
-  ["Verhalen", [["Verhalen", "verhalen", "De rode draden door de families"], ["Opvallende feiten", "opvallend", "Korte feiten uit de akten, met hun bewijs"], ["Tijdlijn", "tijdlijn", "Wie leefde wanneer"], ["Hun tijd", "tijd", "Wat er gebeurde, wat hen raakte, en wat je erover leest"], ["In getallen", "cijfers", "Leeftijden, namen, beroepen"]]],
+  ["Verhalen", [["Verhalen", "verhalen", "De rode draden door de families"], ["Opvallende feiten", "opvallend", "Korte feiten, elk met het bewijs"], ["Tijdlijn", "tijdlijn", "Wie leefde wanneer"], ["Hun tijd", "tijd", "Wat er gebeurde, wat hen raakte, en wat je erover leest"], ["In getallen", "cijfers", "Leeftijden, namen, beroepen"]]],
   ["Plaatsen", [["Kaart", "kaart", "Elk dorp op de kaart, ook per jaar"], ["Grond in 1832", "grond", "Hun land op de kadasterkaart van 1832"], ["Waar de families elkaar kruisten", "verbanden", "Dorpen van beide kanten in dezelfde jaren", "s"]]],
   ["Beeld", [["Familie", "beeld", "Portretten, bidprentjes en kranten"], ["Plaatsen en kaarten", "beeld-plaatsen", "Dorpen, kerken en oude kaarten"], ["Uit de archieven", "beeld-archief", "Oude foto's, prenten en akten, met filters"]]],
+  /* Maken: het overzicht (de hub #maak, uit het register van de productmotor) en een tab per productsoort */
+  ["Maken", [["Overzicht", "maak", "Boek, poster en meer van de stamboom"], ["Boek", "boek", "De stamboom als boek, om zelf te printen of te laten drukken"], ["Poster", "poster", "De waaier, de stamreeks of de kwartierstaat, om op te hangen"]]],
   ["Bronnen", [["Bronnen en betrouwbaarheid", "bronnen", "Hoe zeker alles is, en waar je zelf zoekt"], ["Help mee zoeken", "zoeken", "Open vragen waar je kunt helpen"], ["Tegenstrijdigheden", "bronnen-tegenstrijdig", "Waar bronnen elkaar tegenspreken"], ["Alle bronnen", "bronnen-lijst", "Elke gebruikte akte en genealogie"], ["In de krant", "kranten", "Berichten over de familie in oude kranten"], ["Over deze site", "bronnen-over", "Begrippen, wijzigingen en beeldverantwoording"]]]
 ];
 const TREE_INFO = { h: "De voorouders van Harrie de Groot", s: "Harrie en Alies samen: de voorouders van hun kinderen", a: "De voorouders van Alies Hoekstra" };
@@ -6480,6 +7524,7 @@ function boot() {
 }
 function fromHash() {
   const raw = location.hash.slice(1), changed = setTree(treeOfHash(raw)), h = stripTree(raw) || "overzicht";
+  if (/^kw\d+$/.test(h) && !person(fanKw(+h.slice(2)))) { route.fout = h; go("nietgevonden", { keepHash: true }); return; } /* een kwartiernummer dat niet in deze boom staat */
   if (/^kw\d+$/.test(h)) {
     const onder = (history.state && history.state.onder) || (changed ? "overzicht" : null); /* de pagina onder het profiel */
     if (onder && (changed || onder !== currentToken())) go(onder, { keepHash: true, keepScroll: true });
@@ -6487,8 +7532,12 @@ function fromHash() {
   }
   if (!drawer.hidden) closeProfile(true);
   if (!lb.hidden) closeLb(true);
-  if (changed || h !== currentToken()) go(h, { keepHash: true });
+  if (changed || h !== currentToken()) go(h, { keepHash: true, fromHistory: true });
 }
+try { history.scrollRestoration = "manual"; } catch (e) {} /* de site zet de scrollpositie zelf terug (go, fromHistory) */
+/* de scrollpositie van de huidige stap steeds bijwerken, ook als je met een gewone #-link of de adresbalk kwam */
+let scrollBewaar = 0;
+addEventListener("scroll", () => { if (scrollBewaar) return; scrollBewaar = setTimeout(() => { scrollBewaar = 0; try { history.replaceState(Object.assign({}, history.state, { y: Math.round(scrollY) }), ""); } catch (e) {} }, 250); }, { passive: true });
 window.addEventListener("popstate", fromHash);   /* vorige/volgende */
 window.addEventListener("hashchange", fromHash); /* hash met de hand gewijzigd of een gewone #-link */
 boot();

@@ -97,11 +97,12 @@
     <div class="toolbar">
       <input type="search" id="q" placeholder="Filter op naam, plaats of beroep" aria-label="Filter personen">
       <select id="genSel" aria-label="Generatie"></select>
-      <select id="sortSel" aria-label="Sortering"><option value="kw">Op kwartiernummer</option><option value="b">Op geboortejaar</option><option value="n">Op naam</option></select>
+      <select id="sortSel" aria-label="Sortering"><option value="kw">Op kwartiernummer</option><option value="b">Op geboortejaar</option><option value="n">Op achternaam</option></select>
       <div class="chips" id="stChips"></div>
       <div class="chips" id="chgChips"></div>
     </div>
     <div class="chips" id="lineChips"></div>
+    <p class="small cards-count" id="cardsCount" role="status" aria-live="polite"></p>
     <div id="cardsOut"></div>
   </section>
 
@@ -113,15 +114,14 @@
   <section class="view" id="v-tijdlijn" hidden>
     <div class="eyebrow">Tijdlijn</div>
     <h1 class="page-title">Tijdlijn</h1>
-    <p class="lede">Elke balk is een leven; een ruitje is een huwelijk. Een stippellijn betekent dat de geboorte- of sterfdatum nog onbekend is, een lichte balk dat de data onzeker zijn. Op de achtergrond de gebeurtenissen die hun wereld veranderden.</p>
+    <p class="lede">Elke balk is een leven, een ruitje een huwelijk; gestippeld of licht als een datum onbekend of onzeker is. Op de achtergrond de gebeurtenissen die hun wereld veranderden.</p>
     <div class="toolbar">
       <div class="seg" role="group" aria-label="Sortering"><button id="tlByLine" aria-pressed="true">Per familie</button><button id="tlByYear" aria-pressed="false">Op geboortejaar</button></div>
       <div class="chips" id="tlChips"></div>
     </div>
     <div class="pane tl" id="timeline"></div>
     <div id="tlArch" hidden></div>
-    <div class="section-head"><h2>Hun tijd</h2><p>De gebeurtenissen op de achtergrond van de tijdlijn.</p></div>
-    <div class="grid-3" id="contextCards"></div>
+    <p class="ov-more"><button type="button" class="ov-link" data-go="tijd">De gebeurtenissen op de achtergrond, uitgelegd bij Hun tijd →</button></p>
   </section>
 
   <section class="view" id="v-kaart" hidden>
@@ -159,7 +159,7 @@
 <div class="sdlg" id="sdlg" hidden role="dialog" aria-modal="true" aria-label="Zoeken">
   <div class="scrim" id="sScrim" style="z-index:0"></div>
   <div class="panel">
-    <input type="search" id="sInput" placeholder="Zoek een persoon, plaats, verhaal of begrip" autocomplete="off" aria-label="Zoekterm" role="combobox" aria-expanded="true" aria-controls="sRes" aria-autocomplete="list">
+    <div class="skop"><input type="search" id="sInput" placeholder="Zoek een persoon, plaats, verhaal of begrip" autocomplete="off" aria-label="Zoekterm" role="combobox" aria-expanded="true" aria-controls="sRes" aria-autocomplete="list"><button type="button" class="sclose" id="sClose" aria-label="Zoeken sluiten">×</button></div>
     <div class="sres" id="sRes" role="listbox"></div>
   </div>
 </div>
@@ -198,6 +198,24 @@
 <script src="data/41-alies-people.js"></script>
 <script src="data/42-alies-stories.js"></script>
 <script src="data/43-alies-research.js"></script>
+<!-- product engine (src/products/): after the data, before app.js; build.py inlines them in this order -->
+<script src="src/products/registry.js"></script>
+<script src="src/products/producers.js"></script>
+<script src="src/products/licence.js"></script>
+<script src="src/products/data.js"></script>
+<script src="src/products/platform.js"></script>
+<script src="src/products/engine.js"></script>
+<script src="src/products/print.js"></script>
+<script src="src/products/renderers/sheet.js"></script>
+<script src="src/products/renderers/fan.js"></script>
+<script src="src/products/renderers/lineage.js"></script>
+<script src="src/products/renderers/map.js"></script>
+<script src="src/products/renderers/calendar.js"></script>
+<script src="src/products/renderers/text.js"></script>
+<script src="src/products/book/text.js"></script>
+<script src="src/products/book/build.js"></script>
+<script src="src/products/ui.js"></script>
+<script src="src/products/book/front.js"></script>
 <script src="src/app.js"></script>
 </body>
 </html>

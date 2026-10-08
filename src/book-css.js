@@ -301,6 +301,50 @@ body[data-formaat="vierkant"] .bk-verhaal>.bk-h2,body[data-formaat="vierkant"] .
 .bk-flap-lede{font-family:var(--bk-tekst);font-size:11pt;line-height:16pt;margin:0 0 4mm;hyphens:manual}
 .bk-flap-zin{font-family:var(--bk-tekst);font-style:italic;font-size:10pt;line-height:14.5pt;margin:0 0 5mm;opacity:.85}
 .bk-flap-kern{font-family:var(--bk-mono);font-size:7.6pt;letter-spacing:.06em;margin:0;opacity:.8;font-variant-numeric:lining-nums}
+/* ---- boek: kaart "Waar ze woonden" (tekstpagina; the map and its measures are in the image block) ---- */
+.bkb-kaart .bkb-ka-uitleg{font-family:var(--bk-tekst);font-size:10pt;line-height:14.5pt;color:var(--bk-grijs);max-width:118mm;margin:0 0 8mm;text-wrap:pretty}
+.bkb-kaart .bkb-ka-lijst{column-gap:10mm;font-size:8.8pt;line-height:12.6pt}
+.bkb-kaart .bkb-kl-fam{margin:0 0 6mm}
+.bkb-kaart .bkb-kl-naam{font-family:var(--bk-kop);font-weight:400;font-size:12pt;line-height:1.2;margin:0 0 1.6mm;hyphens:none}
+.bkb-kaart .bkb-kl-fam li{display:flex;align-items:baseline;gap:2mm}
+.bkb-kaart .bkb-kl-fam li span{flex:1;min-width:0}
+.bkb-kaart .bkb-kl-fam small{flex:none;white-space:nowrap;font-family:var(--bk-mono);font-size:6.8pt;color:var(--bk-grijs);font-variant-numeric:tabular-nums}
+/* ---- boek: "Waar de families elkaar kruisten" en de tijdlijn (tekst; tekeningen en maten in het beeldblok) ---- */
+.bkb-kruis .bkb-vb-lede{font-family:var(--bk-tekst);font-size:10pt;line-height:14.5pt;max-width:120mm;text-wrap:pretty}
+.bkb-kruis .bkb-vb-kop{font-family:var(--bk-kop);font-weight:400;font-size:11pt;line-height:1.25;hyphens:none}
+.bkb-kruis .bkb-vb-kop span{font-family:var(--bk-tekst);font-size:9pt;color:var(--bk-grijs)}
+.bkb-kruis .bkb-vb-paar{font-size:8.6pt;line-height:12pt}
+.bkb-tijd .bkb-ti-uitleg{font-family:var(--bk-tekst);font-size:9.5pt;line-height:13.5pt;max-width:140mm;text-wrap:pretty}
+/* ---- boek: naam, begrippen, getallen en geldwaarde ---- */
+.bk-naam-blok{margin:7mm 0 8mm;padding:3.5mm 0 2.5mm;border-top:.8pt solid var(--lc,var(--bk-lijn));border-bottom:.4pt solid var(--bk-lijn);font-size:9.6pt;line-height:13.8pt;break-inside:avoid}
+.bk-naam-blok p{margin:0 0 2mm}
+.bk-naam-kop{font-family:var(--bk-sans);font-weight:600;font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:var(--bk-inkt);hyphens:none}
+.bk-naam-soort{font-family:var(--bk-sans);font-size:6.6pt;letter-spacing:.08em;text-transform:uppercase;color:var(--bk-grijs);border:.4pt solid var(--bk-lijn);padding:0 1.2mm;margin-right:1mm;vertical-align:.8pt}
+.bk-naam-tel,.bk-naam-bron{font-family:var(--bk-sans);font-size:7.2pt;line-height:10.6pt;color:var(--bk-grijs)}
+.bk-geld{color:var(--bk-grijs)}
+.bk-begr-uitleg,.bk-getal-uitleg{font-family:var(--bk-sans);font-size:7.4pt;color:var(--bk-grijs);margin:0 0 7mm}
+.bk-begr{margin:0}
+.bk-begr-it{margin:0 0 3.4mm;break-inside:avoid}
+.bk-begr dt{font-family:var(--bk-kop);font-weight:400;font-size:11.5pt;line-height:1.2;margin:0;hyphens:none}
+.bk-begr dd{margin:.6mm 0 0;font-size:9.4pt;line-height:13.4pt;text-wrap:pretty}
+.bk-begr-bron{font-family:var(--bk-sans);font-size:6.8pt;color:var(--bk-grijs);white-space:nowrap}
+.bk-getallen{break-before:left}
+.bk-getal-p2{break-before:page;padding-top:12mm}
+.bk-getal-blok{margin:0 0 7mm;break-inside:avoid}
+.bk-getal-blok .bk-h3{margin-top:0}
+.bk-getal-duo{display:flex;gap:14mm;margin:1mm 0 2.5mm}
+.bk-getal-duo b{display:block;font-family:var(--bk-kop);font-weight:400;font-size:30pt;line-height:1;font-variant-numeric:lining-nums}
+.bk-getal-duo span{font-family:var(--bk-sans);font-size:6.6pt;letter-spacing:.12em;text-transform:uppercase;color:var(--bk-grijs)}
+.bk-getal-zin{font-size:10pt;line-height:14.6pt;margin:2mm 0 0;text-wrap:pretty}
+.bk-getal-twee{display:grid;grid-template-columns:1fr 1fr;gap:9mm}
+.bk-getal-sub{font-family:var(--bk-sans);font-size:6.8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--bk-grijs);margin:0 0 1.6mm}
+.bk-getal-balk{list-style:none;margin:0;padding:0;font-family:var(--bk-sans);font-size:8pt;line-height:11pt}
+.bk-getal-balk li{display:grid;grid-template-columns:62mm minmax(0,1fr) 11mm;gap:2.5mm;align-items:center;margin:0 0 1.3mm}
+.bk-getal-twee .bk-getal-balk li{grid-template-columns:19mm minmax(0,1fr) 7mm}
+.bk-gb-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bk-gb-t{display:block;height:2.2mm;background:#ece8df}
+.bk-gb-t i{display:block;height:100%;background:var(--bk-grijs)}
+.bk-gb-v{font-family:var(--bk-mono);font-size:7.2pt;text-align:right;color:var(--bk-grijs);font-variant-numeric:tabular-nums}
 `;
 
 window.BOEK_CSS_BEELD = String.raw`
@@ -313,6 +357,50 @@ window.BOEK_CSS_BEELD = String.raw`
 @page open-tekst{margin:0;@top-left{content:none}@top-right{content:none}@top-center{content:none}@bottom-left{content:none}@bottom-right{content:none}@bottom-center{content:none}}
 /* zonder marge, ook als de typografie aparte marges voor linker- en rechterpagina's geeft */
 @page omslag:left{margin:0}@page omslag:right{margin:0}@page omslag:first{margin:0}@page waaier-l:left{margin:0}@page waaier-l:right{margin:0}@page waaier-l:first{margin:0}@page waaier-r:left{margin:0}@page waaier-r:right{margin:0}@page waaier-r:first{margin:0}@page open-beeld:left{margin:0}@page open-beeld:right{margin:0}@page open-beeld:first{margin:0}@page open-tekst:left{margin:0}@page open-tekst:right{margin:0}@page open-tekst:first{margin:0}
+@page kaart-l{margin:0;@top-left{content:none}@top-right{content:none}@top-center{content:none}@bottom-left{content:none}@bottom-right{content:none}@bottom-center{content:none}}
+@page kaart-l:left{margin:0}@page kaart-l:right{margin:0}@page kaart-l:first{margin:0}
+@page tijd{margin:0;@top-left{content:none}@top-right{content:none}@top-center{content:none}@bottom-left{content:none}@bottom-right{content:none}@bottom-center{content:none}}
+@page tijd:left{margin:0}@page tijd:right{margin:0}@page tijd:first{margin:0}
+/* ---- tijdlijn "Hun levens in de tijd": twee pagina's zonder marge, elk met een kop en de tekening (na de opmaak, op maat) ---- */
+.bkb-tijd{break-before:left}
+.bkb-ti-blad{page:tijd;height:calc(var(--bk-ph,297mm) - 2mm);width:var(--bk-pw,210mm);box-sizing:border-box;padding:14mm 12mm 12mm;overflow:hidden;break-after:page;break-inside:avoid;display:flex;flex-direction:column}
+.bkb-ti-kop{flex:0 0 auto;margin:0 0 3mm}
+.bkb-ti-uitleg{font-size:8.5pt;line-height:1.45;color:var(--bk-grijs);max-width:130mm;margin:0}
+.bkb-ti-svg{flex:1 1 auto;min-height:0}
+.bkb-ti-svg svg{display:block;width:100%;height:100%}
+/* ---- kaart "Waar ze woonden": links de kaart over de hele pagina, rechts de dorpen per familie of tak ---- */
+.bkb-kaart{break-before:left}
+/* ---- Waar de families elkaar kruisten (alleen het boek van de kinderen) ---- */
+.bkb-vb-lede{font-size:9.5pt;line-height:1.5;max-width:125mm;margin:0 0 3mm}
+.bkb-vb-leg{font-family:"IBM Plex Mono",monospace;font-size:7pt;letter-spacing:.06em;color:var(--bk-grijs);margin:0 0 4mm}
+/* de kanten als halve stip, zoals op de kaart: links de kant van Harrie, rechts die van Alies (ook leesbaar zonder kleurverschil) */
+.bkb-vb-h,.bkb-vb-a{display:inline-block;width:2.6mm;height:2.6mm;border-radius:50%;margin:0 1.6mm 0 0;vertical-align:-.15mm;box-sizing:border-box;border:.2mm solid var(--bk-inkt)}
+.bkb-vb-leg .bkb-vb-a{margin-left:4mm}
+.bkb-vb-h{background:linear-gradient(90deg,var(--l8) 50%,transparent 50%)}.bkb-vb-a{background:linear-gradient(90deg,transparent 50%,var(--l12) 50%)}
+.bkb-vb-kaart{width:100%;max-height:150mm;margin:0 0 6mm;break-inside:avoid;border:.25mm solid var(--bk-lijn)}
+.bkb-vb-kaart svg{display:block;width:100%;height:100%;overflow:hidden}
+.bkb-vb-lijst{list-style:none;margin:0;padding:0;columns:2;column-gap:8mm;font-size:8.5pt;line-height:1.45}
+.bkb-vb-lijst li{break-inside:avoid;margin:0 0 4.5mm}
+.bkb-vb-kop{margin:0}.bkb-vb-kop span{font-style:italic}.bkb-vb-kop small{display:block;font-family:"IBM Plex Mono",monospace;font-size:6.8pt;color:var(--bk-grijs)}
+.bkb-vb-paar{margin:0}.bkb-vb-ev{color:var(--bk-grijs)}
+.bkb-kruis .vb-strook{display:block;width:100%;height:6mm;margin:1mm 0}
+.bkb-kruis .vb-win{fill:#efe6cf}.bkb-kruis .vb-as{stroke:#c9c2b2;stroke-width:1}
+.bkb-kruis .vb-t{stroke-width:2}.bkb-kruis .vb-t.vb-h{stroke:var(--l8)}.bkb-kruis .vb-t.vb-a{stroke:var(--l12)}
+.bkb-vb-as{font-size:7.5pt;color:var(--bk-grijs);margin:2mm 0 0}
+/* de achterkant als laatste pagina van de pdf om te lezen: geen pagina erna */
+.bkb-achterkant{break-after:auto}
+.bkb-achterkant .bk-sp-achter{height:100%;box-sizing:border-box}
+.bkb-ka-blad{page:kaart-l;height:calc(var(--bk-ph,297mm) - 2mm);width:var(--bk-pw,210mm);overflow:hidden;break-after:page;break-inside:avoid;display:flex;align-items:center;justify-content:center}
+.bkb-ka-svg svg{display:block;width:100%;height:100%;overflow:hidden}
+.bkb-ka-uitleg{font-size:9pt;line-height:1.45;color:var(--bk-grijs);max-width:110mm;margin:0 0 7mm}
+.bkb-ka-lijst{columns:2;column-gap:9mm;font-size:8.5pt;line-height:1.5}
+.bkb-kl-fam{break-inside:avoid;margin:0 0 5mm}
+.bkb-kl-naam{font-weight:600;margin:0 0 1mm}
+.bkb-kl-naam i{display:inline-block;width:2.4mm;height:2.4mm;border-radius:50%;background:var(--lc);margin-right:1.8mm;vertical-align:-.1mm}
+.bkb-kl-fam ul{list-style:none;margin:0;padding:0 0 0 4.2mm}
+.bkb-kl-fam small{font-family:"IBM Plex Mono",monospace;font-size:7pt;color:var(--bk-grijs)}
+.bkb-op-kaart{width:58mm;margin:0 0 4mm}
+.bkb-op-kaart svg{display:block;width:100%;height:auto;border:.25mm solid var(--bk-lijn)}
 :root{--bk-nacht:#14201c;--bk-nacht-inkt:#efe9db;--bk-goud:#c8a45c}
 
 /* de voorkant: de waaier in de familiekleuren op een donkere grond, de titel eronder */
@@ -428,12 +516,12 @@ window.BOEK_CSS_BEELD = String.raw`
 .bkb-om-b .bkb-om-titel{margin-top:24mm}
 .bkb-om-fams{text-align:center;padding:0 14%;margin:6mm 0 0;font-family:var(--bk-sans,"IBM Plex Sans"),sans-serif;font-size:8.5pt;line-height:1.9;letter-spacing:.04em}
 .bkb-om-fams span{color:var(--lc);white-space:nowrap;margin:0 1.4mm;font-weight:600}
-.bkb-om-b .bkb-om-waaier{position:absolute;left:50%;bottom:-30%;width:118%;transform:translateX(-50%)}
+.bkb-om-b .bkb-om-waaier{position:absolute;left:50%;bottom:6%;width:min(86%,calc(var(--bk-ph,297mm) - 108mm));transform:translateX(-50%)} /* de hele waaier, onder de titel (Harrie: de volledige waaier met details) */
 /* C: een oude kaart van de streek als grond, waaier en titel in een kader */
 .bkb-om-c{--bkb-grond:#d9cfb9;--bkb-accent:#7a5c26;--ink:#1d2320;--muted:#56605b;--faint:#8a918d;--rule:#c9bfa8;--surface:#f6f0e2;--sunk:#e6dcc6;--gold:#a8823a;--accent:#1d2320;--accent-ink:#f6f0e2;--fan-gap:#f6f0e2;
   background-image:linear-gradient(rgba(217,207,185,.55),rgba(217,207,185,.55)),var(--bkb-kaart,none);background-size:cover;background-position:center;justify-content:center;align-items:center}
 .bkb-om-kader{width:80%;background:rgba(246,240,226,.94);border:.35mm solid #8a6a2e;outline:.2mm solid #8a6a2e;outline-offset:1.6mm;padding:12mm 9mm 9mm;display:flex;flex-direction:column;align-items:center;gap:6mm}
-.bkb-om-c .bkb-om-waaier{width:92%}
+.bkb-om-c .bkb-om-waaier{width:98%} /* groot genoeg voor de namen van de grootouders (6 pt) */
 /* rug en achterkant per omslag */
 .bkb-sp-a{background:#17221e;color:#efe9db}
 .bkb-sp-b{background:#f3ebd9;color:#1d2320}.bkb-sp-b .bk-sp-fam span,.bkb-sp-b .bk-sp-versie{color:#56605b}.bkb-sp-b .bk-sp-rug{border-color:#c9bfa8}.bkb-sp-b .bk-sp-rug span{color:#1d2320}
