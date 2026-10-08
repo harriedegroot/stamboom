@@ -14,7 +14,7 @@
    40..43-alies-*    de stamboom van Alies Hoekstra
    Tijdperken, begrippen, plaatsen en het wijzigingslog gelden voor alle drie de stambomen.
    ===================================================================== */
-const VERSION = "Versie 13 · 8 oktober 2026";
+const VERSION = "Versie 15 · 8 oktober 2026";
 const OA = "https://www.openarchieven.nl/";
 const RKF_SCAN = n => `https://archiefrkfriesland.nl/archiefdata/advertenties/${n}.jpg`;
 const PEOPLE = [];
@@ -81,7 +81,7 @@ const CONTEXT = [
 ];
 
 const GLOSSARY = [
-  ["Kwartierstaat", "Overzicht van alle voorouders van één persoon. Elke voorouder krijgt een kwartiernummer (kw): de vader van nummer n is 2n, de moeder 2n+1."],
+  ["Kwartierstaat", "De lijst van alle voorouders van één persoon, generatie voor generatie: ouders, grootouders, overgrootouders enzovoort. Broers, zussen en andere verwanten staan er niet in. Zie ook kwartiernummer.", ["Wikipedia, Kwartierstaat", "https://nl.wikipedia.org/wiki/Kwartierstaat"]],
   ["Kwartierverlies", "Als dezelfde voorouder via twee lijnen in de kwartierstaat voorkomt, omdat verre familie met elkaar trouwde."],
   ["Patroniem", "Vadersnaam als tweede naam: Thijs Hilkes is Thijs, zoon van Hilke. In Friesland tot ver in de 19e eeuw gebruikelijk, ook naast een achternaam."],
   ["Naamsaanneming", "In 1811–1812 moesten families een vaste achternaam laten registreren. In Friesland zijn deze registers bewaard bij Tresoar."],
@@ -122,6 +122,6 @@ const GLOSSARY = [
   ["Watermolenaar", "Molenaar van een watermolen, die het water uit de polder maalde.", ["Woordenboek der Nederlandsche Taal, WATERMOLEN", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M084112"]],
   ["Kofschipper", "Schipper van een kof: een zeilschip voor binnenvaart en kustvaart, van het type van de tjalk.", ["Woordenboek der Nederlandsche Taal, KOF", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M034542"]],
   ["Vroedsman", "Lid van een vroedschap, een bestuurscollege; het woord werd vooral in Friesland gebruikt.", ["Woordenboek der Nederlandsche Taal, VROED", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M082914"]],
-  ["Kwartiernummer (kw)", "Het nummer van een voorouder in de kwartierstaat. De persoon van wie de stamboom uitgaat heeft nummer 1; de vader van nummer n heeft nummer 2n, de moeder 2n + 1. Behalve nummer 1 hebben mannen dus even en vrouwen oneven nummers.", ["Wikipedia, Kwartierstaat", "https://nl.wikipedia.org/wiki/Kwartierstaat"]],
+  ["Kwartiernummer (kw)", "Het vaste nummer van een voorouder in de kwartierstaat. De persoon van wie de stamboom uitgaat heeft nummer 1; de vader van nummer n heeft nummer 2n, de moeder 2n + 1. Behalve nummer 1 hebben mannen dus even en vrouwen oneven nummers, en aan het nummer zie je de generatie: 8 tot en met 15 zijn de overgrootouders.", ["Wikipedia, Kwartierstaat", "https://nl.wikipedia.org/wiki/Kwartierstaat"]],
   ["Politiedienaar", "Politieman van lage rang.", ["Woordenboek der Nederlandsche Taal, POLITIE", "https://gtb.ivdnt.org/iWDB/search?actie=article&wdb=WNT&id=M055130"]]
 ];
