@@ -2373,6 +2373,604 @@ const IMAGES = [
 "file": "File:Zorgvlied-RK kerk.JPG"
 },
 {
+"id": "nieuw-k10-akte-van-bekendheid-1825-namle-willems",
+"soort": "persoon",
+"key": "244",
+"src": "img/nieuw-k10-akte-van-bekendheid-1825-namle-willems.jpg",
+"thumb": "img/t/nieuw-k10-akte-van-bekendheid-1825-namle-willems.jpg",
+"w": 1400,
+"h": 634,
+"t": "Bij het huwelijk van Johannes Namles Asma in 1825 verklaren getuigen dat zijn vader Namle Willems in Sondel overleed, op 13 oktober 1794.",
+"desc": "",
+"maker": "Vrederechter kanton Lemmer",
+"datum": "1825-04-16",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/5d294c9d-ed8e-cc9a-7de0-6c7492b0c4a9",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Huwelijksbijlagen Hemelumer Oldeferd 1825 (toegang 30-17, inv. 40), akte 5",
+"kws": [
+244,
+122
+],
+"why": {
+"244": "De akte van bekendheid van 1825 legt vast dat hij op 13 oktober 1794 in Sondel overleed.",
+"122": "De akte van bekendheid bij zijn huwelijk (1825) noemt het overlijden van zijn vader."
+}
+},
+{
+"id": "nieuw-k10-autorisatie-1664-kinderen-tryntie-lieuckema",
+"soort": "persoon",
+"key": "833",
+"src": "img/nieuw-k10-autorisatie-1664-kinderen-tryntie-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-autorisatie-1664-kinderen-tryntie-lieuckema.jpg",
+"w": 1400,
+"h": 820,
+"t": "Het autorisatieboek van Wonseradeel, 20 januari 1664: curatoren over de kinderen van wijlen Tryntie Lieuckema bij Jacobus van Spanga, onder wie Geertie Spanga.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1664-01-20",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/3d28ef3d-d4bf-479f-9309-643dfc7f6d8b",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Autorisatieboek Nedergerecht Wonseradeel 1652–1670 (toegang 13-43, inv. 69), opname 101",
+"kws": [
+833,
+1667,
+1666
+],
+"why": {
+"833": "In januari 1664 krijgen zij en haar broers en zussen curatoren; zij wordt hier met name genoemd.",
+"1667": "In januari 1664 krijgen haar nagelaten kinderen curatoren.",
+"1666": "In januari 1664 krijgen zijn kinderen van wijlen Tryntie Lieuckema curatoren."
+}
+},
+{
+"id": "nieuw-k10-inventaris-1679-sterfhuis-aeltien-jans-joure",
+"soort": "persoon",
+"key": "a-2349",
+"src": "img/nieuw-k10-inventaris-1679-sterfhuis-aeltien-jans-joure.jpg",
+"thumb": "img/t/nieuw-k10-inventaris-1679-sterfhuis-aeltien-jans-joure.jpg",
+"w": 1027,
+"h": 875,
+"t": "De boedelbeschrijving van februari 1679 ten sterfhuize van Aeltien Jans, weduwe van Jan Tiebbes, 'in leven burger en coopman op de Flecke Jouwer'.",
+"desc": "",
+"maker": "Nedergerecht Haskerland",
+"datum": "1679-02-26",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/9cffd6bc-d6e4-4639-b6cd-a1e679b3dc0f",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Haskerland, inventarisatieboek 1673–1681 (toegang 13-17, inv. 50), opname 184",
+"kws": [
+"a-2349",
+"a-2348"
+],
+"why": {
+"a-2349": "De beschrijving van haar boedel, februari 1679.",
+"a-2348": "De boedelbeschrijving van 1679 noemt hem 'in leven burger en coopman op de Flecke Jouwer'."
+}
+},
+{
+"id": "nieuw-k10-kerk-sondel-1721",
+"soort": "persoon",
+"key": "a-314",
+"src": "img/nieuw-k10-kerk-sondel-1721.jpg",
+"thumb": "img/t/nieuw-k10-kerk-sondel-1721.jpg",
+"w": 381,
+"h": 500,
+"t": "De kerk van Sondel in 1721, met het opschrift 'Sondel in Gaesterlant 1721'. Hier waren Sipke Jans en Gertie Gerrits lidmaat.",
+"desc": "",
+"maker": "onbekende tekenaar",
+"datum": "1721",
+"lic": "Geen rechtenvermelding in de metadata; Tresoar, Fries Fotoarchief. Tekening uit 1721; geen auteursrecht.",
+"licUrl": "",
+"bron": "http://collections.tresoar.nl/digital/collection/TRLffa/id/31300",
+"bronNaam": "Tresoar, Fries Fotoarchief (collectie Twerda)",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Fries Fotoarchief, nr. 106060 (dia van een tekening, 1721)",
+"kws": [
+"a-314",
+"a-315"
+],
+"why": {
+"a-314": "Zij waren lidmaat van de kerk van Sondel (1749 en 1752); dit is die kerk in 1721.",
+"a-315": "Zij waren lidmaat van de kerk van Sondel (1749 en 1752); dit is die kerk in 1721."
+}
+},
+{
+"id": "nieuw-k10-krant-1926-klokken-oosterwierum",
+"soort": "persoon",
+"key": "24",
+"src": "img/nieuw-k10-krant-1926-klokken-oosterwierum.jpg",
+"thumb": "img/t/nieuw-k10-krant-1926-klokken-oosterwierum.jpg",
+"w": 780,
+"h": 880,
+"t": "Leeuwarder Nieuwsblad, 8 mei 1926: in Oosterwierum worden twee nieuwe klokken gewijd. Op de grootste staat: 'Wiro is mijn naam. G. M. Boersma en E. Boersma-IJpman hebben mij geschonken'.",
+"desc": "",
+"maker": "Leeuwarder Nieuwsblad",
+"datum": "1926-05-08",
+"lic": "Geen rechtenvermelding bij het krantenbeeld op Delpher (KB).",
+"licUrl": "",
+"bron": "https://resolver.kb.nl/resolve?urn=ddd:010732950:mpeg21:a0164",
+"bronNaam": "Delpher (KB)",
+"artikel": "",
+"file": "",
+"ref": "Leeuwarder Nieuwsblad, 8 mei 1926, p. 13 (Delpher)",
+"kws": [
+24
+],
+"why": {
+"24": "Het bericht over de klokken van Oosterwierum staat bij zijn levensverhaal: 'G. M. Boersma' die de klok schonk, is vrijwel zeker zijn broer Gerben."
+}
+},
+{
+"id": "nieuw-k10-lidmaten-bovenknijpe-1771-douwe-sytzes",
+"soort": "persoon",
+"key": "a-268",
+"src": "img/nieuw-k10-lidmaten-bovenknijpe-1771-douwe-sytzes.jpg",
+"thumb": "img/t/nieuw-k10-lidmaten-bovenknijpe-1771-douwe-sytzes.jpg",
+"w": 700,
+"h": 340,
+"t": "Het lidmatenregister van de doopsgezinden in de Bovenknijpe: 'Douwe Sijtses op de belijdenis sijns geloofs gedoopt 1771', en daaronder 'overleden 1795'.",
+"desc": "",
+"maker": "Doopsgezinde Gemeente Bovenknijpe",
+"datum": "1771",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_28%2FNL-0400410000_28_0609%2FNL-0400410000_28_0609_000006.jp2",
+"bronNaam": "Tresoar",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Lidmatenregister Doopsgezinde Gemeente Bovenknijpe (toegang 28, inv. 609), opname 6",
+"kws": [
+"a-268"
+],
+"why": {
+"a-268": "Zijn doop op belijdenis (1771) en zijn overlijden (1795) in het lidmatenregister van de doopsgezinden in de Bovenknijpe."
+}
+},
+{
+"id": "nieuw-k10-lidmaten-bovenknijpe-1813-andries-douwes-douwenga",
+"soort": "persoon",
+"key": "a-134",
+"src": "img/nieuw-k10-lidmaten-bovenknijpe-1813-andries-douwes-douwenga.jpg",
+"thumb": "img/t/nieuw-k10-lidmaten-bovenknijpe-1813-andries-douwes-douwenga.jpg",
+"w": 680,
+"h": 1120,
+"t": "Het lidmatenregister van de doopsgezinden in de Bovenknijpe: Andries Douwes Douwenga wordt op 14 februari 1813 op belijdenis gedoopt.",
+"desc": "",
+"maker": "Doopsgezinde Gemeente Bovenknijpe",
+"datum": "1813-02-14",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_28%2FNL-0400410000_28_0609%2FNL-0400410000_28_0609_000003.jp2",
+"bronNaam": "Tresoar",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Lidmatenregister Doopsgezinde Gemeente Bovenknijpe (toegang 28, inv. 609), opname 3",
+"kws": [
+"a-134"
+],
+"why": {
+"a-134": "Zijn doop op belijdenis, 14 februari 1813, in het lidmatenregister van de doopsgezinden in de Bovenknijpe."
+}
+},
+{
+"id": "nieuw-k10-lidmaten-sondel-1752-sipke-jans-gertie-gerrits",
+"soort": "persoon",
+"key": "a-314",
+"src": "img/nieuw-k10-lidmaten-sondel-1752-sipke-jans-gertie-gerrits.jpg",
+"thumb": "img/t/nieuw-k10-lidmaten-sondel-1752-sipke-jans-gertie-gerrits.jpg",
+"w": 760,
+"h": 470,
+"t": "De lidmatenlijst van 1752, onder 'In Sondel': 'Sipke Jans & Gertie Gerrits E:L:', echtelieden.",
+"desc": "",
+"maker": "Hervormde gemeente Oudemirdum, Nijemirdum en Sondel",
+"datum": "1752",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:72c3cf13-8c1c-4bb9-a638-e4e813f6b7bf",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Lidmaten Oudemirdum, Nijemirdum en Sondel (toegang 28, inv. 300), akte 615",
+"kws": [
+"a-314",
+"a-315"
+],
+"why": {
+"a-314": "Zij staan in 1752 samen als echtelieden ('E:L:') op de lidmatenlijst van Sondel.",
+"a-315": "Zij staan in 1752 samen als echtelieden ('E:L:') op de lidmatenlijst van Sondel."
+}
+},
+{
+"id": "nieuw-k10-makkum-doniakerk-interieur-1965",
+"soort": "persoon",
+"key": "1666",
+"src": "img/nieuw-k10-makkum-doniakerk-interieur-1965.jpg",
+"thumb": "img/t/nieuw-k10-makkum-doniakerk-interieur-1965.jpg",
+"w": 1400,
+"h": 1124,
+"t": "De kerk van Makkum in 1965. Op de balk staat dat Bonno van Donia hier in 1660 de eerste steen legde. Volgens Hessel de Walle lag in deze kerk de grafsteen van Jacob Spanga en de familie Lieuwkema.",
+"desc": "",
+"maker": "Rijksdienst voor het Cultureel Erfgoed",
+"datum": "1965-07",
+"lic": "CC BY-SA 4.0",
+"licUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+"bron": "https://commons.wikimedia.org/wiki/File:Interieur_naar_het_oosten_-_Makkum_-_20150350_-_RCE.jpg",
+"bronNaam": "Rijksdienst voor het Cultureel Erfgoed via Wikimedia Commons",
+"artikel": "",
+"file": "",
+"ref": "RCE, beeldbank, objectnummer 20150350",
+"kws": [
+1666,
+6668,
+6669
+],
+"why": {
+"1666": "Hij werd in 1679 in de kerk van Makkum begraven; De Walle noteerde zijn grafsteen, die hij deelt met de familie Lieuwkema.",
+"6668": "Zijn grafsteen (1608) lag volgens De Walle in de kerk van Makkum, onder dezelfde steen als Jacob Spanga. Deze kerk werd in 1660 gebouwd; of de steen er nog ligt, is niet bekend.",
+"6669": "Haar naam (1625) staat volgens De Walle op dezelfde grafsteen in de kerk van Makkum. Deze kerk werd in 1660 gebouwd; of de steen er nog ligt, is niet bekend."
+}
+},
+{
+"id": "nieuw-k10-naamsaanneming-1811-willem-namlis-asma",
+"soort": "persoon",
+"key": "244",
+"src": "img/nieuw-k10-naamsaanneming-1811-willem-namlis-asma.jpg",
+"thumb": "img/t/nieuw-k10-naamsaanneming-1811-willem-namlis-asma.jpg",
+"w": 1400,
+"h": 1048,
+"t": "Het register van naamsaanneming, 26 december 1811: Willem Namlis neemt de familienaam Asma aan, met zijn eigen handtekening.",
+"desc": "",
+"maker": "Maire van Doniawerstal",
+"datum": "1811-12-26",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/eea1390d-5e42-4c10-8a74-ff750d0a8b89",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Registers van naamsaanneming (toegang 29), inv. 79",
+"kws": [
+244,
+122
+],
+"why": {
+"244": "Zijn zoon Willem Namlis neemt in 1811 de familienaam Asma aan.",
+"122": "Zijn broer Willem Namlis neemt in 1811 de familienaam Asma aan, de naam die Johannes ook gaat dragen."
+}
+},
+{
+"id": "nieuw-k10-nedergerecht-harlingen-1692-wezen-swerms",
+"soort": "persoon",
+"key": "a-2330",
+"src": "img/nieuw-k10-nedergerecht-harlingen-1692-wezen-swerms.jpg",
+"thumb": "img/t/nieuw-k10-nedergerecht-harlingen-1692-wezen-swerms.jpg",
+"w": 782,
+"h": 1200,
+"t": "Het nedergerecht van Harlingen, maart 1692: curatoren over de weeskinderen van wijlen Seerp Lamberts Swerms en Fookeltie Buwes.",
+"desc": "",
+"maker": "Nedergerecht Harlingen",
+"datum": "1692-03-15",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:2cc2576c-6e11-45ff-b62d-afaad4215f6e",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Harlingen (toegang 13-16, inv. 115), opname 94",
+"kws": [
+"a-2330",
+"a-2331",
+"a-1165"
+],
+"why": {
+"a-2330": "In maart 1692 krijgen hun weeskinderen curatoren.",
+"a-2331": "In maart 1692 krijgen hun weeskinderen curatoren.",
+"a-1165": "In maart 1692 krijgen zij en haar broers en zussen curatoren, na de dood van haar ouders."
+}
+},
+{
+"id": "nieuw-k10-nedergerecht-haskerland-1679-wezen-jan-tiebbes",
+"soort": "persoon",
+"key": "a-2348",
+"src": "img/nieuw-k10-nedergerecht-haskerland-1679-wezen-jan-tiebbes.jpg",
+"thumb": "img/t/nieuw-k10-nedergerecht-haskerland-1679-wezen-jan-tiebbes.jpg",
+"w": 760,
+"h": 640,
+"t": "Het nedergerecht van Haskerland, 25 februari 1679: curatoren over de zes weeskinderen van wijlen Jan Tiebbes en Aeltie Jans uit Joure, op verzoek van Trijntie (21) en Tiebbe Jans (19). Onderaan staat de handtekening van Wisse Tiebbes.",
+"desc": "",
+"maker": "Nedergerecht Haskerland",
+"datum": "1679-02-25",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:94a7370f-83a6-4a30-8ab1-d4accadee280",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Haskerland (toegang 13-17, inv. 31), fol. 40",
+"kws": [
+"a-2348",
+"a-2349",
+"a-1174"
+],
+"why": {
+"a-2348": "In februari 1679 krijgen zijn zes weeskinderen curatoren.",
+"a-2349": "In februari 1679 krijgen haar zes weeskinderen curatoren.",
+"a-1174": "Hij vraagt in februari 1679, 19 jaar oud, om curatoren voor zichzelf en zijn broers en zussen."
+}
+},
+{
+"id": "nieuw-k10-nedergerecht-schoterland-1758-kinderen-evert-clases",
+"soort": "persoon",
+"key": "a-756",
+"src": "img/nieuw-k10-nedergerecht-schoterland-1758-kinderen-evert-clases.jpg",
+"thumb": "img/t/nieuw-k10-nedergerecht-schoterland-1758-kinderen-evert-clases.jpg",
+"w": 780,
+"h": 1200,
+"t": "Het nedergerecht van Schoterland, 18 januari 1758: curatoren over Klaas, Rouke en Jacob Everts, de kinderen van wijlen Evert Clases en Janke Clases uit Nieuweschoot.",
+"desc": "",
+"maker": "Nedergerecht Schoterland",
+"datum": "1758-01-18",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:b86d762a-2df0-2360-f554-df234acf1dd1",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Schoterland (toegang 13-32, inv. 69), fol. 256",
+"kws": [
+"a-756",
+"a-757",
+"a-378"
+],
+"why": {
+"a-756": "Kort na hun dood (1757 en 1758) krijgen hun kinderen curatoren.",
+"a-757": "Kort na hun dood (1757 en 1758) krijgen hun kinderen curatoren.",
+"a-378": "In januari 1758 krijgt hij met zijn broers curatoren, na de dood van zijn ouders."
+}
+},
+{
+"id": "nieuw-k10-nedergerecht-schoterland-1763-wieger-en-jan-andries",
+"soort": "persoon",
+"key": "a-270",
+"src": "img/nieuw-k10-nedergerecht-schoterland-1763-wieger-en-jan-andries.jpg",
+"thumb": "img/t/nieuw-k10-nedergerecht-schoterland-1763-wieger-en-jan-andries.jpg",
+"w": 1219,
+"h": 1000,
+"t": "Het nedergerecht van Schoterland, 19 januari 1763: curatoren over Wieger en Jan Andries, kinderen van Jetske Bonnes bij haar overleden man Andries Siesses.",
+"desc": "",
+"maker": "Nedergerecht Schoterland",
+"datum": "1763-01-19",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:a8694d72-5d84-c6ec-3bf1-6ed0722854b7",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Schoterland (toegang 13-32, inv. 69), fol. 293",
+"kws": [
+"a-270",
+"a-540",
+"a-541"
+],
+"why": {
+"a-270": "In januari 1763 krijgen hij en zijn broer Jan curatoren.",
+"a-540": "In januari 1763 krijgen hun zonen Wieger en Jan curatoren; Andries Siesses was toen al overleden.",
+"a-541": "In januari 1763 krijgen hun zonen Wieger en Jan curatoren; Andries Siesses was toen al overleden."
+}
+},
+{
+"id": "nieuw-k10-nedergerecht-schoterland-1797-kinderen-klaas-everts",
+"soort": "persoon",
+"key": "a-378",
+"src": "img/nieuw-k10-nedergerecht-schoterland-1797-kinderen-klaas-everts.jpg",
+"thumb": "img/t/nieuw-k10-nedergerecht-schoterland-1797-kinderen-klaas-everts.jpg",
+"w": 781,
+"h": 560,
+"t": "Het nedergerecht van Schoterland, 15 april 1797: curatoren over Jelle en Janke Klazes, de kinderen van wijlen Klaas Everts en Popkjen Jelles uit Katlijk.",
+"desc": "",
+"maker": "Nedergerecht Schoterland",
+"datum": "1797-04-15",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://www.openarchieven.nl/frl:d3b5ef86-c4dc-392a-284d-f9ab239990f4",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Nedergerecht Schoterland (toegang 13-32, inv. 69), fol. 425",
+"kws": [
+"a-378",
+"a-379"
+],
+"why": {
+"a-378": "In april 1797 krijgen hun minderjarige kinderen Jelle en Janke curatoren; zij waren toen allebei overleden.",
+"a-379": "In april 1797 krijgen hun minderjarige kinderen Jelle en Janke curatoren; zij waren toen allebei overleden."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1630-boedel-tiete-lieuckema",
+"soort": "persoon",
+"key": "3334",
+"src": "img/nieuw-k10-weesboek-1630-boedel-tiete-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1630-boedel-tiete-lieuckema.jpg",
+"w": 1400,
+"h": 1009,
+"t": "Het weesboek van Wonseradeel, 19 januari 1630: de boedel van wijlen Tiete Lieuckema wordt beschreven voor zijn weduwe Foockel Watses en hun kinderen, onder wie 'Trintie Tiete[s] Lieuckema olt 8 jaer'.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1630-01-19",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_13-43%2FNL-0400410000_13-43_0126%2FNL-0400410000_13-43_0126_000035.jp2",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1630–1631 (toegang 13-43, inv. 126), fol. 35, opname 34",
+"kws": [
+3334,
+3335,
+1667
+],
+"why": {
+"3334": "Het weesboek beschrijft in januari 1630 zijn nagelaten boedel, voor zijn weduwe en kinderen.",
+"3335": "Het weesboek noemt haar in januari 1630 als zijn nagelaten weduwe.",
+"1667": "Het weesboek noemt haar in januari 1630 als dochter van wijlen Tiete Lieuckema, 'olt 8 jaer'."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1636-weeskinderen-tiete-lieuckema",
+"soort": "persoon",
+"key": "3335",
+"src": "img/nieuw-k10-weesboek-1636-weeskinderen-tiete-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1636-weeskinderen-tiete-lieuckema.jpg",
+"w": 1400,
+"h": 2156,
+"t": "Het weesboek van Wonseradeel, 24 mei 1636: een akte over de weeskinderen van Tiete Lieuckema en Foockel Watses.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1636-05-24",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_13-43%2FNL-0400410000_13-43_0126%2FNL-0400410000_13-43_0126_000040.jp2",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1630–1631 (toegang 13-43, inv. 126), fol. 40, opname 39",
+"kws": [
+3335,
+3334,
+1667
+],
+"why": {
+"3335": "Het weesboek gaat in mei 1636 over haar kinderen met wijlen Tiete Lieuckema.",
+"3334": "Het weesboek gaat in mei 1636 over zijn weeskinderen.",
+"1667": "Het weesboek gaat in mei 1636 over haar en de andere weeskinderen van Tiete Lieuckema."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1647-handtekeningen-spanga-lieuckema",
+"soort": "persoon",
+"key": "1666",
+"src": "img/nieuw-k10-weesboek-1647-handtekeningen-spanga-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1647-handtekeningen-spanga-lieuckema.jpg",
+"w": 1005,
+"h": 360,
+"t": "Hun eigen handtekeningen in het weesboek van Wonseradeel, 11 november 1647: Coop Jacobs Spanga, Meye Lieuckema en Trintie Lieuckema. In datzelfde jaar trouwden Coop en Trintie.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1647-11-11",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_13-43%2FNL-0400410000_13-43_0138%2FNL-0400410000_13-43_0138_000188.jp2",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1646–1647 (toegang 13-43, inv. 138), fol. 27 e.v., opname 188",
+"kws": [
+1666,
+1667
+],
+"why": {
+"1666": "Zijn eigen handtekening, Coop Jacobs Spanga, in het weesboek van november 1647.",
+"1667": "Haar eigen handtekening, Trintie Lieuckema, in het weesboek van november 1647."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1648-sijn-susters-man",
+"soort": "persoon",
+"key": "1666",
+"src": "img/nieuw-k10-weesboek-1648-sijn-susters-man.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1648-sijn-susters-man.jpg",
+"w": 960,
+"h": 1230,
+"t": "Het weesboek van Wonseradeel, 9 november 1648: Meye Lieuckema kiest Coop Jacobs Spanga, 'sijn susters man', tot zijn curator. Zo blijkt dat Trijntje Lieuckema de vrouw van Jacob Spanga was.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1648-11-09",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://tresoar-images.memorix.nl/frl/download/fullsize/NL-0400410000%2FNL-0400410000_13-43%2FNL-0400410000_13-43_0138%2FNL-0400410000_13-43_0138_000188.jp2",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1646–1647 (toegang 13-43, inv. 138), opname 188",
+"kws": [
+1666,
+1667
+],
+"why": {
+"1666": "In november 1648 kiest zijn zwager Meye Lieuckema hem tot curator, als 'sijn susters man'.",
+"1667": "Haar broer Meye noemt Coop Jacobs Spanga in november 1648 'sijn susters man'."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1664-omslag-inventaris-tryntie-lieuckema",
+"soort": "persoon",
+"key": "1667",
+"src": "img/nieuw-k10-weesboek-1664-omslag-inventaris-tryntie-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1664-omslag-inventaris-tryntie-lieuckema.jpg",
+"w": 1400,
+"h": 1612,
+"t": "Het omslag van de inventaris uit 1664: 'Inventaris van Tryntie Lieuckema goederen, overleden tot Maccum'.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1664",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/5059a2e2-a309-4e43-9b2e-5a59e5b7fb6e",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1664 (toegang 13-43, inv. 153), opname 402",
+"kws": [
+1667
+],
+"why": {
+"1667": "Het omslag van de inventaris van haar boedel, 1664."
+}
+},
+{
+"id": "nieuw-k10-weesboek-1664-sterfhuis-tryntie-lieuckema",
+"soort": "persoon",
+"key": "1667",
+"src": "img/nieuw-k10-weesboek-1664-sterfhuis-tryntie-lieuckema.jpg",
+"thumb": "img/t/nieuw-k10-weesboek-1664-sterfhuis-tryntie-lieuckema.jpg",
+"w": 1400,
+"h": 1462,
+"t": "Het weesboek van Wonseradeel, 17 november 1664: in Makkum wordt de boedel van wijlen Tryntie Lieuckema beschreven, op verzoek van haar weduwnaar Jacob van Spanga, voor hun kinderen.",
+"desc": "",
+"maker": "Nedergerecht Wonseradeel",
+"datum": "1664-11-17",
+"lic": "Geen rechtenvermelding bij de scan op AlleFriezen. Archiefstuk (Tresoar) van vóór 1900; geen auteursrecht.",
+"licUrl": "",
+"bron": "https://allefriezen.nl/zoeken/deeds/5059a2e2-a309-4e43-9b2e-5a59e5b7fb6e",
+"bronNaam": "Tresoar via AlleFriezen",
+"artikel": "",
+"file": "",
+"ref": "Tresoar, Weesboek Nedergerecht Wonseradeel 1664 (toegang 13-43, inv. 153), fol. 31, opname 389",
+"kws": [
+1667,
+1666,
+833
+],
+"why": {
+"1667": "Het weesboek beschrijft in november 1664 haar nagelaten boedel in Makkum.",
+"1666": "Hij laat in november 1664 de boedel van zijn overleden eerste vrouw beschrijven.",
+"833": "De boedel van haar moeder wordt in november 1664 beschreven voor haar en haar broers en zussen."
+}
+},
+{
 "id": "nieuw-k6-krant-1817-liauckema-scheltinga-state",
 "soort": "persoon",
 "key": "104",
