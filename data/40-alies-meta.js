@@ -97,6 +97,8 @@ Object.assign(PLACES, {
   "Tjerkgaast": P_(52.904, 5.679, "Doniawerstal", FR),
   "Drachten": P_(53.109, 6.085, "Smallingerland", FR),
   "Nijeholtwolde": P_(52.895, 5.986, "Weststellingwerf", FR),
+  "Nijeholtpade": P_(52.913, 6.078, "Weststellingwerf", FR),
+  "Giethoorn": P_(52.739, 6.078, "Giethoorn", OV),
   "Nijeberkoop": P_(52.959, 6.191, "Ooststellingwerf", FR),
   "Doniawerstal": P_(52.957, 5.723, "Doniawerstal", FR, { kind: "gemeente", seat: "Langweer" }),
   "Utingeradeel": P_(53.049, 5.840, "Utingeradeel", FR, { kind: "gemeente", seat: "Akkrum" }),

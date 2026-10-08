@@ -112,12 +112,13 @@ ALIES.STORIES.push(
   ] },
 { id: "geloof-alies", title: "Doopsgezind, hervormd en hernhutter", art: "church", line: null,
   lede: "De families van Alies waren protestants. Maar onder de hervormde boeren en arbeiders zaten ook doopsgezinden, mensen die pas als volwassene werden gedoopt, en in Akkrum een familie hernhutters.",
-  people: [208, 209, 104, 106, 134, 200, 602, 242, 197, 132, 99, 124, 67, 504, 505, 252, 253, 126, 1010, 360, 272, 196, 64, 214, 174],
+  people: [208, 209, 104, 106, 134, 200, 602, 242, 197, 132, 99, 124, 67, 504, 505, 252, 253, 126, 1010, 360, 272, 196, 64, 214, 174, 270],
   parts: [
     { h: "Doopsgezinden in Joure en Broek", st: "A", p: [
       "Doopsgezinden doopten geen kinderen: je werd lid door als volwassene belijdenis te doen. Sjoerd Sybes en Fetje Klazes werden zo in 1761 gedoopt in de doopsgezinde gemeente 'het Oude Huis' in Joure, hun zoon Durk Sjoerds de Vries in 1799.",
       "Durk werd een van de rijkste boeren in de stamboom. In 1832 bezat hij met anderen ongeveer 58 hectare bij Langweer en Broek, met een huis en twee molens. Bij de boedelscheiding van 1863 kregen zijn kinderen en kleinkinderen samen ruim 77.000 gulden aan land en huizen.",
-      "Al in 1740 was Gooye Gerbens lidmaat van de doopsgezinde Vlaamse gemeente in Grouw. Ook Thomas Engelsma in Akmarijp was doopsgezind, en Andries Douwenga, boer in De Knipe, was in 1815 diaken van de doopsgezinde gemeente daar."
+      "Al in 1740 was Gooye Gerbens lidmaat van de doopsgezinde Vlaamse gemeente in Grouw. Ook Thomas Engelsma in Akmarijp was doopsgezind, en Andries Douwenga, boer in De Knipe, was in 1815 diaken van de doopsgezinde gemeente daar.",
+      { t: "Zijn schoonvader Wieger Andries uit Brongerga, die in 1811 de naam De Boer aannam, werd in februari 1801 in diezelfde gemeente gedoopt op belijdenis, 63 jaar oud. In het doopregister staat er later bij dat hij op 25 oktober 1822 overleed.", k: "afgeleid" }
     ] },
     { h: "Gedoopt als volwassene", st: "A", p: [
       "In de hervormde lidmatenboeken staan opvallend veel voorouders die pas als volwassene werden gedoopt. Sjoerd Okkes liet zich in 1744 dopen, samen met twee kinderen 'van enige jaren oud'. Tjibbe Ales Talma werd in 1769 gedoopt in Oldeboorn, Acke Piers in 1772 in Goingarijp, en Ype Annes Bosma in 1785, vier jaar na zijn bruiloft.",
@@ -139,12 +140,17 @@ ALIES.STORIES.push(
   ] },
 { id: "buren", title: "Buren zonder het te weten", art: "map", line: null,
   lede: "Harrie en Alies hebben, voor zover bekend, geen gemeenschappelijke voorouders. Toch kruisten hun families elkaar vaak: in dezelfde dorpen, in dezelfde jaren, één keer zelfs twee dagen na elkaar.",
-  people: [11, 22, 23, 44, 187, 374, 375, 381, 186, 324, 325, 85, 84, 124, 90, 156, 146, 70, 8, 9, 32],
+  people: [11, 22, 23, 44, 187, 374, 375, 381, 186, 324, 325, 85, 84, 124, 90, 156, 146, 70, 8, 9, 32, 360, 356, 357],
   parts: [
     { h: "Nieuweschoot, december 1892", st: "A", p: [
       "Op 15 december 1892 werd in Nieuweschoot bij Heerenveen Janke Wietsma geboren, dochter van Tjeerd Wietsma en Jantje Jongbloed. Twee dagen later, op 17 december, werd in hetzelfde dorp Elisabeth Regina Kingma geboren, dochter van de katholieke boer Jan Gerrits Kingma en Alida Meyners. In het geboorteregister van Schoterland staan ze vlak na elkaar: akte 363 en 365.",
       "Janke trouwde in 1920 met Franke Akkerman, Elisabeth in 1919 met Kornelis de Groot. Ze overleden allebei in Heerenveen, in 1977 en 1983.",
       { t: "Janke is de overgrootmoeder van Alies, Elisabeth die van Harrie. Of de twee families elkaar in Nieuweschoot kenden, weten we niet.", k: "afgeleid" }
+    ] },
+    { h: "Eén kerkboek in Oudeschoot, 1746–1758", st: "A", p: [
+      "In het kerkboek van de hervormde gemeente van Oudeschoot staan in dezelfde jaren voorouders van allebei. Jan Jeips, voorvader van Alies, staat er in 1746 als diaken, toen hij in Mildam woonde, en in 1756 werd hij in Oudeschoot bevestigd als ouderling.",
+      "Daartussen, op 8 juni 1755, trouwden in die kerk Jan Westendorp uit Steenwijk en Aukje Lyklama uit Oudeschoot, voorouders van Harrie. Ze waren katholiek, maar in die tijd moest een katholiek paar wettig trouwen in de hervormde kerk of voor het gerecht. In 1758 trouwden er ook Anne Keimpes en Marrigjen Annes, weer voorouders van Alies.",
+      { t: "Of de ouderling en het katholieke bruidspaar elkaar kenden, staat nergens. Ze staan wel in hetzelfde boek van een kleine dorpskerk.", k: "afgeleid" }
     ] },
     { h: "Follega, 1765–1767", st: "B", p: [
       "In het dorpje Follega bij Lemmer trouwden in maart 1765 Sybe Attes en Tjitske Idzes, voorouders van Alies. Een jaar later, in april 1766, trouwden daar Mintje Pieters en Annechien Noorlans, voorouders van Harrie.",
@@ -212,7 +218,11 @@ ALIES.FACTS.push(
   { kw: 137, y: "1812", t: "Haar eigen handtekening", x: "Janke Punter, arbeidersdochter, werd in 1807 zwanger weduwe. Onder haar tweede huwelijksakte van 1812 zette ze zelf haar naam: rond 1800 voor een vrouw van haar stand niet vanzelfsprekend.", st: "A" },
   { kw: 147, y: "1806", t: "Een gouden oorijzer", x: "Wat Baukje Sjoerds de Vries had geërfd, blijkt uit de nalatenschap van haar dochtertje Sjoerdje (1806): een vierde van een boerderij in Broek, kleine aandelen in huizen in Joure, en een gouden oorijzer.", st: "B" },
   { kw: 36, y: "ca. 1870", t: "In de klas bij zijn neef", x: "Rond 1870 zat Jelte Hepkema, zoon van Hepke Hepkema, op de lagere school in Doniaga, waar zijn volle neef Jacob Hepkema onderwijzer was: de latere krantenmaker. Er is een klassenfoto bewaard.", st: "A" },
-  { kw: 160, y: "1765", t: "Akkermans uit Giethoorn?", x: "In 1765 kwamen Jan Paulus Ackerman en Willempje Roelofs met attestatie uit Giethoorn naar Sintjohannesga. Johannes Jans Akkerman was vermoedelijk hun zoon. Turfmakers uit Giethoorn groeven in die tijd het veen rond de Tjeukemeer af.", st: "D", story: "veen" }
+  { kw: 160, y: "1765", t: "Akkermans uit Giethoorn?", x: "In 1765 kwamen Jan Paulus Ackerman en Willempje Roelofs met attestatie uit Giethoorn naar Sintjohannesga. Johannes Jans Akkerman was vermoedelijk hun zoon. Turfmakers uit Giethoorn groeven in die tijd het veen rond de Tjeukemeer af.", st: "D", story: "veen" },
+  { kw: 2348, y: "1679", t: "Een brouwerij in het sterfhuis", x: "Jan Tiebbes was 'burger en coopman op de Flecke Jouwer'. Bij de inventaris van zijn sterfhuis in februari 1679 stonden er een brouwerij, een mouterij met ketel, een winkel met talk en kaarsen, en bijna 3900 gulden aan contant geld. Hij en zijn vrouw lieten zes minderjarige kinderen na.", st: "B" },
+  { kw: 774, y: "1699", t: "Drie keer Reinsck", x: "Age Jottis liet in de parochie Mirdum tussen 1676 en 1679 drie dochters Reinsck dopen: de eerste twee stierven vermoedelijk jong. In 1699 was alleen Wypck van ongeveer 13 nog over als wees van Age en Berns Foddes.", st: "B" },
+  { kw: 756, y: "1758", t: "Zes weken na elkaar", x: "Janke Klaases stierf op 30 november 1757 in Nieuweschoot, haar man Evert Klaases op 12 januari 1758, 56 jaar oud. Zes dagen later kregen hun zoons Klaas, Rouke en Jacob curatoren.", st: "A" },
+  { kw: 270, y: "1801", t: "Gedoopt op zijn 63e", x: "Wieger Andries uit Brongerga, sinds 1763 wees en later De Boer, werd in 1801 doopsgezind gedoopt op belijdenis, 63 jaar oud. Hij werd 84.", st: "B", story: "geloof-alies" }
 );
 /* Raakvlakken met de grote geschiedenis in de stamboom van Alies (vorm: zie HISTORY_TOUCH in 26-notables.js). */
 ALIES.HISTORY_TOUCH.push(
