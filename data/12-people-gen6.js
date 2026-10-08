@@ -7,6 +7,7 @@ PEOPLE.push(
 { kw: 32, n: "Anne Thijsses de Groot", alt: "Anna; ook Anne Thijs de Groot", b: "1807-10-31", bp: "Oldeholtwolde", bapt: "volgens zijn bidprentje gedoopt op 31-10-1807; volgens een genealogie in Oldeholtpade", d: "1866-02-24", dp: "Oldetrijne", occ: "Boer (1847); sluiswachter in Steggerda (1848)", rel: "Rooms-katholiek", st: "A", unc: { b: "B" },
   stNote: "Huwelijk (1846, akte 34), overlijden (1866, akte 41), bidprentje en memorie van successie gevonden (A). De datum 31-10-1807 is volgens het bidprentje eigenlijk de doopdatum (B).",
   m: { w: "Annigje Harmens Bosma", d: "1846-05-07", p: "Weststellingwerf", note: "akte 34" },
+  marriages: [{ order: 1, partner: "Annigje Harmens Bosma", kw: 33, date: "1846-05-07", place: "Weststellingwerf", note: "akte 34", st: "A", src: [["Huwelijksakte Weststellingwerf 1846, akte 34 (noemt beide ouderparen) · Tresoar, toegang 30-41, inv. 2014", OA + "frl:33245eff-cfa4-a2f6-bdc4-62f9d3abf44b"]], kids: [0, 1] }],
   kids: ["Popkje (21-03-1850 Steggerda), trouwde 1874 met Hendrik Bos", "Hermanus (28-08-1852 Steggerda) · kw 16"],
   sibs: ["Gooitske (ca. 1791), trouwde 1812 met Geert Johannes Bouman en later met Jan Jochems Westerkamp", "Jakobje (12-10-1794 Langezwaag – 30-01-1865 Wolvega), trouwde met Petrus Johannes Scheltinga", "Hylke (gedoopt 13-03-1797 – 29-04-1871 Oldeholtpade), trouwde 1825 met Anna Jentjes Langedijk, een zus van voormoeder Tjitske Langedijk (kw 95); zijn zoon Thijs H. de Groot plaatste de overlijdensadvertentie", "Ids (gedoopt 09-02-1799), vermoedelijk jong overleden", "Ids (gedoopt 03-05-1800), trouwde met Hiltje Jans Molenbrink", "Idzerd (ca. 1801)", "Sytske (gedoopt 04-12-1802), trouwde 1833 met Pieter Luiten Bos", "Wybe (gedoopt 20-03-1805), woonde in Paaslo, trouwde 1839 met Tjeertjen Annes Vonk", "Jeltje (gedoopt 03-09-1806)"],
   res: [{ p: "Oldeholtwolde", y: 1807, t: "geboren" }, { p: "Oldeholtwolde", y: 1811, t: "staat als Anna, 4 jaar, in het naamsregister van zijn vader" }, { p: "Steggerda", y: 1847, t: "boer" }, { p: "Steggerda", y: 1848, t: "sluiswachter" }, { p: "Steenwijkerwold", y: 1855, t: "gezin ingeschreven in het bevolkingsregister (1850–1860)" }, { p: "Steggerda", y: 1856, t: "koopt onroerend goed" }, { p: "Oldetrijne", y: 1866, t: "overleden, 58 jaar" }],
@@ -21,6 +22,7 @@ PEOPLE.push(
 { kw: 33, n: "Annigje Harmens Bosma", alt: "Annegje", b: "1816-11-22", bp: "Donkerbroek", d: "1900-12-07", dp: "Oldeholtpade", rel: "Rooms-katholiek", st: "A",
   stNote: "Geboorte (Ooststellingwerf, akte 41), huwelijk en overlijden (Weststellingwerf, akte 247) uit akten (A). Haar overlijdensadvertentie is gedateerd 'Oldeholtpade, 7 Dec. 1900' (A). De index van haar bidprentje noemt Oldeberkoop; vermoedelijk is dat de plaats van de collectie.",
   m: { w: "Anne Thijsses de Groot", d: "1846-05-07", p: "Weststellingwerf", note: "akte 34" },
+  marriages: [{ order: 1, partner: "Anne Thijsses de Groot", kw: 32, date: "1846-05-07", place: "Weststellingwerf", note: "akte 34", st: "A", src: [["Huwelijksakte Weststellingwerf 1846, akte 34 · Tresoar, toegang 30-41, inv. 2014", OA + "frl:33245eff-cfa4-a2f6-bdc4-62f9d3abf44b"]] }],
   sibs: ["Dirk", "Rinske, trouwde met Leonardus Bokkes Scheltinga", "Klaaske", "Barteld", "Jan", "Roelof"],
   res: [{ p: "Donkerbroek", y: 1816, t: "geboren" }, { p: "Wolvega", y: 1843, t: "dienstmeid" }, { p: "Steggerda", y: 1850, t: "kinderen geboren" }, { p: "Oldeholtpade", y: 1900, t: "overleden, 84 jaar" }],
   notes: ["Ze werd 84 en was 34 jaar weduwe.",
@@ -33,6 +35,7 @@ PEOPLE.push(
 { kw: 34, n: "Kornelis Jans Moezen", alt: "Cornelis Jans Moezen", b: "ca. 1808", bp: "Dalfsen", d: "1898-10-21", dp: "Oldetrijne", occ: "Boerenknecht (1840), later boer en kerkvoogd", rel: "Vermoedelijk rooms-katholiek", st: "A",
   stNote: "Huwelijk (1840, akte 59) met geboorteplaats en ouders, en overlijden (1898, akte 155) gevonden (A). De doop in Dalfsen is nog niet gezien.",
   m: { w: "Sybrigje Willems de Boer", d: "1840-08-03", p: "Weststellingwerf", note: "akte 59" },
+  marriages: [{ order: 1, partner: "Sybrigje Willems de Boer", kw: 35, date: "1840-08-03", place: "Weststellingwerf", note: "akte 59", st: "A", src: [["Huwelijksakte Weststellingwerf 1840, akte 59 · Tresoar, toegang 30-41, inv. 2011", OA + "frl:53144d70-2337-bb4e-8199-b67fd3145742"]], kids: [0, 1, 2, 3, 4, 5] }],
   kids: ["Aleida (ca. 1836 Ter Idzard – 1871), trouwde 1868 met Hette Arends Spin", "Willem (1842)", "Grietje, ook Margaretha (1845–1917)", "Willem (1846)", "Johanna (03-08-1850) · kw 17", "Johannes (1854)"],
   res: [{ p: "Dalfsen", y: 1808, t: "geboren" }, { p: "Ter Idzard", y: 1840, t: "boerenknecht" }, { p: "Oldeholtpade", y: 1850, t: "geboorte van Johanna" }, { p: "Oldetrijne", y: 1898, t: "overleden, 90 jaar" }],
   notes: ["Hij werd geboren in Dalfsen in Overijssel, waar zijn vader landbouwer was in de buurtschap Lenthe. In 1840 werkte hij als boerenknecht in Ter Idzard. Hij trouwde met de boerenmeid Sybrigje de Boer.",
@@ -43,6 +46,7 @@ PEOPLE.push(
 
 { kw: 35, n: "Sybrigje Willems de Boer", alt: "Siebrigje", b: "1809-06-04", bp: "Ter Idzard", bapt: "RK gedoopt 04-06-1809 in Oldeholtpade; de datum is die van de doop", d: "1877-03-16", occ: "Boerenmeid (1840)", rel: "Rooms-katholiek", st: "A",
   m: { w: "Kornelis Jans Moezen", d: "1840-08-03", p: "Weststellingwerf", note: "akte 59" },
+  marriages: [{ order: 1, partner: "Kornelis Jans Moezen", kw: 34, date: "1840-08-03", place: "Weststellingwerf", note: "akte 59", st: "A", src: [["Huwelijksakte Weststellingwerf 1840, akte 59 · Tresoar, toegang 30-41, inv. 2011", OA + "frl:53144d70-2337-bb4e-8199-b67fd3145742"]] }],
   res: [{ p: "Ter Idzard", y: 1840, t: "boerenmeid" }],
   sibs: ["Jetske (gedoopt 16-11-1810 Oldeholtpade, geboren in Ter Idzard), trouwde 1847 met Johannes Theodorus Woudberg", "Jan Willems de Boer (1815), trouwde 1850 met Abeltjen Roelofs Klos"],
   notes: ["Geboren en getogen in Ter Idzard. Ze trouwde op haar 31e.", "Ze overleed op 67-jarige leeftijd. Haar vader Willem werd 91; hij overleed in 1870."],
@@ -51,7 +55,11 @@ PEOPLE.push(
 { kw: 36, n: "Gerrit Remkes Kingma", b: "1812-04-02", bp: "Rauwerd", d: "1877-04-09", dp: "Rauwerd", bur: "Wijtgaard", occ: "Boer; kastelein (herbergier) in 1857", rel: "Rooms-katholiek", unc: { bur: "B" }, st: "A",
   stNote: "Geboorte (akte 43), beide huwelijken, overlijden (akte 20) en bidprentje gevonden (A).",
   m: { w: "Trijntje Jans Hoeben", d: "1851-01-30", p: "Baarderadeel", note: "akte 3; tweede huwelijk. Eerste huwelijk 24-06-1843 met Gerritje Obbes Ypma uit Franeker" },
-  kids: ["uit het eerste huwelijk: Akke (Agatha, trouwde 1878 met Petrus Romkes), Remke en Obbe, geboren 1844–1846", "Jan Gerrits (12-01-1852) · kw 18", "Japke (1853)", "Ynte Rimke (1855)", "Ynte (1857)", "Gerritje (1859)", "Reintje (1862)", "Petrus (1864)", "Reintje (1867)", "Johannes (1869)"],
+  marriages: [
+    { order: 1, partner: "Gerritje Obbes Ypma", kw: null, date: "1843-06-24", place: "Rauwerderhem", note: "Eerste huwelijk (akte 17); zij kwam uit Franeker en overleed in oktober 1849.", st: "A", src: [["Eerste huwelijk Rauwerderhem 1843, akte 17 · Tresoar, toegang 30-29, inv. 2004", OA + "frl:ed13f4f9-3a91-486c-da01-14020bace364"], ["Memorie van successie eerste vrouw Gerritje Ypma 1849 · Tresoar, toegang 42, inv. 11071, akte 348", OA + "frl:470a29a3-0cae-4004-a229-6a03e8aa2754"]], kids: [0, 1, 2], kidsNote: "Akke, Remke en Obbe zijn geboren in 1844–1846" },
+    { order: 2, partner: "Trijntje Jans Hoeben", kw: 37, date: "1851-01-30", place: "Baarderadeel", note: "akte 3; tweede huwelijk", st: "A", src: [["Tweede huwelijk Baarderadeel 1851, akte 3 · Tresoar, toegang 30-04, inv. 2010", OA + "frl:3d91bcc1-b31d-bbbb-a105-fd8cca8d2c89"]], kids: [3, 4, 5, 6, 7, 8, 9, 10, 11] }
+  ],
+  kids: ["Akke (Agatha, trouwde 1878 met Petrus Romkes)", "Remke", "Obbe", "Jan Gerrits (12-01-1852) · kw 18", "Japke (1853)", "Ynte Rimke (1855)", "Ynte (1857)", "Gerritje (1859)", "Reintje (1862)", "Petrus (1864)", "Reintje (1867)", "Johannes (1869)"],
   sibs: ["Ynte", "Reintje", "Johannes", "Meindert (1815), kocht in 1876 een koemelkerij in Rauwerd", "Trijntje"],
   res: [{ p: "Rauwerd", y: 1812, t: "geboren" }, { p: "Rauwerd", y: 1843, t: "eerste huwelijk" }, { p: "Rauwerd", y: 1852, t: "geboorte van Jan" }, { p: "Oosterwierum", y: 1855, t: "kastelein en koopman; koopt drie percelen greidland in Roordahuizum" }, { p: "Rauwerd", y: 1877, t: "overleden, 65 jaar, boer" }],
   notes: ["Volgens een online kwartierstaat (C) overleed hij om negen uur 's ochtends in huis nummer 31 in Rauwerd. Volgens het Archief RK Friesland werd hij in Wijtgaard begraven.", "Zijn eerste vrouw Gerritje Ypma overleed in oktober 1849 en liet drie kleine kinderen na: Akke, Remke en Obbe. Ruim een jaar later hertrouwde hij.", "Hij was bijna zes toen zijn vader Remke overleed.",
@@ -63,6 +71,7 @@ PEOPLE.push(
 
 { kw: 37, n: "Trijntje Jans Hoeben", b: "1832-03-27", bp: "Oosterwierum", d: "1909-08-13", dp: "Bolsward", rel: "Rooms-katholiek", st: "A",
   m: { w: "Gerrit Remkes Kingma", d: "1851-01-30", p: "Baarderadeel", note: "akte 3" },
+  marriages: [{ order: 1, partner: "Gerrit Remkes Kingma", kw: 36, date: "1851-01-30", place: "Baarderadeel", note: "akte 3", st: "A", src: [["Huwelijksakte Baarderadeel 1851, akte 3 · Tresoar, toegang 30-04, inv. 2010", OA + "frl:3d91bcc1-b31d-bbbb-a105-fd8cca8d2c89"]] }],
   sibs: ["Pieter, koopman", "Baukje, trouwde met Abe F. Jorna, schipper", "Wietske, trouwde met Henne Wybes Terpstra, koopman in Leeuwarden", "Brandje (IJsbrandtje), trouwde 1856 met Lubartus Hoytes Lycklama à Nijeholt, landbouwer", "Anna (in 1857 nog minderjarig)"],
   res: [{ p: "Oosterwierum", y: 1832, t: "geboren in een winkeliersgezin" }, { p: "Bolsward", y: 1909, t: "overleden, 77 jaar" }],
   notes: ["Ze trouwde op haar achttiende met de twintig jaar oudere weduwnaar Gerrit Kingma, en was 45 toen hij overleed.",
@@ -72,8 +81,9 @@ PEOPLE.push(
 
 { kw: 38, n: "Hendrik Meyners", alt: "Johann Heinrich Meyners", b: "1807-08-12", bp: "Hollenstede", d: "1884-05-24", dp: "Luinjeberd", bur: "RK begraafplaats Heerenveen", occ: "Veenbaas en winkelier", rel: "Rooms-katholiek", st: "A", unc: { bur: "B", b: "B", m: "B" },
   m: { w: "Margaretha Niemann", d: "1839-02-12", p: "Schwagstorf", note: "volgens de boedelbeschrijving van notaris R. Barends, Heerenveen, 16-09-1884, akte 199: 'te Schwagtorf in het ambt Fürstenau in Hannover'" },
+  marriages: [{ order: 1, partner: "Margaretha Niemann", kw: 39, date: "1839-02-12", place: "Schwagstorf", note: "volgens de boedelbeschrijving van notaris R. Barends, Heerenveen, 16-09-1884, akte 199: 'te Schwagtorf in het ambt Fürstenau in Hannover'", st: "B", src: [["Boedelbeschrijving notaris R. Barends, Heerenveen, 16-09-1884, akte 199 (huwelijk 1839) · Tresoar, toegang 26, inv. 56081", OA + "frl:3cf8779a-3398-40d7-bfd8-be76e70b9b31"]], kids: [0, 1, 2, 3, 4, 5, 6, 7, 8] }],
   stNote: "Overlijden (akte 40, 1884) met geboorteplaats Hollenstede, beroep en ouders (A). Het bevolkingsregister zegt 12-08-1807, 'Oldenstee (Pruissen)' (1872) en 'Hannover Zwaagster' (1880); zijn bidprentje zegt 1808. Het huwelijk (1839) is B: het staat in een notariële akte van 1884, niet in het trouwboek zelf.",
-  kids: ["Margaretha (19-11-1839)", "Johannes Hendrik (15-04-1842), veenbaas", "Elisabeth (23-01-1844)", "Gerhard (16-05-1846 – 1847) en een levenloos geboren dochter", "Gerhardus (20-10-1848)", "Henderikus (11-05-1851)", "Alida (29-11-1853) · kw 19", "Anna Engelina (25-06-1857, volgens de geboorteakte; de registers zeggen 24 juni of 24 juli)"],
+  kids: ["Margaretha (19-11-1839)", "Johannes Hendrik (15-04-1842), veenbaas", "Elisabeth (23-01-1844)", "Gerhard (16-05-1846 – 1847)", "een levenloos geboren dochter", "Gerhardus (20-10-1848)", "Henderikus (11-05-1851)", "Alida (29-11-1853) · kw 19", "Anna Engelina (25-06-1857, volgens de geboorteakte; de registers zeggen 24 juni of 24 juli)"],
   res: [{ p: "Hollenstede", y: 1807, t: "geboren" }, { p: "Schwagstorf", y: 1839, t: "trouwt op 12 februari met Margaretha Niemann" }, { p: "Luinjeberd", y: 1839, t: "gezin woont hier; kinderen geboren 1839–1857" }, { p: "Luinjeberd", y: 1884, t: "overleden, 76 jaar" }],
   notes: ["Volgens een krantenartikel uit 1951 was zijn zoon Johannes als presiderend kerkmeester de drijvende kracht achter het katholieke kerkhof aan de Rottumerweg in Heerenveen (ca. 1880). Dat is een latere bron, geen akte (C). Hendrik en Margaretha liggen vermoedelijk op juist dit kerkhof.", "Volgens de boedelbeschrijving van 16 september 1884 was hij 'vervener en veehouder': het gezin gebruikte zelf het land onder Luinjeberd en Terband als boerderij, met koeien, paarden, schapen en varkens. Hij had ruim 36.950 gulden uitgeleend, onder meer 2.000 gulden aan de katholieke gemeente van Heerenveen. De begrafenis kostte 850 gulden. Hij maakte testamenten op 16 mei 1868 (notaris Binnerts, akte 145) en 23 april 1884 (notaris Barends, akte 94).", "Hij trouwde op 12 februari 1839 in Schwagstorf, in het ambt Fürstenau, met Margaretha Niemann; dat staat in de boedelbeschrijving die notaris Barends in Heerenveen na zijn dood maakte. In november van dat jaar werd in Luinjeberd hun eerste kind geboren.", "Hij ligt op de katholieke begraafplaats van Heerenveen onder een grafkruis: 'Johan Heinrich Meijners, echtgenoot van Margarita Niemans', overleden te Luinjeberd op 24 mei 1884, 76 jaar. Zijn vrouw ligt naast hem.", "Een Duitse katholieke veenbaas in Luinjeberd.", { t: "Een veenbaas liet turf steken en verkocht en vervoerde die, vaak per schip. Dat past bij de vaartuigen die de familie bezat.", k: "context" },
     "In oktober 1840 kocht hij bij notaris Binnerts in Heerenveen land en water in Luinjeberd voor 190 gulden. In die akte heet hij veenbaas en winkelier: naast het veen had hij een winkel.", "Tussen 1840 en 1850 kocht hij stelselmatig percelen land en water (veen) in Luinjeberd en omgeving, vaak uit boedels van andere veenbazen, zoals de familie Mast.", "Notariële akten uit 1885–1887 noemen de verkoop van vaartuigen (620 gulden), huizen in Nijehaske en land in Terband en Tjalleberd uit het bezit van de familie.",
@@ -84,6 +94,7 @@ PEOPLE.push(
 
 { kw: 39, n: "Margaretha Adelheid Niemann", alt: "in de akten: Magrita, Margrietha of Margarietha Niemans; in het bevolkingsregister (1872) Magretha Niemand", b: "1812-10-08", bp: "Schwagstorf", d: "1886-01-29", dp: "Luinjeberd", bur: "RK begraafplaats Heerenveen", rel: "Rooms-katholiek", st: "A", unc: { bur: "B", b: "B", m: "B" },
   m: { w: "Hendrik Meyners", d: "1839-02-12", p: "Schwagstorf", note: "volgens de boedelbeschrijving van notaris R. Barends, Heerenveen, 16-09-1884, akte 199: 'te Schwagtorf in het ambt Fürstenau in Hannover'" },
+  marriages: [{ order: 1, partner: "Hendrik Meyners", kw: 38, date: "1839-02-12", place: "Schwagstorf", note: "volgens de boedelbeschrijving van notaris R. Barends, Heerenveen, 16-09-1884, akte 199: 'te Schwagtorf in het ambt Fürstenau in Hannover'", st: "B", src: [["Boedelbeschrijving notaris R. Barends, Heerenveen, 16-09-1884, akte 199 (huwelijk 1839) · Tresoar, toegang 26, inv. 56081", OA + "frl:3cf8779a-3398-40d7-bfd8-be76e70b9b31"]] }],
   stNote: "Overlijden (akte 7, 1886) met geboorteplaats Schwagstorf en ouders (A). Het bevolkingsregister zegt 08-10-1812, met als plaats 'Idem' (= Oldenstee, 1872) en 'Hannover Zwaagster' (1880); haar bidprentje zegt 1813 in Schwagstorf. Het huwelijk (1839) is B: het staat in een notariële akte van 1884.",
   res: [{ p: "Schwagstorf", y: 1812, t: "geboren" }, { p: "Schwagstorf", y: 1839, t: "trouwt op 12 februari met Hendrik Meyners" }, { p: "Luinjeberd", y: 1839, t: "moeder van acht kinderen, geboren 1839–1857" }, { p: "Luinjeberd", y: 1886, t: "overleden, 73 jaar" }],
   notes: ["Ze ligt naast haar man op de katholieke begraafplaats van Heerenveen. Op haar grafkruis staat 'Margarita Niemans, weduwe van Johan Heinrich Meijners', overleden te Luinjeberd op 29 januari 1886, 73 jaar.", "Schwagstorf is een dorp bij Fürstenau in het Osnabrücker Land, niet ver over de grens bij Coevorden.",
@@ -94,6 +105,7 @@ PEOPLE.push(
 
 { kw: 40, n: "Albert Eisen de Vries", alt: "Albertus; ook Albert Eizes", b: "1807-06-18", bp: "Ter Idzard", bapt: "RK gedoopt 18-06-1807 als Albertus, parochie Oldeholtpade/Wolvega", d: "1879-09-15", dp: "Steggerda", rel: "Rooms-katholiek", st: "A",
   m: { w: "Kornelisje Wytzes de Boer", d: "1836-05-11", p: "Weststellingwerf", note: "akte 19" },
+  marriages: [{ order: 1, partner: "Kornelisje Wytzes de Boer", kw: 41, date: "1836-05-11", place: "Weststellingwerf", note: "akte 19", st: "A", src: [["Huwelijksakte Weststellingwerf 1836, akte 19 · Tresoar, toegang 30-41, inv. 2010", OA + "frl:715b4ad0-667c-144c-b873-d6ccafecfeb7"]], kids: [0, 1, 2, 3, 4] }],
   kids: ["Hylkje (01-06-1837 Ter Idzard)", "Eise (08-10-1839), trouwde 1881 met Theresia Vonk", "Geertje (02-10-1842)", "Hielkje (01-04-1847 – 05-09-1879)", "Wytze (17-06-1852) · kw 20"],
   res: [{ p: "Ter Idzard", y: 1807, t: "geboren en gedoopt" }, { p: "Ter Idzard", y: 1837, t: "eerste kind geboren" }, { p: "Steggerda", y: 1852, t: "geboorte van Wytze" }, { p: "Steggerda", y: 1879, t: "overleden, 72 jaar" }],
   notes: ["Zijn ouders Eisse Fresses en Hielkjen Eylers trouwden op 13 mei 1787 in Oldeholtpade, in het hervormde én het katholieke register.", "Zijn dochter Hielkje overleed op 5 september 1879, tien dagen voor hem.",
@@ -102,11 +114,13 @@ PEOPLE.push(
 
 { kw: 41, n: "Kornelisje Wytzes de Boer", b: "1812-08-17", bp: "Wolvega", d: "1873-02-13", rel: "Vermoedelijk rooms-katholiek", st: "A",
   m: { w: "Albert Eisen de Vries", d: "1836-05-11", p: "Weststellingwerf", note: "akte 19" },
+  marriages: [{ order: 1, partner: "Albert Eisen de Vries", kw: 40, date: "1836-05-11", place: "Weststellingwerf", note: "akte 19", st: "A", src: [["Huwelijksakte Weststellingwerf 1836, akte 19 · Tresoar, toegang 30-41, inv. 2010", OA + "frl:715b4ad0-667c-144c-b873-d6ccafecfeb7"]] }],
   notes: ["Haar zoon Wytze draagt de naam van haar vader.", "Ze trouwde op haar 23e en overleed op 60-jarige leeftijd, zes jaar voor haar man."],
   src: [["Memorie van successie, Oldeberkoop 1873 · Tresoar, toegang 42, inv. 13015, akte 4633", OA + "frl:0c170f01-a63b-4815-b170-b6595a3c0890"], ["Geboorteakte Weststellingwerf 1812, akte 46 · Tresoar, toegang 30-41, inv. 1004", OA + "frl:2eb62455-869f-ac58-33f1-2210a75b6fb4"], ["Huwelijksakte Weststellingwerf 1836, akte 19 · Tresoar, toegang 30-41, inv. 2010", OA + "frl:715b4ad0-667c-144c-b873-d6ccafecfeb7"], ["Overlijdensakte Weststellingwerf 1873, akte 28 · Tresoar, toegang 30-41, inv. 3021", OA + "frl:a9f1e2e5-56fd-14e0-ab79-57d822cafadb"]] },
 
 { kw: 42, n: "Remmelt Eises ten Berge", b: "1834-11-04", bp: "Steggerda", d: "1909-01-21", dp: "Overburen", occ: "Veehouder; 27 jaar lid van de gemeenteraad van Weststellingwerf", bur: "RK kerkhof Steggerda (26-01-1909)", rel: "Rooms-katholiek", st: "A", unc: { dp: "B" },
   m: { w: "Maria (Marijke) Jans Oosterkamp", d: "1860-05-04", p: "Weststellingwerf", note: "akte 18" },
+  marriages: [{ order: 1, partner: "Maria (Marijke) Jans Oosterkamp", kw: 43, date: "1860-05-04", place: "Weststellingwerf", note: "akte 18", st: "A", src: [["Huwelijksakte Weststellingwerf 1860, akte 18 · Tresoar, toegang 30-41, inv. 2021", OA + "frl:6fe2987a-dc3c-d18a-6ac4-ff3ea2a15400"]], kids: [0, 1, 2, 3, 4, 5, 6] }],
   kids: ["Anna Maria (1861) · kw 21", "Agatha Maria (1862), kloosterzuster Rembertus, overleden 1907 in Groningen", "Eise (1865)", "Johannes Romualdus (1867–1950)", "Klaasje", "Clara Theresia (1875–1967)", "Catharina Maria (1879–1925)"],
   sibs: ["Klaartje (1833)", "Anne (1836)", "Maria (1839)", "Johannes (1841)", "Theresia (1843–1932, ongehuwd)"],
   res: [{ p: "Steggerda", y: 1834, t: "geboren; veehouder" }, { p: "Overburen", y: 1909, t: "overleden, 74 jaar" }],
@@ -115,24 +129,30 @@ PEOPLE.push(
 
 { kw: 43, n: "Maria (Marijke) Jans Oosterkamp", b: "1835-05-26", bp: "Blesdijke", d: "1917-02-18", dp: "Overburen", rel: "Rooms-katholiek", st: "A", unc: { b: "B" },
   m: { w: "Remmelt Eises ten Berge", d: "1860-05-04", p: "Weststellingwerf", note: "akte 18" },
+  marriages: [{ order: 1, partner: "Remmelt Eises ten Berge", kw: 42, date: "1860-05-04", place: "Weststellingwerf", note: "akte 18", st: "A", src: [["Huwelijksakte Weststellingwerf 1860, akte 18 · Tresoar, toegang 30-41, inv. 2021", OA + "frl:6fe2987a-dc3c-d18a-6ac4-ff3ea2a15400"]] }],
   notes: ["Begraven op 22 februari 1917. Ze werd 81 en was acht jaar weduwe."],
   src: [["Grafsteen oud RK kerkhof Steggerda (graftombe.nl)", "https://graftombe.nl/names/info/478582/oosterkamp"], ["Huwelijksakte Weststellingwerf 1860, akte 18 · Tresoar, toegang 30-41, inv. 2021", OA + "frl:6fe2987a-dc3c-d18a-6ac4-ff3ea2a15400"], ["Overlijdensakte Weststellingwerf 1917, akte 53 · Tresoar, toegang 30-41, inv. 3055", OA + "frl:abedba29-9f12-08dd-33c3-3a9b9e3af9f8"], ["Bidprentje Maria Oosterkamp (geboren Blesdijke)", OA + "rkf:c1ff1b0f-1fdd-eef8-cba1-40a6420b590b"]] },
 
 { kw: 44, n: "Anthonij Belt", alt: "ook Antonie Beld", b: "ca. 1829", bp: "Blankenham", d: "1881-02-16", dp: "Blankenham", occ: "Boerwerker (1857), later veehouder", rel: "Rooms-katholiek", st: "A",
   m: { w: "Anna Maria de Jong", d: "1857-04-25", p: "Blankenham", note: "akte 1" },
-  kids: ["Johannes Anthonius (21-09-1860)", "tweeling Wilhelmus (28-08-1863) · kw 22 en Maria (1863–1928)"],
+  marriages: [{ order: 1, partner: "Anna Maria de Jong", kw: 45, date: "1857-04-25", place: "Blankenham", note: "akte 1", st: "A", src: [["Huwelijksakte Blankenham 1857, akte 1", OA + "hco:72397D00-76C9-4F81-BF94-0057A9CBA774"]], kids: [0, 1, 2] }],
+  kids: ["Johannes Anthonius (21-09-1860)", "Wilhelmus (28-08-1863) · kw 22", "Maria (1863–1928)"],
+  kidsNote: "Wilhelmus en Maria waren een tweeling",
   res: [{ p: "Blankenham", y: 1829, t: "geboren" }, { p: "Blankenham", y: 1857, t: "trouwt als boerwerker" }, { p: "Blankenham", y: 1881, t: "overleden, 52 jaar, veehouder" }],
   notes: ["Van boerwerker in 1857 werd hij veehouder.", "Volgens zijn bidprentje overleed hij op Rondebroek, de boerderijplek die ook bij de geboorte van zijn tweeling wordt genoemd."],
   src: [["Huwelijksakte Blankenham 1857, akte 1", OA + "hco:72397D00-76C9-4F81-BF94-0057A9CBA774"], ["Overlijdensakte Blankenham 1881, akte 2", OA + "hco:24F9AD4A-1683-4A9F-9C6B-1780B1007C63"], ["Bidprentje (Rondebroek)", OA + "rkf:a568e64d-d978-3fca-484a-c0396b5c54e9"], ["Huwelijksakte zoon Wilhelmus 1890", OA + "hco:1ACBD536-0FB0-4AF6-92D7-31B7FC9CBDFC"], ["Volkstelling Blankenham 1840 (gezin van zijn vader) · Gemeentearchief Steenwijkerland, toegang 7, inv. 2, fol. 5", OA + "swl:805e126a-87bb-7d1b-ef81-471bce697a06"]] },
 
 { kw: 45, n: "Anna Maria de Jong", b: "1836-01-07", bp: "Blankenham", d: "1905-01-24", dp: "Blankenham", rel: "Vermoedelijk rooms-katholiek", st: "A",
   m: { w: "Anthonij Belt", d: "1857-04-25", p: "Blankenham", note: "akte 1" },
+  marriages: [{ order: 1, partner: "Anthonij Belt", kw: 44, date: "1857-04-25", place: "Blankenham", note: "akte 1", st: "A", src: [["Huwelijksakte Blankenham 1857, akte 1", OA + "hco:72397D00-76C9-4F81-BF94-0057A9CBA774"]] }],
   notes: ["Ze trouwde op haar 21e en was 24 jaar weduwe.", "Ze verloor in 1896 haar zoon Wilhelmus, 32 jaar oud."],
   src: [["Geboorteakte Blankenham 1836, akte 2", OA + "hco:66A73455-FB94-4D18-B76F-9C551193F81C"], ["Huwelijksakte Blankenham 1857, akte 1", OA + "hco:72397D00-76C9-4F81-BF94-0057A9CBA774"], ["Overlijdensakte Blankenham 1905, akte 2", OA + "hco:8FD4B604-FCE8-4F2E-903B-B3A3BEDBB986"]] },
 
 { kw: 46, n: "Titus Groenestege", alt: "Tietes Jannes", b: "1831-01-03", bp: "Steenwijkerwold", d: "1911-10-02", dp: "Lage Egge", bur: "RK kerkhof Steenwijkerwold", occ: "Landbouwer, veehouder", rel: "Rooms-katholiek", st: "A",
   m: { w: "Apollonia Barbara Gossen Spitzen", d: "1854-05-04", p: "Steenwijkerwold", note: "akte 23" },
-  kids: ["Johannes Chrysostomus (ca. 1856), trouwde 1883 met Maria Belt", "Chrysostomus Joachim (1857–1946)", "tweeling Agatha Maria en Hendricus Jozephus (1862–1863)", "Engebertus Azuerus (1867–1940)", "Agatha Anna Maria (06-03-1868) · kw 23", "Thecla Johanna Maria (1869–1942)", "Henricus Josephus Isidorus (1871–1924)", "Maria Veronica (1872–1918)", "Anna Maria Josephina (1877–1947)", "Franciscus Bonifacius"],
+  marriages: [{ order: 1, partner: "Apollonia Barbara Gossen Spitzen", kw: 47, date: "1854-05-04", place: "Steenwijkerwold", note: "akte 23", st: "A", src: [["Huwelijksakte Steenwijkerwold 1854, akte 23", OA + "hco:81230944-A779-4359-97CC-72047303E820"]], kids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }],
+  kids: ["Johannes Chrysostomus (ca. 1856), trouwde 1883 met Maria Belt", "Chrysostomus Joachim (1857–1946)", "Agatha Maria (1862–1863)", "Hendricus Jozephus (1862–1863)", "Engebertus Azuerus (1867–1940)", "Agatha Anna Maria (06-03-1868) · kw 23", "Thecla Johanna Maria (1869–1942)", "Henricus Josephus Isidorus (1871–1924)", "Maria Veronica (1872–1918)", "Anna Maria Josephina (1877–1947)", "Franciscus Bonifacius"],
+  kidsNote: "Agatha Maria en Hendricus Jozephus waren een tweeling",
   res: [{ p: "Steenwijkerwold", y: 1831, t: "geboren" }, { p: "Gelderingen", y: 1854, t: "boer bij de katholieke kerk van Steenwijkerwold" }, { p: "Lage Egge", y: 1911, t: "overleden in Ooster Lage Egge, 80 jaar" }],
   notes: ["Zijn bidprentje zegt dat hij op 5 oktober 1911 begraven werd op het R.K. kerkhof van Steenwijkerwold. Het werd gedrukt door Alb. Jos. Tiel Groenestege, boekhandelaar in Steenwijkerwold. Het prentje noemt als geboortedag 2 januari 1831; de geboorteakte zegt 3 januari.", "In Gelderingen (Steenwijkerwold, nu nr. 73c) zit een gevelsteen uit 1880: 'Gesticht ter eere Gods door Titus Groenestege en zijn echtgenoote Apolonia Barbara Spitzen'. Om welk gebouw het ging, staat niet in de beschrijving van het fotoarchief. In hetzelfde jaar schonken zij het kruisbeeld op het katholieke kerkhof van Gelderingen.", "In 1880 schonk hij met zijn vrouw het kruisbeeld op het katholieke kerkhof in Gelderingen. Daar liggen ook graven van de families Groenestege en Spitzen.",
     "Vader van elf kinderen, onder wie een tweeling die in 1863 als baby's overleed.",
@@ -142,6 +162,7 @@ PEOPLE.push(
 
 { kw: 47, n: "Apollonia Barbara Gossen Spitzen", alt: "ook Spitsen", b: "1830-09-11", bp: "Steenwijkerwold", d: "1912-02-16", dp: "Lage Egge", rel: "Rooms-katholiek", st: "A",
   m: { w: "Titus Groenestege", d: "1854-05-04", p: "Steenwijkerwold", note: "akte 23" },
+  marriages: [{ order: 1, partner: "Titus Groenestege", kw: 46, date: "1854-05-04", place: "Steenwijkerwold", note: "akte 23", st: "A", src: [["Huwelijksakte Steenwijkerwold 1854, akte 23", OA + "hco:81230944-A779-4359-97CC-72047303E820"]] }],
   notes: ["In Gelderingen (Steenwijkerwold, nu nr. 73c) zit een gevelsteen uit 1880: 'Gesticht ter eere Gods door Titus Groenestege en zijn echtgenoote Apolonia Barbara Spitzen'. Om welk gebouw het ging, staat niet in de beschrijving van het fotoarchief. In hetzelfde jaar schonken zij het kruisbeeld op het katholieke kerkhof van Gelderingen.", "Gossen betekent dochter van Gosse.", "Ze overleefde haar man vier maanden en werd 81.",
     { t: "Ze is genoemd naar haar grootmoeder Apolonia Petrus Bos.", k: "afgeleid" }, "Haar volle neef Otto Antonius Spitzen (1823–1889) werd pastoor in Zwolle, kanunnik en hoogleraar, en schreef over Thomas a Kempis. Zie Bekende verwanten.",
     "Haar kleindochter Anna Maria Apollonia en achterkleindochter Apollonia Wilhelmina dragen de naam Apollonia verder."],
@@ -150,6 +171,7 @@ PEOPLE.push(
 { kw: 48, n: "Meinte Minnes Boersma", alt: "in de akte van 1879: Meinte Meines", b: "1814-03-28", bp: "Irnsum", d: "1896-05-25", dp: "Oosterwierum", bur: "Irnsum", occ: "Boer", rel: "Vermoedelijk rooms-katholiek", unc: { bur: "C" }, st: "A",
   stNote: "Geboorteakte (Rauwerderhem 1814, akte 17), huwelijk (1841, akte 45) en overlijden (1896, akte 29) uit akten (A).",
   m: { w: "Pietje Gerbens Teppema", d: "1841-06-26", p: "Wymbritseradeel", note: "akte 45" },
+  marriages: [{ order: 1, partner: "Pietje Gerbens Teppema", kw: 49, date: "1841-06-26", place: "Wymbritseradeel", note: "akte 45", st: "A", src: [["Huwelijksakte Wymbritseradeel 1841, akte 45 · Tresoar, toegang 30-44, inv. 2012", OA + "frl:4f2222cc-7147-511e-7b88-2e521e96dd5e"]], kids: [0, 1, 2, 3, 4, 5, 6, 7] }],
   kids: ["Baaye (1842)", "Minne (1844)", "Elisabeth (1846)", "Gerben (1847–1928)", "Minke (1848)", "Jacobus (07-03-1851) · kw 24", "Marijke (1853)", "Pieter (1854)"],
   res: [{ p: "Irnsum", y: 1814, t: "geboren" }, { p: "Rauwerd", y: 1842, t: "eerste kinderen geboren in Rauwerderhem" }, { p: "Oosterwierum", y: 1851, t: "boer" }, { p: "Oosterwierum", y: 1896, t: "overleden, 82 jaar" }],
   notes: ["Een online kwartierstaat (C) noemt hem ook timmerman en timmermansknecht.", "Hij staat tussen 1860 en 1892 in zeventien notariële akten, steeds als landbouwer in Oosterwierum. In 1873 was hij voogd over Catharina en Minne Foekes Boersma.", "Volgens de memorie van successie behoorde er onroerend goed tot de nalatenschap.", "Zoon van een schipper uit Irnsum.",
@@ -158,13 +180,15 @@ PEOPLE.push(
 
 { kw: 49, n: "Pietje Gerbens Teppema", b: "1816-02-10", bp: "Tirns", d: "1875-08-02", dp: "Oosterwierum", occ: "Boerin", rel: "Rooms-katholiek", st: "A", unc: { b: "B" },
   m: { w: "Meinte Minnes Boersma", d: "1841-06-26", p: "Wymbritseradeel", note: "akte 45" },
+  marriages: [{ order: 1, partner: "Meinte Minnes Boersma", kw: 48, date: "1841-06-26", place: "Wymbritseradeel", note: "akte 45", st: "A", src: [["Huwelijksakte Wymbritseradeel 1841, akte 45 · Tresoar, toegang 30-44, inv. 2012", OA + "frl:4f2222cc-7147-511e-7b88-2e521e96dd5e"]], kids: [0, 1, 2, 3, 4, 5, 6, 7] }],
+  kids: ["Baaye (1842)", "Minne (1844)", "Elisabeth (1846)", "Gerben (1847–1928)", "Minke (1848)", "Jacobus (07-03-1851) · kw 24", "Marijke (1853)", "Pieter (1854)"],
   notes: ["Haar zoon Gerben draagt de naam van haar vader Gerben Teppema.",
     "Haar bidprentje noemt 02-02-1815 in Annaburen; het archief tekende daarbij zelf aan dat de geboorteakte 10-02-1816 in Tirns zegt.",
     "Ze was tien toen haar moeder overleed. In 1840 werd de boerderij van haar ouders verdeeld: zie kw 98."],
   src: [["Huwelijksakte Wymbritseradeel 1841, akte 45 · Tresoar, toegang 30-44, inv. 2012", OA + "frl:4f2222cc-7147-511e-7b88-2e521e96dd5e"], ["Overlijdensakte Baarderadeel 1875, akte 90 · Tresoar, toegang 30-04, inv. 3014", OA + "frl:51f6f668-7c20-986a-1957-dcd1ba171f4c"], ["Bidprentje (met aantekening over de geboorteakte)", OA + "rkf:33b80e11-3531-25d1-060b-195c8745f457"], ["Bevolkingsregister (geboren Tirns 1816)", OA + "frl:94c185b5-b042-9ec9-52ce-c200c4d67873"]] },
-
 { kw: 50, n: "Frans Heeres Poelsma", alt: "Franciscus", b: "1816-11-10", bp: "Leeuwarden", d: "1901-10-10", dp: "Oosterend", bur: "Begraafplaats Slijpsterwei, Roodhuis", occ: "Boer", rel: "Vermoedelijk rooms-katholiek", unc: { bur: "B" }, st: "A",
   m: { w: "Sytske Ypes Jongma", d: "1839-05-19", p: "Leeuwarden", note: "akte 79" },
+  marriages: [{ order: 1, partner: "Sytske Ypes Jongma", kw: 51, date: "1839-05-19", place: "Leeuwarden", note: "akte 79", st: "A", src: [["Huwelijksakte Leeuwarden 1839, akte 79 · Historisch Centrum Leeuwarden, toegang 1007, inv. 3564A", OA + "frl:1ddd2567-8331-72a2-5e8d-b19f3e7954e7"]], kids: [0, 1, 2, 3, 4, 5, 6, 7, 8] }],
   kids: ["Heere (1840–1912)", "Ype (1842–1864)", "Sybolt (1844 Oldeklooster – 1922)", "Jan (1846)", "Jan (1848–1931)", "Baukje (1850)", "Bauke (1851–1931)", "Elisabeth (1854)", "Baukje (06-10-1857) · kw 25"],
   res: [{ p: "Leeuwarden", y: 1816, t: "geboren; zijn vader is boer" }, { p: "Leeuwarden", y: 1839, t: "getrouwd" }, { p: "Oldeklooster", y: 1844, t: "boer" }, { p: "Oosterend", y: 1901, t: "overleden, 84 jaar" }],
   notes: ["Hij heeft een eigen grafmonument op de begraafplaats Slijpsterwei bij Roodhuis: 'Frans H. Poelsma, weduwnaar van S.IJ. Jongma, … overl. onder Oosterend den 10 october 1901, in den ouderdom van bijna 85 jaren'.", "In 1888 kocht hij een perceel weiland in Oosterend voor 4.752 gulden; in 1895 verkocht hij een huizinge met schuur, veestalling en erf in Tirns.", "Volgens de memorie van successie behoorde er onroerend goed tot de nalatenschap.", "Geboren in Leeuwarden als zoon van een boer, zelf boer geworden op Oldeklooster bij Hartwerd."],
@@ -172,6 +196,7 @@ PEOPLE.push(
 
 { kw: 51, n: "Sytske Ypes Jongma", b: "1816-02-20", bp: "Leeuwarden", d: "1896-05-20", dp: "Oosterend", bur: "RK kerkhof Roodhuis", rel: "Vermoedelijk rooms-katholiek", st: "A", unc: { bur: "C", b: "B" },
   m: { w: "Frans Heeres Poelsma", d: "1839-05-19", p: "Leeuwarden", note: "akte 79" },
+  marriages: [{ order: 1, partner: "Frans Heeres Poelsma", kw: 50, date: "1839-05-19", place: "Leeuwarden", note: "akte 79", st: "A", src: [["Huwelijksakte Leeuwarden 1839, akte 79 · Historisch Centrum Leeuwarden, toegang 1007, inv. 3564A", OA + "frl:1ddd2567-8331-72a2-5e8d-b19f3e7954e7"]] }],
   notes: ["Volgens de memorie van successie behoorde er onroerend goed tot de nalatenschap.", "Moeder van negen kinderen. Ze overleed op 80-jarige leeftijd, vijf jaar voor haar man."],
   src: [["Online stamboom (begraafplaats)", "https://www.genealogieonline.nl/kwartierstaat-freark-jongma/I131.php"], ["Memorie van successie, Bolsward 1896 · Tresoar, toegang 42, inv. 2112, akte 2/2246", OA + "frl:370ebbd2-7207-4abd-91f4-97c5b61a34c7"], ["Huwelijksakte Leeuwarden 1839, akte 79 · Historisch Centrum Leeuwarden, toegang 1007, inv. 3564A", OA + "frl:1ddd2567-8331-72a2-5e8d-b19f3e7954e7"], ["Overlijdensakte Hennaarderadeel 1896 · Tresoar, toegang 30-18, inv. 3020, fol. 7", OA + "frl:fbce97f5-2cc8-7f4a-09d3-4f1dd3e2ed0a"]] },
 
@@ -179,7 +204,9 @@ PEOPLE.push(
   stNote: "Huwelijk (1834, akte 22), overlijden (1870, akte 17), ouders en kinderen uit akten (A). Zijn overlijdensakte (1870) en zijn bidprentje noemen Ter Idzard als geboorteplaats; het bidprentje geeft 10-08-1808. De huwelijksakte (1834) zegt dat hij 'gedoopt te Oldeholtpa den zestienden Augustus' 1808 werd, 'blijkens gelegaliseerd doopceduul' (A). Oldeholtpade is dus zijn doopplaats; Ter Idzard viel onder die RK-parochie.",
   sibs: ["Maria, trouwde met Wybe Thomas Overmeer, koopman in Makkum", "Apollonia Theodora (ca. 1812 Ter Idzard – 1877 Bolsward), trouwde 1832 met Hendrik Mevis Brandsma op Ugoklooster: grootmoeder van de heilige Titus Brandsma", "Sabina, weduwe van Hendrik Willems Nijdam, Sneek", "Jan, landbouwer", "Frans, koopman in Sneek", "Agatha, trouwde met Hylke Thomas Overmeer", "Gerardus Assuerus, Workum"],
   m: { w: "Grietje Jacobs Kooiker", d: "1834-11-09", p: "Workum", note: "akte 22" },
-  kids: ["Jacobus (1836–1843)", "Tekela (1839–1850)", "Johannes (1841–1856)", "Maria (1843–1919)", "Jacobus (1846) · kw 26", "Anno (1849–1857)", "een levenloos geboren zoon (1856)", "Sybrigje (overleden 1859)", "Assuerus (trouwde 1865)", "Jan (overleden 1936)", "twaalf kinderen in totaal"],
+  marriages: [{ order: 1, partner: "Grietje Jacobs Kooiker", kw: 53, date: "1834-11-09", place: "Workum", note: "akte 22", st: "A", src: [["Huwelijksakte Workum 1834, akte 22 · Tresoar, toegang 30-43, inv. 2005", OA + "frl:f74c2c0b-e4f3-5b35-3cec-57e1bcfeade0"]], kids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }],
+  kids: ["Jacobus (1836–1843)", "Tekela (1839–1850)", "Johannes (1841–1856)", "Maria (1843–1919)", "Jacobus (1846) · kw 26", "Anno (1849–1857)", "een levenloos geboren zoon (1856)", "Sybrigje (overleden 1859)", "Assuerus (trouwde 1865)", "Jan (overleden 1936)"],
+  kidsNote: "twaalf kinderen in totaal",
   res: [{ p: "Ter Idzard", y: 1808, t: "geboren" }, { p: "Workum", y: 1834, t: "trouwt" }, { p: "Wonseradeel", y: 1839, t: "kinderen geboren 1839–1843" }, { p: "Scharnegoutum", y: 1846, t: "boer; kinderen geboren en overleden 1846–1859" }, { p: "Tirns", y: 1870, t: "overleden, 61 jaar" }],
   open: ["Waarom zijn dochter Tekela in 1850 in Woerden was, in huis 229 aan de Groenendaal, is niet bekend. De originele akte (Woerden 1850, nr. 128) noemt de aangevers; het bevolkingsregister van Woerden kan zeggen wie daar woonde."],
   notes: ["Zijn zus Apollonia is de grootmoeder van de heilige Titus Brandsma (1881–1942). Titus' vader, Titus Brandsma (1843), was een volle neef van Jacobus (kw 26). Zie Bekende verwanten.", "Van zijn twaalf kinderen stierven er minstens zes jong. Toen de eerste Jacobus in 1843 overleed, kreeg de volgende zoon in 1846 dezelfde naam.",
@@ -190,11 +217,13 @@ PEOPLE.push(
 
 { kw: 53, n: "Grietje Jacobs Kooiker", alt: "Kooyker", b: "1814-07-09", bp: "Workum", d: "1886-12-27", dp: "Oosterwierum", bur: "Irnsum", occ: "Boerin, landbouwster (1843–1844)", rel: "Vermoedelijk rooms-katholiek", st: "A", unc: { b: "B", bur: "B" },
   m: { w: "Titus Terwisscha van Scheltinga", d: "1834-11-09", p: "Workum", note: "akte 22" },
+  marriages: [{ order: 1, partner: "Titus Terwisscha van Scheltinga", kw: 52, date: "1834-11-09", place: "Workum", note: "akte 22", st: "A", src: [["Huwelijksakte Workum 1834, akte 22 · Tresoar, toegang 30-43, inv. 2005", OA + "frl:f74c2c0b-e4f3-5b35-3cec-57e1bcfeade0"]] }],
   notes: ["Volgens de memorie van successie: er behoorde onroerend goed tot de nalatenschap.", "Ze was dertien toen haar moeder overleed en 22 toen haar vader stierf.", "Weduwe vanaf 1870. Ze overleed in Oosterwierum, waar haar schoonvader Assuerus in 1857 was overleden.", "Haar zoon Jacobus draagt de naam van haar vader."],
   src: [["Grafsteen RK kerkhof Irnsum (graftombe.nl)", "https://graftombe.nl/names/info/1677081/kooiker"], ["Memorie van successie, Leeuwarden 1886 · Tresoar, toegang 42, inv. 11135, akte 2/6171", OA + "frl:5ea52fd2-12c3-4b2d-9801-0dad5121b426"], ["Archief RK Friesland, personendatabase nr. 3830 (begraven te Irnsum, RK)", "https://archiefrkfriesland.nl/scripts/open_arch.php?nummer=3830"], ["Huwelijksakte Workum 1834, akte 22 · Tresoar, toegang 30-43, inv. 2005", OA + "frl:f74c2c0b-e4f3-5b35-3cec-57e1bcfeade0"], ["Overlijdensakte Baarderadeel 1886, akte 109 (noemt ouders) · Tresoar, toegang 30-04, inv. 3016", OA + "frl:21d6b747-22aa-f0dc-3652-f08194d0cb64"]] },
 
 { kw: 54, n: "Taeke IJsbrands Galema", b: "ca. 1818", bp: "Burgwerd", d: "1892-12-09", dp: "Dronrijp", occ: "Boer (1847)", rel: "Vermoedelijk rooms-katholiek", st: "A",
   m: { w: "Marijke Anes Terpstra", d: "1842-05-21", p: "Wonseradeel", note: "akte 49" },
+  marriages: [{ order: 1, partner: "Marijke Anes Terpstra", kw: 55, date: "1842-05-21", place: "Wonseradeel", note: "akte 49", st: "A", src: [["Huwelijksakte Wonseradeel 1842, akte 49 · Tresoar, toegang 30-42, inv. 2014B", OA + "frl:7c566876-2fa2-22ea-0313-fe5838483b24"]], kids: [0, 1] }],
   kids: ["IJsbrand (1843, Tzummarum)", "Antje (29-11-1847, Peins) · kw 27"],
   res: [{ p: "Burgwerd", y: 1818, t: "geboren" }, { p: "Tzummarum", y: 1843, t: "woont hier" }, { p: "Peins", y: 1847, t: "woont hier" }, { p: "Dronrijp", y: 1892, t: "overleden, 75 jaar" }],
   notes: ["Hij staat tussen 1845 en 1889 in 26 notariële akten, bijna altijd als landbouwer in Peins. In 1887 kocht hij een stelphuis met erf en grond in Dronrijp voor 2.397 gulden, waar hij in 1892 overleed; in 1888 werd zijn roerend goed geveild voor 4.671 gulden.", "Zijn memorie van successie (1892) vermeldt onroerend goed in de nalatenschap.", "Hij overleed in Dronrijp, waar zijn dochter Antje met haar gezin woonde.", "Zijn vader overleed in 1842, vijf maanden na zijn bruiloft."],
@@ -202,10 +231,12 @@ PEOPLE.push(
 
 { kw: 55, n: "Marijke Anes Terpstra", b: "1817-03-15", bp: "Tzummarum", d: "1885-02-09", dp: "Peins", bur: "RK kerkhof Irnsum", occ: "Boerin", rel: "Rooms-katholiek", unc: { bur: "C" }, st: "A",
   m: { w: "Taeke IJsbrands Galema", d: "1842-05-21", p: "Wonseradeel", note: "akte 49" },
+  marriages: [{ order: 1, partner: "Taeke IJsbrands Galema", kw: 54, date: "1842-05-21", place: "Wonseradeel", note: "akte 49", st: "A", src: [["Huwelijksakte Wonseradeel 1842, akte 49 · Tresoar, toegang 30-42, inv. 2014B", OA + "frl:7c566876-2fa2-22ea-0313-fe5838483b24"]] }],
   src: [["Online stamboom (begraafplaats)", "https://www.genealogieonline.nl/kwartierstaat-freark-jongma/I8897.php"], ["Huwelijksakte Wonseradeel 1842, akte 49 · Tresoar, toegang 30-42, inv. 2014B", OA + "frl:7c566876-2fa2-22ea-0313-fe5838483b24"], ["Overlijdensakte Franekeradeel 1885, akte 9 · Tresoar, toegang 30-13, inv. 3013", OA + "frl:b2afd809-19fe-c785-6b02-d3eedf89a97e"]] },
 
 { kw: 56, n: "Tjitte Rientses Huitema", b: "1817-02-12", bp: "Idzega", d: "1893-05-19", dp: "Snikzwaag", bur: "RK kerkhof Irnsum", occ: "Veehouder", rel: "Rooms-katholiek", st: "A", unc: { bur: "B", b: "B" },
   m: { w: "Marijke Josephs Witteveen", d: "1850-01-24", p: "Wonseradeel", note: "akte 1" },
+  marriages: [{ order: 1, partner: "Marijke Josephs Witteveen", kw: 57, date: "1850-01-24", place: "Wonseradeel", note: "akte 1", st: "A", src: [["Huwelijksakte Wonseradeel 1850, akte 1 (noemt beide ouderparen) · Tresoar, toegang 30-42, inv. 2018", OA + "frl:fdb5d483-936b-d4ce-d94a-67094ae7c681"]], kids: [0, 1, 2, 3] }],
   kids: ["Jarig (16-04-1851 – 1936)", "Rients (01-10-1852 – 1941)", "Harmen (25-02-1854 – 1939)", "Age (12-09-1857) · kw 28"],
   res: [{ p: "Idzega", y: 1817, t: "geboren" }, { p: "Snikzwaag", y: 1893, t: "overleden, 76 jaar, veehouder" }],
   notes: ["Zijn bidprentje, gedrukt door R. H. Bouma in Joure, zegt: 'Tjitte R. Huitema, in leven echtgenoot van Maria Witteveen, geboren te Oudega den 12 Februari 1817, overleed (…) den 19 Mei 1893 te Snikzwaag onder de parochie Joure en werd den 23 d.a.v. op het Kath. kerkhof te Irnsum begraven.' Het prentje noemt Oudega als geboorteplaats; bij ons staat Idzega, een dorp vlakbij.", "Hij trouwde op zijn 32e met een weduwe met vier kinderen, die drie jaar ouder was."],
@@ -213,13 +244,18 @@ PEOPLE.push(
 
 { kw: 57, n: "Marijke Josephs Witteveen", b: "1814-06-10", bp: "Snikzwaag", d: "1897-04-19", dp: "Snikzwaag", bur: "RK kerkhof Irnsum", occ: "Boerin", rel: "Vermoedelijk rooms-katholiek", unc: { bur: "B" }, st: "A",
   m: { w: "Tjitte Rientses Huitema", d: "1850-01-24", p: "Wonseradeel", note: "akte 1; haar tweede huwelijk. Eerste huwelijk 18-10-1837 in Haskerland met Jarig Thomas Symonsma" },
-  kids: ["uit het eerste huwelijk: Akke, Froukje, Sieuwke en Jozef Symonsma", "uit het tweede huwelijk: Jarig, Rients, Harmen en Age · kw 28"],
+  marriages: [
+    { order: 1, partner: "Jarig Thomas Symonsma", kw: null, date: "1837-10-18", place: "Haskerland", note: "Eerste huwelijk (akte 35).", st: "A", src: [["Eerste huwelijk Haskerland 1837, akte 35 · Tresoar, toegang 30-16, inv. 2007", OA + "frl:9a074de6-19e7-55c8-afdc-fa09761ad487"]], kids: [0, 1, 2, 3] },
+    { order: 2, partner: "Tjitte Rientses Huitema", kw: 56, date: "1850-01-24", place: "Wonseradeel", note: "akte 1; haar tweede huwelijk", st: "A", src: [["Huwelijksakte Wonseradeel 1850, akte 1 · Tresoar, toegang 30-42, inv. 2018", OA + "frl:fdb5d483-936b-d4ce-d94a-67094ae7c681"]], kids: [4, 5, 6, 7] }
+  ],
+  kids: ["Akke", "Froukje", "Sieuwke", "Jozef Symonsma", "Jarig (16-04-1851 – 1936)", "Rients (01-10-1852 – 1941)", "Harmen (25-02-1854 – 1939)", "Age (12-09-1857) · kw 28"],
   notes: [{ t: "Een familieverhaal in een online stamboom (C): over haar land liep een onofficieel voetpad van Hieslum naar Greonterp en Blauwhuis, en zij verbood de mensen het te gebruiken. De Hieslummers stuurden Tjitte Rientses Huitema om het recht van overpad te regelen. 'Die Tjitte was een snoade prater, en regelde niet alleen het recht van overpad': hij werd haar tweede man.", k: "hypothese" }, "Als weduwe van Tjitte Rientses Huitema verkocht zij in 1858 een stuk land in Oudega voor 3.000 gulden, voor zichzelf en haar kinderen.", "Ze kreeg acht kinderen bij twee mannen; de jongste, Age, toen ze 43 was.", "Ze werd 82 en overleed in het dorp waar ze geboren was."],
   src: [["Familiesteen RK kerkhof Irnsum (graftombe.nl)", "https://graftombe.nl/names/info/1677242/witteveen"], ["Online stamboom (begraafplaats)", "https://www.genealogieonline.nl/stamboom-huitema/I8356.php"], ["Memorie van successie, Heerenveen 1897 · Tresoar, toegang 42, inv. 8073, akte 8487", OA + "frl:0f816d2e-1673-4fbe-929c-a627c5c87899"], ["Verkoop land Oudega 1858 · Tresoar, toegang 26, inv. 119052, akte 68", OA + "frl:a2064709-a9a6-4025-b97f-45e09fa56791"], ["Geboorteakte Haskerland 1814 · Tresoar, toegang 30-16, inv. 1003, fol. 16", OA + "frl:0a0a0fa9-0fbc-d182-a745-533b656c456a"], ["Eerste huwelijk Haskerland 1837, akte 35 · Tresoar, toegang 30-16, inv. 2007", OA + "frl:9a074de6-19e7-55c8-afdc-fa09761ad487"], ["Huwelijksakte Wonseradeel 1850, akte 1 · Tresoar, toegang 30-42, inv. 2018", OA + "frl:fdb5d483-936b-d4ce-d94a-67094ae7c681"], ["Overlijdensakte Haskerland 1897, akte 54 · Tresoar, toegang 30-16, inv. 3023", OA + "frl:db069a29-092f-3055-b1cc-edf6c5fabf60"]] },
 
 { kw: 58, n: "Klaas Douwes Flapper", b: "1820-08-26", bp: "Hartwerd", d: "1893-06-29", dp: "Westhem", bur: "Blauwhuis", occ: "Boer (1859)", rel: "Rooms-katholiek", st: "A", unc: { bur: "B", b: "B" },
   stNote: "Huwelijk (1855, akte 73) en overlijden (1893, akte 134) uit akten (A). De geboortedatum staat op zijn bidprentje; de geboorteakte is nog niet gezien (B).",
   m: { w: "Trijntje Pieters Jorna", d: "1855-05-26", p: "Wonseradeel", note: "akte 73" },
+  marriages: [{ order: 1, partner: "Trijntje Pieters Jorna", kw: 59, date: "1855-05-26", place: "Wonseradeel", note: "akte 73", st: "A", src: [["Huwelijksakte Wonseradeel 1855, akte 73 (noemt beide ouderparen) · Tresoar, toegang 30-42, inv. 2021A", OA + "frl:c867d105-7079-c6a3-ab3e-01dc499fa56e"]], kids: [0, 1, 2] }],
   kids: ["Maurits (05-03-1856, Burgwerd)", "een kind (21-04-1859 – 26-04-1859)", "Rinske (26-12-1861, Burgwerd) · kw 29"],
   res: [{ p: "Hartwerd", y: 1820, t: "geboren" }, { p: "Burgwerd", y: 1856, t: "kinderen geboren" }, { p: "Westhem", y: 1893, t: "overleden, 72 jaar" }],
   notes: ["Volgens een online kwartierstaat (C) werd hij geboren op Ruurdastate bij Hartwerd. Volgens het Archief RK Friesland werd hij in Blauwhuis begraven.", "In 1887 liet hij in Hartwerd een boelgoed houden (veiling van roerend goed), dat 3.361 gulden opbracht.", { t: "Zijn vader Douwe was 65 toen Klaas werd geboren, zijn moeder Rinske ongeveer 34.", k: "afgeleid" }],
@@ -227,6 +263,7 @@ PEOPLE.push(
 
 { kw: 59, n: "Trijntje Pieters Jorna", b: "1825-05-08", bp: "Lollum", d: "1900-04-11", dp: "Westhem", bur: "Blauwhuis", occ: "Dienstmeid (1849)", rel: "Vermoedelijk rooms-katholiek", st: "A", unc: { bur: "C", b: "B" },
   m: { w: "Klaas Douwes Flapper", d: "1855-05-26", p: "Wonseradeel", note: "akte 73" },
+  marriages: [{ order: 1, partner: "Klaas Douwes Flapper", kw: 58, date: "1855-05-26", place: "Wonseradeel", note: "akte 73", st: "A", src: [["Huwelijksakte Wonseradeel 1855, akte 73 · Tresoar, toegang 30-42, inv. 2021A", OA + "frl:c867d105-7079-c6a3-ab3e-01dc499fa56e"]] }],
   res: [{ p: "Oudega", y: 1849, t: "dienstmeid" }],
   notes: ["In 1849 was ze dienstmeid in Oudega. Dat staat in de memorie van successie van haar broer Pieter, een soldaat die in juli 1849 in Woerden overleed, 22 jaar oud.", "Ze was zes toen haar vader in 1832 overleed, 33 jaar oud, en veertien toen ook haar moeder stierf.", "Ze trouwde op haar dertigste en was zeven jaar weduwe."],
   src: [["Memorie van successie zoon Pieter, Bolsward nr. 627 (1849) · Tresoar, toegang 42, inv. 2052, akte 627", OA + "frl:2295a96c-7071-4e9f-81d3-e060d40dc661"], ["Online stamboom (begraafplaats)", "https://www.genealogieonline.nl/kwartierstaat-freark-jongma/I14162.php"], ["Memorie van successie, Sneek 1900 · Tresoar, toegang 42, inv. 14117, akte 7940", OA + "frl:b52a435a-023e-43a9-840e-7a259d41f4de"], ["Huwelijksakte Wonseradeel 1855, akte 73 · Tresoar, toegang 30-42, inv. 2021A", OA + "frl:c867d105-7079-c6a3-ab3e-01dc499fa56e"], ["Overlijdensakte Wymbritseradeel 1900, akte 82 · Tresoar, toegang 30-44, inv. 3033", OA + "frl:6741cc74-43b7-d15c-f9d0-b7e0e2a4bb0c"]] },
@@ -234,6 +271,7 @@ PEOPLE.push(
 { kw: 60, n: "Rein Lammerts de Jong", b: "1823-02-06", bp: "Mirns", d: "1862-05-04", dp: "Molkwerum", occ: "Landbouwer; zetboer op Ymedam onder Molkwerum", rel: "Rooms-katholiek", st: "A",
   stNote: "Geboorte (Gaasterland, akte 10), huwelijk (1855, akte 10) en overlijden (1862, akte 45) uit akten. Zijn beroep zetboer staat in de memorie van zijn vader (1856).",
   m: { w: "Marijke Johannes Asma", d: "1855-05-09", p: "Gaasterland", note: "akte 10" },
+  marriages: [{ order: 1, partner: "Marijke Johannes Asma", kw: 61, date: "1855-05-09", place: "Gaasterland", note: "akte 10", st: "A", src: [["Huwelijksakte Gaasterland 1855, akte 10 · Tresoar, toegang 30-14, inv. 2007", OA + "frl:dbfad874-dfa8-5ba4-a729-2580710c34dc"]], kids: [0, 1, 2, 3] }],
   kids: ["Lammert (04-04-1856) · kw 30", "een kind (1858)", "een kind (1859)", "Rein (04-07-1862), geboren na de dood van zijn vader"],
   res: [{ p: "Mirns", y: 1823, t: "geboren" }, { p: "Molkwerum", y: 1856, t: "zetboer op Ymedam" }, { p: "Molkwerum", y: 1862, t: "overleden, 39 jaar" }],
   notes: [{ t: "Dat de Rein Lammerts de Jong van de prent deze Rein is, is een sterke afleiding: naam, patroniem, geloof en streek kloppen (B). Sint Odulphus is ook de patroonheilige van de katholieke kerk in Bakhuizen, de parochie van Mirns.", k: "afgeleid" }, "Op 10 september 1846 werd hij gevormd in de katholieke kerk 'bij D. Bootsma' in Workum, door bisschop Cornelius Ludovicus baron van Wijkerslooth. Hij was toen 23. Zijn vormnaam was Odulphus. Dat staat op een ingevulde vormselprent in Museum Catharijneconvent in Utrecht.", "Een zetboer pachtte de boerderij met het vee van een eigenaar.",
@@ -243,6 +281,7 @@ PEOPLE.push(
 
 { kw: 61, n: "Marijke Johannes Asma", b: "1830-05-05", bp: "Gaasterland", d: "1899-03-02", dp: "Gaasterland", occ: "Boerin", rel: "Vermoedelijk rooms-katholiek", st: "A",
   m: { w: "Rein Lammerts de Jong", d: "1855-05-09", p: "Gaasterland", note: "akte 10" },
+  marriages: [{ order: 1, partner: "Rein Lammerts de Jong", kw: 60, date: "1855-05-09", place: "Gaasterland", note: "akte 10", st: "A", src: [["Huwelijksakte Gaasterland 1855, akte 10 · Tresoar, toegang 30-14, inv. 2007", OA + "frl:dbfad874-dfa8-5ba4-a729-2580710c34dc"]] }],
   res: [{ p: "Bakhuizen", y: 1872, t: "woont hier als weduwe" }],
   notes: ["Ze werd weduwe op haar 32e, zwanger van haar vierde kind, en bleef 37 jaar weduwe. Ze trad op als voogdes van haar zonen.",
     "Haar broer Matthyas Johannes Asma (1828–1909) hertrouwde in mei 1865 nog in Gaasterland, vertrok daarna naar Amerika en overleed in Waukegan bij Chicago."],
@@ -250,7 +289,11 @@ PEOPLE.push(
 
 { kw: 62, n: "Johannes Gerrits Westendorp", b: "1829-03-20", bp: "Balk", d: "1919-02-04", dp: "Raalte", occ: "Landbouwer", rel: "Rooms-katholiek", st: "A",
   m: { w: "Riemke Pieters Hylkema", d: "1857-02-09", p: "Gaasterland", note: "akte 1; eerste huwelijk. Hertrouwd 12-05-1867 met Rimke Siemens Bouwhuis (1842–1916)" },
-  kids: ["Agatha, Aat (1858–1916 Raalte)", "Elisabeth (1859) · kw 31", "Gerrit (1861–1932)", "Petrus", "Renske (29-01-1864)", "kinderen uit het tweede huwelijk"],
+  marriages: [
+    { order: 1, partner: "Riemke Pieters Hylkema", kw: 63, date: "1857-02-09", place: "Gaasterland", note: "akte 1; eerste huwelijk", st: "A", src: [["Huwelijksakte Gaasterland 1857, akte 1 · Tresoar, toegang 30-14, inv. 2007", OA + "frl:63c37348-df9e-3598-1ede-4e388a0bf0a6"]], kids: [0, 1, 2, 3, 4] },
+    { order: 2, partner: "Rimke Siemens Bouwhuis", kw: null, date: "1867-05-12", place: "Gaasterland", note: "Tweede huwelijk (akte 17). Rimke Bouwhuis (1842–1916) kwam uit Sint Nicolaasga; met haar en de kinderen uit dit huwelijk vertrok hij later naar Raalte.", st: "A", src: [["Tweede huwelijk Gaasterland 1867, akte 17 · Tresoar, toegang 30-14, inv. 2009", OA + "frl:e88cc628-9c34-f0ef-56e9-4131ab1eeae4"]], kidsNote: "kinderen uit het tweede huwelijk" }
+  ],
+  kids: ["Agatha, Aat (1858–1916 Raalte)", "Elisabeth (1859) · kw 31", "Gerrit (1861–1932)", "Petrus", "Renske (29-01-1864)"],
   res: [{ p: "Balk", y: 1829, t: "geboren" }, { p: "Wijckel", y: 1858, t: "kinderen geboren 1858–1864" }, { p: "Raalte", y: 1919, t: "overleden, 89 jaar" }],
   notes: ["Zijn moeder Aath van der Hoff overleed negentien dagen na zijn geboorte.",
     "Hij trouwde op 9 februari 1857. Op dezelfde dag trouwde de broer van zijn bruid, Dirk Pieters Hylkema, met Geeske Lammerts de Jong: een tante van de latere schoonzoon van Johannes.",
@@ -263,6 +306,8 @@ PEOPLE.push(
 
 { kw: 63, n: "Riemke Pieters Hylkema", b: "1833-05-19", bp: "Warns", d: "1864-05-01", dp: "Wijckel", occ: "Boerin", rel: "Vermoedelijk rooms-katholiek", st: "A",
   m: { w: "Johannes Gerrits Westendorp", d: "1857-02-09", p: "Gaasterland", note: "akte 1" },
+  marriages: [{ order: 1, partner: "Johannes Gerrits Westendorp", kw: 62, date: "1857-02-09", place: "Gaasterland", note: "akte 1", st: "A", src: [["Huwelijksakte Gaasterland 1857, akte 1 · Tresoar, toegang 30-14, inv. 2007", OA + "frl:63c37348-df9e-3598-1ede-4e388a0bf0a6"]], kids: [0, 1, 2, 3, 4] }],
+  kids: ["Agatha, Aat (1858–1916 Raalte)", "Elisabeth (1859) · kw 31", "Gerrit (1861–1932)", "Petrus", "Renske (29-01-1864)"],
   sibs: ["Rimmer (1829), kerkmeester in 1862; volgens een genealogie getrouwd met Geeske Berends van der Hoff", "Dirk, boer in Warns, trouwde op dezelfde dag als zij met Geeske Lammerts de Jong"],
   notes: ["Ze overleed op 30-jarige leeftijd, drie maanden na de geboorte van haar dochter Renske.",
     "Sommige stambomen geven 1916 als haar sterfjaar; dat is het sterfjaar van de tweede vrouw van Johannes."],

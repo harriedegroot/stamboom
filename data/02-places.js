@@ -64,6 +64,7 @@ const PLACES = {
   "Oosterend": P_(53.096, 5.618, "Hennaarderadeel", FR),
   "Warga": P_(53.152, 5.844, "Idaarderadeel", FR),
   "Irnsum": P_(53.078, 5.791, "Rauwerderhem", FR),
+  "Rauwerderhem": P_(53.098, 5.760, "Rauwerderhem", FR, { kind: "gemeente", name: "Rauwerderhem (gemeente)" }),
   "Rauwerd": P_(53.098, 5.759, "Rauwerderhem", FR, { info: "Hier liet Remke Yntes zich in 1811 inschrijven als Kingma, net als de schipper Minne Meintes als Boesma en de ketelboeter Pieter Hoeben, die zijn naam Houben hield." }),
   "Jorwerd": P_(53.145, 5.712, "Baarderadeel", FR),
   "Weidum": P_(53.146, 5.744, "Baarderadeel", FR),

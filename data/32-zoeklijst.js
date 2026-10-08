@@ -745,5 +745,19 @@ const ZOEKLIJST = [
   "online": "vrij online",
   "hoe": "Zoek dopen van een Antje met vader Johannes Claes (Klaas, Clases, Klazes) tussen 1715 en 1730, en een trouw van Johannes Clases vóór 1730. Kijk of de Johannes Klaas uit Joure later in IJlst woonde. Let op: een jongere Johannes Klaases in Langweer (dopen 1769–1773) is een ander.",
   "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "432"
+  ],
+  "vraag": "Was Andrieske, de oudste dochter van IJsbrand Geles (gedoopt 1736), de Andersche IJsbrands die met Hendrik Johannes Brandsma trouwde? Dan stamt Titus Brandsma ook van IJsbrand Geles af.",
+  "beslist": "De memorie van Gaele IJsbrands Galema (1819) noemt als zesde erfdeel een overleden zus, 'NN IJsbrands Galema', met Brandsma-kinderen. De overlijdensakte van Mevis Hendriks Brandsma (1827) noemt zijn moeder Andersche IJsbrands. Nu is het vermoedelijk (B); de index van de memorie zegt iets anders over de Brandsma's dan de akte van 1827.",
+  "archief": "Tresoar",
+  "bron": "Memorie van successie Gaele IJsbrands Galema, kantoor Bolsward, inv. 2003, nr. 587; boedelscheiding bij notaris Evert Schotanus, Workum, 04-03-1820",
+  "link": "https://www.openarchieven.nl/frl:d0fcb09c-cd8c-4025-ba64-d928ef562b0a",
+  "online": "scan op bestelling",
+  "hoe": "Zoek de memorie (nr. 587) op de film van het kantoor Bolsward op AlleFriezen, of vraag bij Tresoar de boedelscheiding van 1820 op. Kijk hoe de zus heet en wie haar kinderen zijn.",
+  "pri": 2
  }
 ];
