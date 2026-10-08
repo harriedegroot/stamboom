@@ -79,6 +79,7 @@ const PLACES = {
   "Ruigahuizen": P_(52.913, 5.587, "Gaasterland", FR),
   "Sonnega": P_(52.889, 5.993, "Weststellingwerf", FR),
   "Zorgvliet": P_(52.922, 6.255, "Diever", DR, { name: "Zorgvliet (Diever)", info: "Drents dorp net over de grens met Weststellingwerf, ook gespeld als Zorgvlied. Meinte Boersma en Marianna Terwisscha van Scheltinga overleden hier." }),
+  "Vledder": P_(52.857, 6.209, "Vledder", DR, { info: "Drents dorp net over de grens met Weststellingwerf; Nijensleek hoorde bij het kerspel Vledder. Gerwert Fressen en Jantjen Hendriks trouwden hier in 1689." }),
   "Meppel": P_(52.696, 6.194, "Meppel", DR),
   "Scharnegoutum": P_(53.060, 5.678, "Wymbritseradeel", FR, { info: "Dorp ten noorden van Sneek. Hier woonden de Terwisscha's rond 1846–1859 en de Huitema's rond 1918–1925; Akke Huitema werd er in 1925 geboren." }),
   "Sneek": P_(53.033, 5.660, "Sneek", FR, { kind: "stad" }),

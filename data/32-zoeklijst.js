@@ -12,10 +12,10 @@ const ZOEKLIJST = [
   "vraag": "Was Jeltje Reins van Hoitema de moeder van Tiete en Gatse Lieuckema?",
   "beslist": "Tiete Lieuckema is met akten een zoon van Rein Lieuckema (B). Dat Jeltje van Hoitema (overleden 1625) zijn moeder was, en niet een eerdere vrouw van Rein, staat alleen in de aantekeningen van De Walle. Haar grafsteen noemt haar wel de vrouw van Rein van Lieukema.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Weesboeken van Wonseradeel na 1625 (de boedel van Jeltje), en het weesboek van 1630 met de boedel van Tiete: daar was een Rein Hoitema testamentair curator over zijn kinderen",
+  "bron": "Nedergerecht Wonseradeel: de weesboeken van 1608–1609 en 1625–1627 noemen geen boedel van Rein of Jeltje. Nog niet gezien: de quaclappen en de boedels in Oudega (Wymbritseradeel), waar de curator Rein Hoitema in 1630 woonde.",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Blader in de weesboeken van Wonseradeel van 1625–1627 naar een inventaris of scheiding van Jeltje (Jelcke) van Hoitema, en lees bij Tiete (1630) wat Rein Hoitema als 'oom' of 'grootvader' van de kinderen genoemd wordt.",
+  "hoe": "Zoek in Wymbritseradeel (Oudega) naar de familie Van Hoitema rond 1600–1630: een boedel of scheiding die Jeltje als dochter van Rein Hoites van Hoitema († 1589) of als moeder van Tiete en Gatse noemt.",
   "pri": 2
  },
  {
@@ -66,23 +66,6 @@ const ZOEKLIJST = [
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Giethoorn&j=&t=&q=dopen#results",
   "online": "online met inlog",
   "hoe": "Zoek in de doopboeken van Giethoorn naar kinderen van Jan Paulus (Ackerman) en Willempje Roelofs: Roelof, Paulus, Johannes, Harmen, Grietje, Geertje of IJda. Kijk ook in de eigen DTB-index van Collectie Overijssel.",
-  "pri": 1
- },
- {
-  "boom": "a",
-  "kws": [
-   "a-133",
-   "a-266",
-   "a-267",
-   "a-360",
-   "a-361"
-  ],
-  "vraag": "Wie was de moeder van Martje Jans, geboren in Mildam in juli 1753?",
-  "beslist": "Haar overlijdensakte noemt Antje Harmens, maar de enige Jan Jeips in die dorpen was getrouwd met Akke Roels. Was het Akke, dan waren Martje en Roel Jans Heida broer en zus, en staat Jan Jeips twee keer in de stamboom.",
-  "archief": "FamilySearch (scans van Tresoar)",
-  "bron": "Doopboek hervormd Oudeschoot c.a. (Oudeschoot, Nieuweschoot, Mildam, Rottum en Katlijk), DTB 0607, juli–augustus 1753",
-  "online": "online met inlog",
-  "hoe": "Blader naar juli en augustus 1753 en kijk welke moeder er bij de doop van Martje staat.",
   "pri": 1
  },
  {
@@ -151,13 +134,13 @@ const ZOEKLIJST = [
    "1285",
    "1286"
   ],
-  "vraag": "Wie was de vrouw van Fresse Garwerts van de Blesse, en wie was Hendrik, de vader van Jantjen Hendriks?",
+  "vraag": "Wie was de eerste vrouw van Fresse Garwerts van de Blesse, de moeder van Gerwert, en wie was Hendrik, de vader van Jantjen Hendriks?",
   "beslist": "Gerwert Fressen en Jantjen Hendriks (De Blesse) staan twee keer in de stamboom (kwartierverlies). Hun ouders brengen beide lijnen tegelijk verder terug.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Autorisatieboeken Weststellingwerf (de curatele van 1725 noemt Meyne Hendriks uit Nijensleek als oom), RK-doopboeken Steggerda en Oldeholtpade, en de huwelijken van Fresse Garwerts (1670 en 1676)",
+  "bron": "Fresse trouwde in 1670 en 1676; Gerwert was in 1689 al weduwnaar, dus zijn moeder was vermoedelijk een vrouw van vóór 1670. Jantjen Hendriks en haar broer Meine kwamen uit Nijensleek (Drenthe, trouwboek Vledder).",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Lees bij de huwelijken van Fresse Garwerts (1670 en 1676) wie zijn bruiden waren en wie de moeder van Gerwert is. Zoek Meyne Hendriks uit Nijensleek, de broer van Jantjen: zijn doop of huwelijk noemt hun vader Hendrik voluit.",
+  "hoe": "Zoek een huwelijk van Fresse Garwerts vóór 1670 (Weststellingwerf of Vledder), en de doop of het huwelijk van Jantjen en Meine Hendricks in Vledder of Diever, met de naam van hun vader voluit.",
   "pri": 2
  },
  {
@@ -683,9 +666,9 @@ const ZOEKLIJST = [
    "a-5"
   ],
   "vraag": "Wat staat er in de geboorteakte van Jantje Akkerman (Delfstrahuizen, 11 januari 1921)?",
-  "beslist": "Bevestigt haar geboortedatum en -plaats; die komen nu uit het bevolkingsregister.",
+  "beslist": "Bevestigt haar geboortedatum en geboorteplaats. De datum komt nu uit het bevolkingsregister van Schoterland; een geboorteplaats staat daar niet bij.",
   "archief": "Tresoar (Leeuwarden)",
-  "bron": "Burgerlijke stand Haskerland, geboorten 1921 (openbaar, maar nog niet in de online index)",
+  "bron": "Burgerlijke stand Schoterland (toegang 30-31), geboorten 1921: Delfstrahuizen hoorde toen bij Schoterland. Openbaar, maar nog niet in de online index",
   "online": "scan op bestelling",
   "hoe": "Vraag bij Tresoar een scan of afschrift van de geboorteakte aan.",
   "pri": 3
@@ -701,6 +684,22 @@ const ZOEKLIJST = [
   "bron": "DTB Schoterland, hervormd Sintjohannesga: doop ca. 1774 en trouw ca. 1795–1797",
   "online": "online met inlog",
   "hoe": "Zoek een doop van Lucas met vader Symen rond 1774, en de trouw met Aaltje Harmens rond 1796.",
+  "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "6668",
+   "6669",
+   "1666"
+  ],
+  "vraag": "Is er een afbeelding van de grafsteen van Rein Lieuwkema (1608), Jeltje van Hoitema (1625) en Jacob Spanga (1679) in Makkum?",
+  "beslist": "De tekst van de steen kennen we alleen uit de aantekeningen van Hessel de Walle. Een foto of een scan van zijn handschrift laat zien wat er precies staat, en kan de namen en sterfjaren bevestigen.",
+  "archief": "Tresoar (Leeuwarden); de kerk in Makkum",
+  "bron": "Verzameling Hessel de Walle, inscripties en grafschriften (Tresoar, toegang 0001, akte 4276); en de steen zelf, als die nog in de kerk in Makkum ligt",
+  "link": "https://www.openarchieven.nl/frl:e5703ef2-9434-4aa4-afb0-566e6e07c47f",
+  "online": "scan op bestelling",
+  "hoe": "Vraag bij Tresoar een scan aan van de bladzijde bij De Walle. Vraag de kerkvoogdij in Makkum (of ga zelf kijken) of de zerk nog in de kerk ligt, en maak een foto. Op Wikimedia Commons, in de beeldbank van Tresoar en bij HCL staat hij niet.",
   "pri": 3
  }
 ];
