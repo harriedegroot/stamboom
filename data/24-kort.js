@@ -233,7 +233,7 @@ const KORT = {
   "303": "Woonde in 1754, vermoedelijk als dienstmeid, in Mantgum toen ze met Jorrit Foppes trouwde; haar ouders waren vrijwel zeker Wytse Lolkes en Bauck Wybes uit Warga en Wartena.",
   "320": "Katholiek in Peperga die in 1715 bij de pastoor thuis in Kuinre trouwde, 'te mijnen huize', en in 1733 overleed toen zijn jongste zoon nog geen twee was.",
   "321": "Katholieke vrouw uit Peperga die in 1715 in Kuinre trouwde; haar naam leeft voort in haar kleindochter Teertjen (1746).",
-  "336": "Katholiek uit Steenwijkerwold en vrijwel zeker een broer van Fretse Alberts, bij wiens kinderen hij doopgetuige was; zijn zoon Albert Eizen ten Berge werd huisman in Steggerda.",
+  "336": "Katholiek uit Steenwijkerwold, die in 1733 op zijn zesde wees werd, samen met zijn broer Fretse Alberts; zijn zoon Albert Eizen ten Berge werd huisman in Steggerda.",
   "337": "Kwam uit Ter Idzard en trouwde in 1754, 21 jaar oud, in Oldeholtpade met Eise Alberts.",
   "338": "Katholiek uit IJsselham die op de Hare bij Oldemarkt woonde en zijn kinderen in Steggerda liet dopen, de oudste in 1762 thuis.",
   "339": "Katholieke vrouw uit Vinkega, gedoopt als Illuminata, die in 1815 in Steenwijkerwold overleed; haar dochter Meintje kreeg de naam van haar moeder Meindora.",

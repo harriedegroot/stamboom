@@ -7,16 +7,17 @@ const ZOEKLIJST = [
  {
   "boom": "h",
   "kws": [
-   "1667",
    "3334",
-   "3335"
+   "6668",
+   "6669"
   ],
-  "vraag": "Wie waren de ouders van Catharina Lieuckema, de moeder van Geertje Spanga uit Makkum?",
-  "beslist": "Dat Catharina de moeder van Geertje was, blijkt nu uit het weesboek van 1679. Folio 36 van hetzelfde boek gaat over Jacob Spanga als curator van de wees Tiete Meyes Lieuwkema. Dat kan laten zien of Catharina een dochter was van Tiete Reins of van Gatse Lieuwkema, en of de lijn tot rond 1550 echt bij de stamboom hoort.",
+  "vraag": "Was Tiete Lieuckema, de grootvader van Geertje Spanga, een zoon van Rein Meies Lieuwkema en Jeltje Reins van Hoitema?",
+  "beslist": "Trijntje Lieuckema, de moeder van Geertje Spanga, was een volle zus van Meye Tietes Lieuckema (curatele 1664), en dus een dochter van Tiete. Dat Tiete een zoon was van Rein Meies Lieuwkema en Jeltje van Hoitema, staat nu alleen in de aantekeningen van De Walle. Een akte zou de lijn tot rond 1550 zeker maken.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Nedergerecht Wonseradeel, weesboek 1679 (toegang 13-43, inv. 168), folio 36: 'Jacobus Spanga als gewesen Curator of Tiete Meijes Lieuwkema'",
+  "bron": "Nedergerecht Wonseradeel, weesboeken 1629–1632 (na de dood van Tiete in 1629: een weesakte over zijn kinderen Meye en Trijntje noemt vaak ooms en grootouders), en de quaclappen van het Hof van Friesland (Meye Reyns Lieuckema, 1581)",
+  "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Blader in de scans van dit weesboek (765 opnamen, zonder namenindex), vermoedelijk na opname 500. Het register achter in het boek wijst folio 36 aan.",
+  "hoe": "Blader in de weesboeken van Wonseradeel van 1629 tot 1632 (per jaar gescand, zonder namenindex) naar een titelblad als 'Inventaris van Tiete Reyns goederen' of naar de namen Meye en Trijntje.",
   "pri": 1
  },
  {
@@ -148,16 +149,16 @@ const ZOEKLIJST = [
  {
   "boom": "h",
   "kws": [
-   "168",
-   "336"
+   "320",
+   "321"
   ],
-  "vraag": "Was Eise Alberts, de vader van Remmelt Eizen ten Berge, de Eligius die in 1726 werd gedoopt als broer van Fretse Alberts?",
-  "beslist": "Dan komt deze lijn een generatie verder en staat de familie twee keer in de stamboom (een vierde kwartierverlies).",
-  "archief": "FamilySearch (scans van de doopboeken van Steenwijkerwold)",
-  "bron": "RK-doopboek Steenwijkerwold 1726 en 1755–1776, met de aantekeningen bij de getuigen; of een weesboek of voogdijstuk uit 1733 na de dood van Albert Eysche (Weststellingwerf of Steenwijkerwold)",
-  "link": "https://www.genealogiewerkbalk.nl/fs/?p=Steenwijkerwold&j=&t=&q=dopen#results",
-  "online": "online met inlog",
-  "hoe": "Lees de doop van 1726 en die van Remmelt (januari 1766) op de scan: staat er bij een getuige een verwantschap, zoals 'vaders broer'?",
+  "vraag": "Wie waren de ouders van Albert Eysche en Tjertjen Garwerts uit Peperga?",
+  "beslist": "Zij staan twee keer in de stamboom (kwartierverlies). Hun ouders brengen beide lijnen tegelijk een generatie verder.",
+  "archief": "Tresoar, via AlleFriezen",
+  "bron": "RK-doopboek Steggerda (DTB 0781), huwelijk 1715; autorisatieboeken Weststellingwerf (inv. 055 en ouder): in 1733 was Remmelt Eijssen 'oom van vaderskant'",
+  "link": "https://www.allefriezen.nl/",
+  "online": "vrij online",
+  "hoe": "Zoek het huwelijk van 1715 met de getuigen, en een weesakte of boedel van de ouders van Albert of Remmelt Eijssen (patroniem Eijsses, Eisses).",
   "pri": 2
  },
  {
@@ -194,17 +195,17 @@ const ZOEKLIJST = [
  {
   "boom": "h",
   "kws": [
-   "248",
    "496",
-   "497"
+   "992",
+   "993"
   ],
-  "vraag": "Wie waren de ouders van Johannes Jans Westendorp (ca. 1763), later in Balk?",
-  "beslist": "Bewijst dat hij een zoon was van Jan Westendorp en Aukje Lyklama, en kan de ouders van Jan noemen.",
+  "vraag": "Was Jan Gerrits Westendorp een zoon van Gerrit Mertens (Grutter, later Westendorp) en Aaltjen Jans uit Steenwijk?",
+  "beslist": "De ouders van Johannes Jans Westendorp staan nu in zijn overlijdensakte (Balk 1826). Zijn grootouders komen alleen uit de genealogie van windgenealogie.org (C); een doop van Jan met vader Gerrit zou ze zeker maken.",
   "archief": "Collectie Overijssel (Zwolle); scans op FamilySearch",
-  "bron": "DTB Steenwijk, doopboeken rond 1760–1765",
+  "bron": "DTB Steenwijk, doopboeken ca. 1715–1730, en de volkstelling van Steenwijk 1748",
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Steenwijk&j=&t=&q=dopen#results",
   "online": "online met inlog",
-  "hoe": "Zoek een doop van Johannes (Jan) met vader Jan Westendorp rond 1763; de doopboeken van Steenwijk staan niet in de online indexen.",
+  "hoe": "Zoek de doop van Jan met vader Gerrit (Mertens) in Steenwijk, en lees in de volkstelling van 1748 wie er bij Gerrit in huis woonde.",
   "pri": 2
  },
  {
@@ -481,10 +482,10 @@ const ZOEKLIJST = [
   "vraag": "Wie waren de ouders van Hylcke Jans (Oudehaske) en Aefke Beits (Haskerhorne), getrouwd in 1681?",
   "beslist": "Brengt de lijn van Jeltje Hylkes een generatie verder: haar grootvaders heetten Jan en Beint.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Nedergerecht Haskerland, autorisatieboeken 1660–1700 (scans 1–18 van het register), en de floreenkohieren van Haskerland 1700–1720",
+  "bron": "Nedergerecht Haskerland: weesboeken en boedels van vóór 1681, en de floreenkohieren van Haskerland 1700–1720. Het autorisatieboek (inv. 031) begint pas in 1671; de akte van 1677 over Aefke noemt haar ouders niet.",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Lees de voogdijen en boedels van vóór 1681 op de scans: ze noemen ouders en kinderen bij naam. Beint was in 1677 al overleden.",
+  "hoe": "Zoek een boedel of weesakte van Beint, die in 1677 vermoedelijk al overleden was: zo'n akte noemt zijn kinderen bij naam. In 1677 vroeg Aefke, 'oudt in haer 17e jaer', zelf om curatoren.",
   "pri": 3
  },
  {
