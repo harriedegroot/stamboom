@@ -14,7 +14,7 @@
    40..43-alies-*    de stamboom van Alies Hoekstra
    Tijdperken, begrippen, plaatsen en het wijzigingslog gelden voor alle drie de stambomen.
    ===================================================================== */
-const VERSION = "Versie 12 · 8 oktober 2026";
+const VERSION = "Versie 13 · 8 oktober 2026";
 const OA = "https://www.openarchieven.nl/";
 const RKF_SCAN = n => `https://archiefrkfriesland.nl/archiefdata/advertenties/${n}.jpg`;
 const PEOPLE = [];

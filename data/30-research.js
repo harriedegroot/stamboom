@@ -246,6 +246,10 @@ const SOURCE_GROUPS = [
 ];
 
 const CHANGELOG = [
+  { v: "Versie 13", d: "8 oktober 2026", items: [
+    "Menu: de tabs van een onderdeel staan als tweede balk onder de kop, met dezelfde namen als in het uitklapmenu en een korte uitleg erbij; op de computer blijven ze bij het scrollen staan. Het uitklapmenu sluit nu meteen na een klik.",
+    "Overzicht: de waaier is rustiger en beter leesbaar. Er staan alleen voornamen die op het scherm groot genoeg zijn, en onder de waaier staat één regel uitleg met de link \"Open de hele waaier\". De familiekleuren staan op brede schermen ernaast.",
+    "\"Kies een stamboom\": de stamboom die je bekijkt, valt duidelijk op, met een accentrand, een lichte achtergrond en bovenaan \"Je bekijkt deze stamboom\". De andere twee kaarten hebben de link \"Open deze stamboom\"."] },
   { v: "Versie 12", d: "8 oktober 2026", items: [
     "Nieuw: \"Hoe zijn we familie?\", via Personen, de voorpagina en elk profiel. Kies de voorouder van wie je afstamt en hoeveel generaties je eronder staat, en de site zegt wat je bent van Harrie, Alies of Marit, Tijmen en Jorn: neef of nicht, achterneef, oudoom of oudtante, met de wettelijke graad van bloedverwantschap, een schema en de zwakste stap. Je kunt ook twee personen uit de stamboom kiezen: dan zie je of de een voorouder is van de ander, of ze door kwartierverlies bloedverwant zijn, en via welk huwelijk hun families samenkwamen.",
     "Nieuw: \"Waar de families elkaar kruisten\", in de stamboom van de kinderen: de dorpen waar voorouders van Harrie en van Alies binnen tien jaar van elkaar woonden, trouwden of overleden, op een kaartje en per dorp een tijdstrook. In Nieuweschoot werden de overgrootmoeders Elisabeth Kingma en Janke Wietsma in december 1892 twee dagen na elkaar geboren.",
