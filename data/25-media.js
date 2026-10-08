@@ -12,7 +12,7 @@ const MEDIA_KINDS = {
   bidprentje: { label: "Bidprentjes", d: "Gedachtenisprentjes uit de archieven, met scan waar die bekend is." },
   kerk: { label: "Kerken en kerkhoven", d: "Waar ze gedoopt werden, trouwden en begraven liggen." },
   plek: { label: "Plekken met een verhaal", d: "Kloosters, havens en andere plekken met een eigen verhaal." },
-  krant: { label: "Kranten", d: "Berichten uit Delpher die bij het zoeken opdoken, nog niet gelezen." },
+  krant: { label: "Kranten", d: "Berichten uit Delpher die de familie kunnen noemen; ze zijn nog niet nagelezen." },
   achtergrond: { label: "Achtergrond", d: "Boeken, artikelen en archieven over de tijd waarin ze leefden." }
 };
 const NOT_OPENED = "niet zelf geopend";
