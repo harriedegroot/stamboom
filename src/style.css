@@ -132,6 +132,14 @@ button.link{background:none;border:0;padding:0;color:var(--accent);cursor:pointe
 @media (max-width:520px){.tb-lbl{display:none}.treebar .wrap{padding-block:6px}.tb-seg{flex:1}.tb-seg button{flex:1 1 auto;justify-content:center;padding:6px 8px;gap:6px}.tb-seg b{font-size:14.5px}.tb-seg .tb-ic{width:13px;height:13px}}
 input[type=search],select{font:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
 input[type=search]{width:min(320px,100%)}
+/* keuzelijsten: eigen pijl (dunne chevron in de tekstkleur, licht en donker), zelfde hoogte als het zoekveld; compact in werkbalken */
+select{appearance:none;-webkit-appearance:none;box-sizing:border-box;min-height:40px;padding:8px 32px 8px 11px;cursor:pointer;line-height:1.3;
+  background-image:linear-gradient(45deg,transparent calc(50% - .8px),currentColor calc(50% - .8px),currentColor calc(50% + .8px),transparent calc(50% + .8px)),linear-gradient(-45deg,transparent calc(50% - .8px),currentColor calc(50% - .8px),currentColor calc(50% + .8px),transparent calc(50% + .8px));
+  background-size:6px 6px,6px 6px;background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-repeat:no-repeat}
+select:hover{border-color:var(--faint)}
+select:focus-visible,input[type=search]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+select:disabled{opacity:.55;cursor:default}
+select option{background:var(--surface);color:var(--ink)}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:18px 0}
 .legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -798,7 +806,6 @@ ol.kpath .kp-nu b{font-weight:650}
 .ptile.hist img{filter:var(--card-tone)}
 .ptile .cap small.l2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* telefoon: compacte stroken en lichtbak */
-.tinynote{display:block;font-size:11px;color:var(--muted);font-style:italic}
 .lbmore summary{cursor:pointer;color:var(--lb-ink);font-size:13px;padding:4px 0}
 .lbmore[open] summary{margin-bottom:4px}
 /* lichtbak: alleen het onderschrift scrolt (één scrollvak); beschrijving, uitgeklapte titel en aktetekst niet apart */
@@ -969,7 +976,7 @@ details.mcredit[open]{overflow-wrap:anywhere}
 .vw-form{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:end;margin-top:4px}
 .vw-field{display:flex;flex-direction:column;gap:5px;flex:1 1 260px;min-width:0}
 .vw-field label{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.vw-field select,.vw-combo input[type=search]{width:100%}
+.vw-field select,.vw-combo input[type=search]{width:100%;max-width:32em}
 .vw-combo{position:relative}
 .vw-list{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);margin:0;padding:4px 0;list-style:none;background:var(--surface);border:1px solid var(--rule);border-radius:8px;box-shadow:var(--shadow)}
 .vw-list li{display:flex;flex-direction:column;gap:1px;padding:7px 12px;cursor:pointer;min-width:0;overflow-wrap:anywhere}
@@ -1176,29 +1183,34 @@ nav.tabs{overflow:visible!important;-webkit-mask-image:none!important;mask-image
 .sb-g{align-self:center;flex:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-right:16px;border-right:1px solid var(--rule);line-height:18px}
 .subtabs ul{display:flex;flex-wrap:wrap;gap:0 20px;list-style:none;margin:0;padding:0;min-width:0}
 .subtabs li{display:flex}
-.subtabs a{display:inline-flex;align-items:center;padding:9px 0 7px;margin-bottom:-1px;font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.subtabs a{display:inline-flex;align-items:center;gap:6px;padding:9px 0 7px;margin-bottom:-1px;font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.subtabs a .nico{width:16px;height:16px;flex:none;color:var(--faint)}
+.subtabs a[aria-current] .nico{color:var(--accent)}
 .subtabs a:hover{color:var(--ink)}
 .subtabs a[aria-current]{color:var(--ink);border-bottom-color:var(--accent)}
 .subtabs a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:0}
 .sb-u{align-self:center;margin-left:auto;font-size:12.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding-left:12px}
 html.sub-op main > .view > .eyebrow:first-child{display:none}
-main h1[tabindex]:focus:not(:focus-visible){outline:none}
+main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* programmatische focus na een navigatie: geen rand, de schermlezer leest de kop wel voor */
 @media (min-width:961px) and (max-height:700px){.subbar{position:static}}
 .letters{top:var(--vast,57px)}
 .mcard,.bpcard{scroll-margin-top:calc(var(--vast,57px) + 33px)}
 #v-bronnen .section-head,.namereg section{scroll-margin-top:calc(var(--vast,57px) + 63px)}
 @media (min-width:861px){.map{top:calc(var(--vast,57px) + env(safe-area-inset-top,0px))}.vb-map{top:calc(var(--vast,57px) + 13px + env(safe-area-inset-top,0px))}}
 @media print{.subbar{display:none}}
-@media (max-width:1100px){.sb-u{display:none}}
 @media (max-width:960px){
   .subbar{position:static;backdrop-filter:none;background:var(--bg)}
-  .subtabs{flex-wrap:wrap;gap:0;padding-top:8px}
-  .subtabs{padding-top:2px;align-items:center;column-gap:12px}
-  .sb-g{border:0;padding-right:4px;line-height:16px}
-  .subtabs ul{gap:0 16px}
-  .subtabs a{white-space:normal;padding:7px 0 6px}
+  .subtabs{display:block;padding-block:8px 10px}
+  .sb-g{display:none} /* het hoofdonderdeel staat al in de kop */
+  /* even grote knoppen: 2 kolommen, bij 3 tabs 3; een laatste losse knop over de hele breedte */
+  .subtabs ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  .subtabs ul.sb-n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .subtabs ul.sb-n5 li:last-child{grid-column:1/-1}
+  .subtabs li{display:block;min-width:0}
+  .subtabs a{display:flex;justify-content:center;width:100%;min-height:34px;padding:4px 8px;margin:0;border:1px solid var(--rule);border-bottom-width:1px;background:var(--surface);white-space:normal;text-align:center;line-height:1.2;font-size:13.5px}
+  .subtabs a[aria-current]{border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 }
-@media (max-width:400px){.subtabs ul{gap:0 13px}.subtabs a{font-size:13.5px}}
+@media (max-width:400px){.subtabs a .nico{display:none}}
 @media (max-width:1180px) and (min-width:961px){.searchbtn .lbl,.searchbtn kbd{display:none}.searchbtn{width:40px;height:36px;justify-content:center;padding:0}.mn-top{padding-left:6px;padding-right:6px}.mn-lbl{padding-right:1px}.mn-chev{padding-left:2px;padding-right:4px}}
 /* smal: boomkiezer links, zoeken en ☰ rechts, één regel */
 @media (max-width:960px){
@@ -1393,7 +1405,7 @@ main h1[tabindex]:focus:not(:focus-visible){outline:none}
 /* ---- op deze dag: een andere dag kiezen ---- */
 .otd-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px}
 .otd-pick{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px}
-.otd-pick select{font-size:13px;padding:4px 8px}
+.otd-pick select,.tree-diep select{font-size:13px;min-height:30px;padding:4px 26px 4px 9px;background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%}
 .otd-step{width:30px;height:30px;border:1px solid var(--rule);background:var(--surface);border-radius:6px;cursor:pointer;color:var(--ink);font-size:17px;line-height:1}
 .otd-step:hover,.otd-step:focus-visible{border-color:var(--accent)}
 .otd-today{background:none;border:0;padding:4px 2px;font:inherit;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer}
@@ -1427,15 +1439,89 @@ main h1[tabindex]:focus:not(:focus-visible){outline:none}
 .tl-k b{font-weight:600;font-size:14px;line-height:1.3;overflow-wrap:anywhere}
 .tl-k span{font-size:12.5px;color:var(--muted)}
 .tl-k:hover b{color:var(--accent)}
-.tl-k:focus-visible,.tl-meer:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tl-k:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .tl-k.twin{border-color:var(--gold);border-left-color:var(--c)}
 .tl-k.st-C{border-style:dashed;border-left-style:solid}
 .tl-k.st-D{border-style:dotted;border-left-style:solid}
 .tl-k.leeg{border-style:dashed;border-left:1px dashed var(--rule);color:var(--faint);cursor:default}
-.tl-meer{flex:none;width:40px;background:var(--accent);color:var(--accent-ink);border:0;border-radius:0;font-size:20px;line-height:1;cursor:pointer}
 .tree-back{margin-right:10px;padding:4px 10px;font-size:13px}
 
 /* waaier en boom: normale witruimte tussen de inleiding en het kader */
 #v-stamboom > .lede,#v-boom > .lede{margin-bottom:6px}
 .fan-wissel{margin:0 0 18px!important}
-#v-boom .boom-hint{margin:-10px 0 14px}
+#v-boom .boom-hint{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 10px}
+.bh-it{display:inline-flex;align-items:center;gap:6px}
+#treePane{scroll-margin-top:calc(var(--vast,57px) + 12px)}
+/* boom: weergavekeuze en uitklapbare lijst */
+#crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+#crumbs .tree-pad{flex:1 1 auto;min-width:0}
+.tree-views{display:inline-flex;gap:4px;flex-wrap:wrap}
+.tree-views .chip{border-radius:0;font-size:12.5px;padding:3px 10px}
+.tree-diep select{margin-left:4px}
+.tl-r{gap:4px}
+.tl-tg{flex:none;width:28px;background:var(--surface);border:1px solid var(--rule);border-radius:0;color:var(--accent);font-size:17px;line-height:1;cursor:pointer;font-family:var(--mono)}
+.tl-tg[aria-expanded="true"]{background:var(--sunk)}
+.tl-tg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tl-tg.leeg{border:0;background:none;cursor:default}
+@media (max-width:520px){.tree-lijst ol{margin-left:6px;padding-left:7px}.tl-tg{width:24px}}
+@media print{
+  #crumbs .tree-views,#crumbs .tree-diep,#crumbs .tree-back,.tl-tg,.subtabs{display:none}
+  .tree svg{width:100%;height:auto;max-height:none}
+  .tree .node{cursor:default}
+}
+
+/* ---------- beeld: subtabs, secties met "Toon alle" ---------- */
+#mToc{margin-top:10px}
+.bz-meer{margin:14px 0 0}
+.bz.dicht.c6 :is(.gallery,.grid-3)>:nth-child(n+7),.bz.dicht.c12 :is(.gallery,.grid-3)>:nth-child(n+13),.bz.dicht.c18 :is(.gallery,.grid-3)>:nth-child(n+19),.bz.dicht .bz-rest{display:none}
+:is(#v-beeld,#v-beeld-plaatsen) .section-head{scroll-margin-top:calc(var(--vast,57px) + 16px)}
+@media (max-width:560px){
+  :is(#v-beeld,#v-beeld-plaatsen) .gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  :is(#v-beeld,#v-beeld-plaatsen) .gallery.mem .phb img{max-height:220px}
+  .bz.dicht.c12 .gallery>:nth-child(n+9),.bz.dicht.c18 .gallery>:nth-child(n+11){display:none}
+  .bz.dicht.c6 .grid-3>:nth-child(n+4){display:none}
+}
+
+/* ---------- menu: iconen in het telefoonpaneel en de uitklapmenu's ---------- */
+.mn-it.mn-ico{display:flex;align-items:flex-start;gap:11px}
+.mn-ico .nico{flex:none;width:20px;height:20px;color:var(--muted);margin-top:0}
+.mn-panel .mn-it.mn-ico{align-items:center}
+.mn-ico .mn-tx{min-width:0}
+.mn-it[aria-current] .nico{color:var(--accent)}
+
+/* ---------- boom: schaal 1, families, verder, afdrukken ---------- */
+.tree svg{display:block;width:100%;height:auto}
+.tree svg.dim .node[data-l]:not(.aan){opacity:.28}
+.tree svg .node{transition:opacity .15s}
+#crumbs .tree-fam{flex:1 0 100%;margin:2px 0 0}
+#crumbs .tree-print{border-radius:0;font-size:12.5px;padding:3px 10px}
+.tl-verder{flex:none;background:var(--surface);border:1px solid var(--rule);border-radius:0;color:var(--accent);font:inherit;font-size:12.5px;padding:0 9px;cursor:pointer;white-space:nowrap}
+.tl-verder:hover{background:var(--sunk)}
+.tl-verder:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tree-druk{display:none}
+@media print{
+  .tree-verder,#crumbs .tree-print,#crumbs .tree-fam,.tl-verder{display:none}
+  .tl-k{max-width:100%;box-sizing:border-box}
+  html.boom-druk #v-boom > :not(#treePane),html.boom-druk #crumbs{display:none!important}
+  html.boom-druk .tree-druk{display:block;margin:0 0 6px;color:#000;font-size:13px}
+  html.boom-druk .tree-druk.small{font-size:9.5px;margin:6px 0 0}
+  html.boom-druk #treePane{border:0;border-radius:0;padding:0;background:none}
+  html.boom-druk .tree svg{max-height:160mm;break-inside:avoid}
+}
+
+/* ---------- man of vrouw: klein teken in lijsten met losse voornamen ---------- */
+.sexico{display:inline-block;width:13px;height:13px;vertical-align:-1px;margin-right:4px;color:var(--muted);flex:none}
+.nw{white-space:nowrap}
+
+/* uitleg van de huidige tab, direct onder de tabbalk (scrolt mee, niet vast) */
+.sb-uitleg{margin:-14px 0 14px;font-size:13px;line-height:1.4;color:var(--muted)}
+.sb-uitleg[hidden]{display:none}
+@media (max-width:960px){.sb-uitleg{margin:-16px 0 12px}}
+@media print{.sb-uitleg{display:none}}
+
+/* ---------- afdrukknoppen: printericoon naast het woord ---------- */
+.btn .nico{width:18px;height:18px;flex:none}
+.chip .nico{width:15px;height:15px;flex:none}
+
+/* ---------- voorpagina: tegels en ingangen met dezelfde iconen als het menu; op 28–44 px een dunnere lijn ---------- */
+.layer .nico,.ingang .nico{stroke-width:1;flex:none}
