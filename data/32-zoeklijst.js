@@ -49,7 +49,7 @@ const ZOEKLIJST = [
   "archief": "Tresoar (nedergerecht Wonseradeel); FamilySearch (kerkboeken Makkum)",
   "bron": "Voogdij of curatele over de kinderen van Durk Tjetses en Rinske Foppes, na 15-01-1799 of na 07-11-1807 (nedergerecht Wonseradeel); doop RK Makkum 12-02-1764",
   "online": "alleen ter plaatse",
-  "hoe": "Het RK-dodenboek van Makkum noemt alleen naam en datum, geen leeftijd. Zoek daarom een voogdij of curatele over de drie kinderen na de dood van Durk (1799) of van Rinske (1807): een oom of grootmoeder als voogd zou zijn ouders aanwijzen.",
+  "hoe": "Het RK-dodenboek van Makkum noemt alleen naam en datum, geen leeftijd. Zoek daarom een voogdij of curatele over de drie kinderen na de dood van Durk (1799) of van Rinske (1807): een oom of grootmoeder als voogd zou zijn ouders aanwijzen. De rekeningen van curatoren van Wonseradeel 1785–1810 (inv. 087) zijn al doorgekeken: daarin staat geen rekening voor de kinderen van Durk en Rinske.",
   "pri": 1
  },
  {
@@ -59,13 +59,13 @@ const ZOEKLIJST = [
    "a-320",
    "a-321"
   ],
-  "vraag": "Wie waren de ouders van Johannes Jans Akkerman (ca. 1743), de oudste Akkerman in de stamboom?",
-  "beslist": "Bevestigt of hij een zoon was van Jan Paulus Ackerman en Willempje Roelofs uit Giethoorn (nu een hypothese, D). Johannes staat drie keer in de stamboom, dus het antwoord telt drie keer.",
-  "archief": "Collectie Overijssel (Zwolle); scans op FamilySearch",
-  "bron": "DTB Giethoorn (hervormd): doopboek ca. 1735–1750, en het lidmatenboek (vertrek met attestatie naar Sintjohannesga, februari 1765)",
-  "link": "https://www.genealogiewerkbalk.nl/fs/?p=Giethoorn&j=&t=&q=dopen#results",
-  "online": "online met inlog",
-  "hoe": "Zoek in de doopboeken van Giethoorn naar kinderen van Jan Paulus (Ackerman) en Willempje Roelofs: Roelof, Paulus, Johannes, Harmen, Grietje, Geertje of IJda. Kijk ook in de eigen DTB-index van Collectie Overijssel.",
+  "vraag": "De doop van Johannes Jans Akkerman, 29 april 1742 in Giethoorn: staat die zo in het doopboek?",
+  "beslist": "Volgens een gezinsreconstructie van de doopboeken van Giethoorn was hij een zoon van Jan Paulus Akkerman en Willempje Roelofs (nu B). De scan van de doop maakt het A. Johannes staat drie keer in de stamboom, dus het antwoord telt drie keer.",
+  "archief": "Collectie Overijssel (Zwolle), toegang 0124 (DTB Overijssel); scans ook op FamilySearch",
+  "bron": "Doopboek Giethoorn (hervormd), 29-04-1742: Johannes, vader Jan Paulus Akkerman, moeder Willempje Roelofs, getuige Jantje Paulus Akkerman",
+  "link": "https://collectieoverijssel.nl/zoekhulp/doop-trouw-en-begraafboeken/",
+  "online": "vrij online",
+  "hoe": "Zoek in de doopboeken van Giethoorn de doop van 29 april 1742. Staan de vader Jan Paulus, de moeder Willempje Roelofs en de getuige Jantje Paulus Akkerman erbij?",
   "pri": 1
  },
  {
@@ -93,7 +93,7 @@ const ZOEKLIJST = [
   "vraag": "Was Rinske Foppes (Makkum) een dochter van Foppe Jochems Scheltinga en Sasse Bokkes?",
   "beslist": "Dan was haar moeder een zus van Titus Bokkes Terwisscha van Scheltinga, en staat hun vader Bocke Bockes twee keer in de stamboom. Nu is het een hypothese.",
   "archief": "FamilySearch (scans van de RK-doopboeken)",
-  "bron": "RK-doopboeken Oldeholtpade en Makkum, ca. 1763–1767: een doop van Rinske (Reinske), dochter van Foppe",
+  "bron": "RK-doopboeken Oldeholtpade en Makkum, ca. 1763–1767: een doop van Rinske (Reinske), dochter van Foppe. De ouders van Foppe zijn gevonden: Jochem Foppes en Lisbet Jans uit Sonnega; zijn oudste zus heette Rijnsje (1715). In de boedel- en proclamatieboeken van Weststellingwerf (1783–1808) staat geen boedel van Foppe of Saske",
   "online": "online met inlog",
   "hoe": "Blader op de scans naar een doop van Rinske met vader Foppe; de online index noemt bij deze dopen alleen de vader.",
   "pri": 2
@@ -194,19 +194,32 @@ const ZOEKLIJST = [
   "boom": "h",
   "kws": [
    "202",
-   "404",
-   "405",
-   "808",
-   "809"
+   "405"
   ],
-  "vraag": "Wie was de moeder van Pieter Wybes Talsma (overleden Hidaard 1796)?",
-  "beslist": "Of Sipkje Johannes zijn moeder was (nu een hypothese, D), of een eerdere vrouw van zijn vader Wybe Pieters Tolsma. Het trouwboek kan ook het huwelijk van zijn grootouders Pieter Wybes en Minke Athes laten zien.",
-  "archief": "FamilySearch (scans van de RK-boeken van Roodhuis)",
-  "bron": "RK-doopboek Roodhuis ca. 1750–1752 (doop van Pieter, zoon van Wybe Pieters); RK-trouwboek Roodhuis ca. 1719 (Pieter Wybes × Minke Athes)",
+  "vraag": "Wie waren de ouders van Sipkje Johannes uit Hidaard (overleden 1753), de moeder van Pieter Wybes Talsma?",
+  "beslist": "Brengt deze lijn een generatie verder. Haar zussen waren vermoedelijk Ytje Johannes (getrouwd 1752 met Jacob Mevis uit Bozum) en Pierke Joannes; een broer misschien Durk Johannes.",
+  "archief": "FamilySearch (scans van de RK-boeken van Roodhuis); Tresoar, via AlleFriezen",
+  "bron": "RK-doopboek Roodhuis ca. 1715–1730 (alleen op scan); de curatele van 1782 over Sipke, zoon van Ytje Johannes, waarin haar man Wybe Pieters curator was (nedergerecht Hennaarderadeel)",
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Roodhuis&j=&t=&q=dopen#results",
   "online": "online met inlog",
-  "hoe": "Zoek de doop van Pieter rond 1750–1752 en kijk welke moeder er staat; deze doop staat niet in de online index.",
-  "pri": 2
+  "hoe": "Zoek dopen van Sipkje (Cypriana), Ytje en Pierke met een vader Johannes rond 1715–1730. Een weesakte of boedel van Johannes in Hidaard kan de kinderen samen noemen.",
+  "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "394",
+   "788",
+   "789"
+  ],
+  "vraag": "Wanneer werd Gerben Nannes geboren: rond 1710 of rond 1716?",
+  "beslist": "Zijn dochter gaf in 1806 een leeftijd van 95 jaar, 5 maanden en 5 dagen op, het register van Hennaarderadeel 90 jaar. Een doop van Gerben, zoon van Nanne, beslist dat en maakt ook de koppeling aan zijn ouders Nanne Gerbens en Diuke Meinerts (nu B) A.",
+  "archief": "FamilySearch (scans van de RK-boeken van Roodhuis)",
+  "bron": "RK-doopboek Roodhuis 1708–1717 (alleen op scan; de online index heeft voor Roodhuis vóór 1722 geen doop met een vader Nanne)",
+  "link": "https://www.genealogiewerkbalk.nl/fs/?p=Roodhuis&j=&t=&q=dopen#results",
+  "online": "online met inlog",
+  "hoe": "Blader de dopen van 1708 tot 1717 door naar een Gerben (Gerbrandus) met vader Nanne (Nanno) en moeder Diuke (Dieuwke); begin bij oktober 1710.",
+  "pri": 3
  },
  {
   "boom": "h",
@@ -222,7 +235,7 @@ const ZOEKLIJST = [
   "bron": "RK-doopboek Roodhuis 1680–1722",
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Roodhuis&j=&t=&q=dopen#results",
   "online": "online met inlog",
-  "hoe": "Blader door de dopen van 1685–1695 (Sipke, vader Widmer) en van 1718–1721 (Widmer, vader Sipke).",
+  "hoe": "Blader door de dopen van 1685–1695 (Sipke, vader Widmer) en van 1718–1721 (Widmer, vader Sipke). Ook een curatele over Widmer Ebkes, het zoontje van Geertie Widmers dat in 1719 wees werd, kan de grootouders noemen: die staat niet in het autorisatieboek van Hennaarderadeel 1711–1722; de recesboeken 1676–1732 zijn nog niet gelezen.",
   "pri": 2
  },
  {
@@ -239,21 +252,6 @@ const ZOEKLIJST = [
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Heeg&j=&t=&q=dopen#results",
   "online": "online met inlog",
   "hoe": "Zoek een doop van Huite (Hoyte) met vader Klaas tussen 1703 en 1712; deze jaren staan niet in de online index.",
-  "pri": 2
- },
- {
-  "boom": "a",
-  "kws": [
-   "a-147",
-   "a-208",
-   "a-209"
-  ],
-  "vraag": "Was Baukje Sjoerds uit Broek een dochter van Sjoerd Sybes en Fetje Klazes?",
-  "beslist": "Nu een sterke afleiding (B): geen akte noemt haar ouders. Een boedel of voogdij maakt het zeker.",
-  "archief": "Tresoar (Leeuwarden)",
-  "bron": "Nedergerecht Doniawerstal, weesboeken 1777–1784 (na de dood van Fetje Klazes in 1777 en Sjoerd Sybes in 1784); de memorie of het overlijden van haar broer Klaas Sjoerds (1806–1811)",
-  "online": "alleen ter plaatse",
-  "hoe": "Zoek een voogdij of boedelscheiding na de dood van Fetje Klazes of Sjoerd Sybes: daarin staan hun kinderen bij naam.",
   "pri": 2
  },
  {
@@ -305,17 +303,18 @@ const ZOEKLIJST = [
   "boom": "a",
   "kws": [
    "a-99",
+   "a-199",
    "a-198",
    "a-396",
    "a-397"
   ],
-  "vraag": "Wie waren de ouders en grootouders van Aaltje Sybes Boetje uit Terhorne?",
-  "beslist": "Of zij een dochter was van Sybe Gerrits Boetje en zijn tweede vrouw Antje Wijbrens, en of Gerrit Sybes en Marijke Engeles zijn ouders waren (nu een hypothese, D). Deze familie staat twee keer in de stamboom.",
+  "vraag": "Wie waren de moeder en de grootouders van Aaltje Sybes Boetje uit Terhorne?",
+  "beslist": "Haar vader Sybe Gerrits Boetje staat vast (A): haar overlijdensakte van 1815 noemt hem. Die akte noemt de moeder 'Antje Gerrits', maar Sybe trouwde in 1773 met Antje Wijbrens (nu B). Ook of Gerrit Sybes en Marijke Engeles zijn ouders waren, is nog een hypothese (D). Deze familie staat twee keer in de stamboom.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Huwelijksbijlagen Utingeradeel, juli 1837 (huwelijk van Symon Sybes Boetje), met een afschrift van de akte van bekendheid; doopsgezinde registers Akkrum/Terhorne 1770–1782",
+  "bron": "Memorie van successie of boedel van Antje Wiebrens (overleden Terhorne 1812) of van Sybe Gerrits (overleden vóór 1812), met de erfgenamen; doopsgezinde registers Akkrum/Terhorne 1770–1782. In het register van het weesboek van Utingeradeel 1778–1810 staan ze niet.",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Open de bijlagen bij de huwelijksakte van Symon Sybes Boetje (juli 1837): een akte van bekendheid noemt vaak de overleden ouders en grootouders.",
+  "hoe": "Zoek een boedel, scheiding of memorie na de dood van Antje Wiebrens of Sybe Gerrits: daarin staan de kinderen uit beide huwelijken als erfgenamen.",
   "pri": 2
  },
  {
@@ -433,7 +432,7 @@ const ZOEKLIJST = [
   "vraag": "Staat er ergens letterlijk dat Jan Tjeerds Jorna een zoon was van Tjeerd Hilles en Lijsbert Jans?",
   "beslist": "Nu een sterke afleiding uit een weesakte van 1793 (B); een akte die het zegt, maakt het A.",
   "archief": "FamilySearch (scans); Tresoar",
-  "bron": "RK-doopboek Het Klooster (dopen van kinderen van Jan Tjeerds); memorie of boedelscheiding van Tjeerd Hilles (ca. 1786); curatele over Joannes na de dood van Lijsbert (1756–1764), nedergerecht Leeuwarderadeel",
+  "bron": "RK-doopboek Het Klooster (dopen van kinderen van Jan Tjeerds); memorie of boedelscheiding van Tjeerd Hilles (ca. 1786); curatele over Joannes na de dood van Lijsbert (1756–1764), nedergerecht Leeuwarderadeel. Al doorgekeken, zonder resultaat: het autorisatieboek van Leeuwarderadeel 1756–1765 en de boedelinventarissen 1762–1769",
   "online": "online met inlog",
   "hoe": "Kijk bij de dopen van de kinderen van Jan Tjeerds wie de doopheffers waren: grootouders worden daar vaak genoemd.",
   "pri": 3
@@ -461,13 +460,13 @@ const ZOEKLIJST = [
    "514",
    "515"
   ],
-  "vraag": "Wie waren de ouders van Hylcke Jans (Oudehaske) en Aefke Beits (Haskerhorne), getrouwd in 1681?",
-  "beslist": "Brengt de lijn van Jeltje Hylkes een generatie verder: haar grootvaders heetten Jan en Beint.",
+  "vraag": "Wie waren de ouders van Hylcke Jans (Oudehaske), en die van Beint Hanses en Auckjen Beints uit Haskerhorne?",
+  "beslist": "De ouders van Aefke Beits zijn gevonden: Beint Hanses, huisman in Haskerhorne, en Auckjen Beints (inventaris van 13 juni 1677). Nu nog de vorige generatie, en de vader van Hylcke Jans (een Jan in Oudehaske).",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Nedergerecht Haskerland: weesboeken en boedels van vóór 1681, en de floreenkohieren van Haskerland 1700–1720. Het autorisatieboek (inv. 031) begint pas in 1671; de akte van 1677 over Aefke noemt haar ouders niet.",
+  "bron": "Nedergerecht Haskerland: het weesboek 1671–1678 (inv. 041) en het inventarisatieboek 1673–1681 (inv. 050) zijn via hun registers bekeken. Nog niet gezien: de weesboeken 1643–1667 (inv. 035–040), de sententieboeken 1651–1658 (inv. 026) en de proclamatieboeken 1661–1689 (inv. 053, 054), alle zonder index.",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Zoek een boedel of weesakte van Beint, die in 1677 vermoedelijk al overleden was: zo'n akte noemt zijn kinderen bij naam. In 1677 vroeg Aefke, 'oudt in haer 17e jaer', zelf om curatoren.",
+  "hoe": "Zoek in de oudere weesboeken een curatele of boedel met Beint Hanses of Auckjen Beints (hun huwelijk was rond 1655–1660), en een boedel van een Jan in Oudehaske met een zoon Hylcke. Hylke Jans Offringe (getrouwd 1654) is het niet: hij overleed vóór 1658.",
   "pri": 3
  },
  {
@@ -479,7 +478,7 @@ const ZOEKLIJST = [
   "vraag": "Was Jantje Tjeerds Langendijk de vader van Baukje Jantjes, de vrouw van Widmer Sipkes?",
   "beslist": "Maakt de koppeling (nu B, via de naam Langendijk bij twee kleinzonen) zeker.",
   "archief": "FamilySearch (scans); Tresoar",
-  "bron": "RK-doopboeken Wijtgaard en Warga vóór 1736; floreenkohier en nedergerecht Baarderadeel",
+  "bron": "RK-doopboeken Wijtgaard en Warga vóór 1736; floreenkohier en nedergerecht Baarderadeel. Het register van het weesboek van Baarderadeel 1759–1779 (inv. 050) noemt hen niet",
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Wijtgaard&j=&t=&q=dopen#results",
   "online": "online met inlog",
   "hoe": "Zoek een doop van Baukje, Elbrig, Inske of Tiert met vader Jantje Tjeerds.",
@@ -513,7 +512,7 @@ const ZOEKLIJST = [
   "bron": "Boedel van 1772: autorisatieboek Baarderadeel, inv. 033, folio 1 (scan online, nog niet gelezen); RK-dopen Dronrijp ca. 1710–1720",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Lees de scan van de boedel van 1772: die noemt waarschijnlijk de erfgenamen en voogden.",
+  "hoe": "Lees de scan van de boedel van 1772: die noemt waarschijnlijk de erfgenamen en voogden. Spoor: Mourens Philips, varensgezel in Franeker, trouwde in 1703 met Trijntje Heeres uit Peins. Philippus noemde zijn eerste kinderen Trintje (1742, getuige Yfke Heeres) en Mauritius (1744). Een doop van Philippus in Franeker (ca. 1704–1715) zou kunnen bewijzen dat zij zijn ouders waren.",
   "pri": 3
  },
  {
@@ -700,6 +699,51 @@ const ZOEKLIJST = [
   "link": "https://www.openarchieven.nl/frl:e5703ef2-9434-4aa4-afb0-566e6e07c47f",
   "online": "scan op bestelling",
   "hoe": "Vraag bij Tresoar een scan aan van de bladzijde bij De Walle. Vraag de kerkvoogdij in Makkum (of ga zelf kijken) of de zerk nog in de kerk ligt, en maak een foto. Op Wikimedia Commons, in de beeldbank van Tresoar en bij HCL staat hij niet.",
+  "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "337",
+   "674",
+   "675"
+  ],
+  "vraag": "Was Cornelisjen Coops, de weduwe van Roelof Eyses uit Ter Idzard, ook de moeder van Trijntje Roelofs (geboren ca. 1733)?",
+  "beslist": "De boedelscheiding van 1757 noemt haar alleen de moeder van Jantjen, een zus van Trijntje; als moeder van Trijntje is zij nu een hypothese (D). Het huwelijk van Roelof en Cornelisjen vóór 1733, of een akte die Trijntje haar dochter noemt, maakt dat B of A.",
+  "archief": "FamilySearch (scans RK Oldeholtpade); Tresoar",
+  "bron": "Huwelijk van Roelof Eyses en Cornelisjen Coops (vóór 1733; niet in de online index); de dispensatie bij het RK-huwelijk van Eyse Alberts en Catharina Roelofs (Oldeholtpade, 4 mei 1754)",
+  "link": "https://www.genealogiewerkbalk.nl/fs/?p=Oldeholtpa&j=&t=&q=dopen#results",
+  "online": "online met inlog",
+  "hoe": "Kijk op de scan van het RK-huwelijk van 4 mei 1754 of er een dispensatie staat (die zou zeggen of Eyse en Catharina neef en nicht waren), en zoek in het Gerecht Weststellingwerf en de RK-boeken van Oldeholtpade vóór 1733 naar Roelof Eyses (Eisses, Eysen) en Cornelisjen (Kneelsjen) Coops. Let op: er was ook een jongere Roelof Eyses in Steggerda (getrouwd rond 1752 met Aaltje Harmens, hervormd). Roelof uit Ter Idzard overleed vermoedelijk in januari 1751 (register van overledenen Oldeholtpade).",
+  "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "180"
+  ],
+  "vraag": "Was Seuwert Frits (getrouwd 1784 met Jantje Alten) dezelfde als de Sieuwert Frits uit Ter Idzard die in 1768 met Trijntje Joannis Steffes trouwde?",
+  "beslist": "In 1784/1785 staat in het register van het inventarisatieboek van Weststellingwerf een 'acte van uitwysing' van Souwert Frits op Ter Idzard. Noemt die akte kinderen of een eerdere vrouw, dan wordt de hypothese (D) B of A.",
+  "archief": "Tresoar",
+  "bron": "Nedergerecht Weststellingwerf, inventarisatieboek 1783–1807 (toegang 13-42, inv. 096), p. 37; de bladzijden 32–39 staan niet in de online scans",
+  "link": "https://www.allefriezen.nl/",
+  "online": "scan op bestelling",
+  "hoe": "Vraag bij Tresoar een scan van p. 37 van inv. 096 (of kijk ter plaatse), en lees wie er in de akte van uitwijzing genoemd worden.",
+  "pri": 3
+ },
+ {
+  "boom": "a",
+  "kws": [
+   "a-594",
+   "a-297"
+  ],
+  "vraag": "Was Johannes Clases uit IJlst de vader van Antje Johannes, de moeder van Freerk Douwes Bokma?",
+  "beslist": "In de boedel van Douwe Freerks (1766) heet Johannes Clases 'grootvader' van Freerk en Johannes Douwes. Dat hij de vader van Antje is, volgt uit die akte en haar vadersnaam (B). Haar doop of zijn huwelijk maakt het A, en brengt een generatie verder.",
+  "archief": "Tresoar, via AlleFriezen",
+  "bron": "Doopboeken van IJlst, Wymbritseradeel en Haskerland ca. 1715–1730; weesboek IJlst 1745–1811 (zonder register). Spoor: Johannes Klaas en Blyke Klaas lieten in Joure in 1725 een tweeling Antje en Wybe dopen.",
+  "link": "https://www.allefriezen.nl/",
+  "online": "vrij online",
+  "hoe": "Zoek dopen van een Antje met vader Johannes Claes (Klaas, Clases, Klazes) tussen 1715 en 1730, en een trouw van Johannes Clases vóór 1730. Kijk of de Johannes Klaas uit Joure later in IJlst woonde. Let op: een jongere Johannes Klaases in Langweer (dopen 1769–1773) is een ander.",
   "pri": 3
  }
 ];
