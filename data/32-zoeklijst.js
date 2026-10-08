@@ -7,18 +7,16 @@ const ZOEKLIJST = [
  {
   "boom": "h",
   "kws": [
-   "3334",
-   "6668",
    "6669"
   ],
-  "vraag": "Was Tiete Lieuckema, de grootvader van Geertje Spanga, een zoon van Rein Meies Lieuwkema en Jeltje Reins van Hoitema?",
-  "beslist": "Trijntje Lieuckema, de moeder van Geertje Spanga, was een volle zus van Meye Tietes Lieuckema (curatele 1664), en dus een dochter van Tiete. Dat Tiete een zoon was van Rein Meies Lieuwkema en Jeltje van Hoitema, staat nu alleen in de aantekeningen van De Walle. Een akte zou de lijn tot rond 1550 zeker maken.",
+  "vraag": "Was Jeltje Reins van Hoitema de moeder van Tiete en Gatse Lieuckema?",
+  "beslist": "Tiete Lieuckema is met akten een zoon van Rein Lieuckema (B). Dat Jeltje van Hoitema (overleden 1625) zijn moeder was, en niet een eerdere vrouw van Rein, staat alleen in de aantekeningen van De Walle. Haar grafsteen noemt haar wel de vrouw van Rein van Lieukema.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Nedergerecht Wonseradeel, weesboeken 1629–1632 (na de dood van Tiete in 1629: een weesakte over zijn kinderen Meye en Trijntje noemt vaak ooms en grootouders), en de quaclappen van het Hof van Friesland (Meye Reyns Lieuckema, 1581)",
+  "bron": "Weesboeken van Wonseradeel na 1625 (de boedel van Jeltje), en het weesboek van 1630 met de boedel van Tiete: daar was een Rein Hoitema testamentair curator over zijn kinderen",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Blader in de weesboeken van Wonseradeel van 1629 tot 1632 (per jaar gescand, zonder namenindex) naar een titelblad als 'Inventaris van Tiete Reyns goederen' of naar de namen Meye en Trijntje.",
-  "pri": 1
+  "hoe": "Blader in de weesboeken van Wonseradeel van 1625–1627 naar een inventaris of scheiding van Jeltje (Jelcke) van Hoitema, en lees bij Tiete (1630) wat Rein Hoitema als 'oom' of 'grootvader' van de kinderen genoemd wordt.",
+  "pri": 2
  },
  {
   "boom": "h",
@@ -149,16 +147,17 @@ const ZOEKLIJST = [
  {
   "boom": "h",
   "kws": [
-   "320",
-   "321"
+   "1284",
+   "1285",
+   "1286"
   ],
-  "vraag": "Wie waren de ouders van Albert Eysche en Tjertjen Garwerts uit Peperga?",
-  "beslist": "Zij staan twee keer in de stamboom (kwartierverlies). Hun ouders brengen beide lijnen tegelijk een generatie verder.",
+  "vraag": "Wie was de vrouw van Fresse Garwerts van de Blesse, en wie was Hendrik, de vader van Jantjen Hendriks?",
+  "beslist": "Gerwert Fressen en Jantjen Hendriks (De Blesse) staan twee keer in de stamboom (kwartierverlies). Hun ouders brengen beide lijnen tegelijk verder terug.",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "RK-doopboek Steggerda (DTB 0781), huwelijk 1715; autorisatieboeken Weststellingwerf (inv. 055 en ouder): in 1733 was Remmelt Eijssen 'oom van vaderskant'",
+  "bron": "Autorisatieboeken Weststellingwerf (de curatele van 1725 noemt Meyne Hendriks uit Nijensleek als oom), RK-doopboeken Steggerda en Oldeholtpade, en de huwelijken van Fresse Garwerts (1670 en 1676)",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Zoek het huwelijk van 1715 met de getuigen, en een weesakte of boedel van de ouders van Albert of Remmelt Eijssen (patroniem Eijsses, Eisses).",
+  "hoe": "Lees bij de huwelijken van Fresse Garwerts (1670 en 1676) wie zijn bruiden waren en wie de moeder van Gerwert is. Zoek Meyne Hendriks uit Nijensleek, de broer van Jantjen: zijn doop of huwelijk noemt hun vader Hendrik voluit.",
   "pri": 2
  },
  {

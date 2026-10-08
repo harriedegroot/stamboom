@@ -179,7 +179,10 @@ const PLACES = {
   "Oosterwolde": P_(52.990, 6.291, "Ooststellingwerf", FR),
   "Beers": P_(53.156, 5.734, "Baarderadeel", FR),
   "Hichtum": P_(53.082, 5.525, "Wonseradeel", FR),
-  "Dijken": P_(52.954, 5.711, "Doniawerstal", FR)
+  "Dijken": P_(52.954, 5.711, "Doniawerstal", FR),
+  "Blesse": P_(52.857, 6.026, "Weststellingwerf", FR, { info: "Buurtschap aan de Blesse, bij de Blessebrug tussen Peperga en Blesdijke." }),
+  "Menaldum": P_(53.216, 5.661, "Menaldumadeel", FR),
+  "Sint Annaparochie": P_(53.276, 5.657, "Het Bildt", FR)
 };
 /* Plaatsen buiten het kaartbeeld */
 const OFFMAP = {
