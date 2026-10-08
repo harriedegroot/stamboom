@@ -42,7 +42,6 @@ const ALIES = {
     heroLede: "De voorouders van Marit, Tijmen en Jorn, met bronnen terug tot {oldest}. In de waaier staan links de families van hun vader Harrie (De Groot en Boersma), rechts die van hun moeder Alies (Hoekstra en Bakker). Ze woonden vaak dicht bij elkaar: ruim 25 dorpen en steden komen in beide stambomen voor, van Heerenveen en Akkrum tot Oldeboorn en Oudeschoot.",
     layerVerhalen: "De verhalen uit beide stambomen.",
     layerVerwanten: "Bekende verwanten uit beide stambomen.",
-    statusNote: "Hier tellen de stambomen van Harrie en Alies samen, met hun kinderen in het midden. Per boom staat de verdeling bij de stamboom van Harrie en die van Alies.",
     famMapSub: "Van de Stellingwerven en Gaasterland tot Oldeboorn en de Tjeukemeer.",
     verhalenLede: "De verhalen uit beide stambomen: eerst die van Harrie, dan die van Alies.",
     verwanten: "Bekende verwanten uit beide stambomen. Aan de kant van Harrie: de heilige Titus Brandsma en kanunnik Otto Spitzen. Aan de kant van Alies: de journalist Jacob Hepkema."
@@ -63,6 +62,7 @@ Object.assign(PLACES, {
   "Lemmer": P_(52.845, 5.712, "Lemsterland", FR),
   "Mildam": P_(52.936, 6.002, "Schoterland", FR),
   "Nieuwehorne": P_(52.950, 6.056, "Schoterland", FR),
+  "Nijemirdum": P_(52.866, 5.561, "Gaasterland", FR),
   "Oudehorne": P_(52.966, 6.092, "Schoterland", FR),
   "Gaastmeer": P_(52.962, 5.583, "Wymbritseradeel", FR),
   "Rotstergaast": P_(52.924, 5.937, "Schoterland", FR),
