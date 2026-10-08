@@ -1253,6 +1253,10 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
 .fan-legend.twee{grid-template-columns:repeat(2,minmax(0,1fr))}
 .fl-it{display:flex;align-items:center;gap:7px;min-width:0;background:none;border:0;padding:4px 0;font:inherit;font-size:12.5px;color:var(--muted);text-align:left;cursor:pointer}
 .fl-it i{width:10px;height:10px;flex:none;background:var(--c)}
+/* waaier met een ander midden: de acht takken als lijst in de zijkolom (ook op de telefoon) */
+.fan-takken{display:grid;grid-template-columns:1fr;gap:0;margin:2px 0 4px}
+.fan-takken .fl-it{align-items:baseline;padding:3px 0;line-height:1.35}
+.fan-takken .fl-it i{transform:translateY(1px)}
 .fl-it:hover{color:var(--ink)}
 .fl-it:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .fan-note .ov-more{margin-top:6px}
@@ -1542,3 +1546,257 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
 .lb.lblaad .lbstage img{opacity:.55;transition:opacity .2s}
 .lb.lbvol .lbstage{overflow:auto;overscroll-behavior:contain;align-items:flex-start;justify-content:flex-start}
 .lb.lbvol .lbstage img{max-width:none;max-height:none;border-radius:0}
+
+/* ---- boek: de pagina #boek (de keuzes en het voorbeeld; het boek zelf staat in src/book-css.js) ---- */
+.bk-keuzes{display:grid;gap:10px;margin:18px 0 14px;padding:14px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.bk-voorbeeld{position:relative;border:1px solid var(--rule);background:var(--sunk)}
+.bk-voorbeeld iframe{display:block;width:100%;height:min(80vh,900px);border:0;background:var(--sunk)}
+@media (max-width:620px){.bk-voorbeeld iframe{height:62vh}}
+.bk-voorbeeld:fullscreen{display:flex;flex-direction:column;border:0}
+.bk-voorbeeld:fullscreen iframe{flex:1;height:auto}
+/* boek: voortgang tijdens het opbouwen, over het voorbeeld heen */
+.bk-bezig{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:var(--sunk);text-align:center;color:var(--ink)}
+.bk-bezig p{margin:0;max-width:34em;line-height:1.55}
+.bk-balk{width:min(320px,80%);height:6px;border-radius:3px;background:var(--rule);overflow:hidden}
+.bk-balk i{display:block;height:100%;width:0;background:var(--accent)}
+/* boek: bladeren door het voorbeeld */
+.bk-blad{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:10px;border-top:1px solid var(--rule);background:var(--surface)}
+.bk-blad .btn:disabled{opacity:.45;cursor:default}
+/* boek: voorinstellingen en onderdelen */
+.bk-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 12px}
+.bk-preset{display:grid;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;cursor:pointer;color:var(--ink);font:inherit}
+.bk-preset b{font-family:var(--display);font-weight:400;font-size:20px}
+.bk-preset small{font-size:13px;color:var(--muted)}
+.bk-preset[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.bk-pp{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.bk-delen{border:0;margin:0 0 6px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.bk-delen legend{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.bk-deel-keuze{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--rule);cursor:pointer}
+.bk-deel-keuze input{margin-top:4px}
+.bk-deel-keuze b{display:block;font-weight:600;font-size:14.5px}
+.bk-deel-keuze small{display:block;font-size:13px;color:var(--muted)}
+@media (max-width:760px){.bk-presets{grid-template-columns:1fr}.bk-delen{grid-template-columns:1fr}}
+/* op de telefoon: de kaarten op één regel, alleen de gekozen kaart met uitleg; zo begint "Wat komt erin" hoger */
+@media (max-width:620px){.bk-presets{gap:6px;margin:12px 0 8px}.bk-preset{grid-template-columns:minmax(0,1fr) auto;align-items:baseline;padding:9px 12px}
+  .bk-preset small{grid-column:1/-1}.bk-preset[aria-pressed="false"] small{display:none}.bk-preset b{font-size:17px}}
+.bk-maat{width:56px;height:5px;margin-top:9px;border-radius:3px;background:var(--rule);overflow:hidden}
+.bk-maat i{display:block;height:100%;background:var(--accent)}
+.bk-eigen{margin:-4px 0 12px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;font-size:14px}
+.bk-groep{margin:6px 0 0;border-top:1px solid var(--rule)}
+.bk-groep>summary,.bk-hoe>summary{list-style:none;cursor:pointer} /* het driehoekje binnen de kolom, zoals .gen-fold en .gen-det */
+.bk-groep>summary::-webkit-details-marker,.bk-hoe>summary::-webkit-details-marker{display:none}
+.bk-groep>summary::before,.bk-hoe>summary::before{content:"▸";display:inline-block;width:1.1em;color:var(--muted);font-size:.85em}
+.bk-groep[open]>summary::before,.bk-hoe[open]>summary::before{content:"▾"}
+.bk-groep>summary{padding:12px 0}
+.bk-groep>summary b{font-weight:600}
+.bk-groep>summary span{color:var(--muted);font-size:13.5px}
+.bk-groep .bk-keuzes{margin-top:0}
+.bk-uitleg{margin:6px 0 0;font-size:13px;color:var(--muted);max-width:44em}
+/* boek: explanation on request, a "?" next to the label of a row (works on touch and keyboard), and how to save as pdf next to the button */
+.bk-help{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;padding:0;vertical-align:1px;border:1px solid var(--rule);border-radius:50%;background:none;color:var(--muted);font:600 11px/1 var(--body);letter-spacing:0;cursor:pointer}
+.bk-help::after{content:"";position:absolute;inset:-8px}
+.bk-help:hover{color:var(--ink);border-color:var(--muted)}
+.bk-help[aria-expanded="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.bk-help:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bk-help-t{margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--muted);max-width:44em}
+.bk-hoe{font-size:13px;color:var(--muted)}
+.bk-hoe summary{cursor:pointer;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;padding:6px 0}
+.bk-hoe summary:hover{color:var(--ink)}
+.bk-hoe ol{margin:4px 0 0;padding-left:1.4em;line-height:1.6}
+.chip.bk-omslag-k{display:inline-flex;flex-direction:column;align-items:center;gap:6px;border-radius:10px;padding:8px 10px}
+.bk-drukker{display:grid;gap:8px}
+.bk-drukker:empty{display:none}
+.bk-mini{display:block;width:72px;line-height:0;border-radius:2px;overflow:hidden;box-shadow:0 1px 4px color-mix(in srgb,var(--ink) 22%,transparent)}
+.bk-waarschuwing{margin:0;padding:8px 12px;border-left:3px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,transparent);font-size:14px}
+.chip.bk-te{border-color:var(--warn)}
+
+/* ---- beroepen en grond in 1832 ---- */
+.br-chips{margin:14px 0 22px}
+.chip[data-brcat][aria-pressed="true"]{border-color:var(--accent);color:var(--ink);background:var(--sunk)}
+.br-cat{margin:0 0 28px}
+.br-list li{grid-template-columns:52px minmax(0,1fr);position:relative}
+.br-list li>span:last-child{border-left:3px solid var(--c);padding-left:10px}
+.br-occ{color:var(--ink)}
+.grond-map{margin:0 0 24px;max-width:760px}
+.grond-list{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:22px}
+.grond-it{border-left:3px solid var(--c);padding:2px 0 2px 14px}
+.grond-kop{margin:0 0 10px}
+.grond-kop .hoofd{font-weight:600;font-size:16px}
+.grond-it .perc{margin:0}
+
+/* ---- de akte bij het feit ---- */
+.akf{display:inline-flex;flex-wrap:wrap;gap:4px 5px;margin-left:4px;vertical-align:1px}
+.akf-b{display:inline-flex;align-items:center;gap:3px;padding:0 7px 0 5px;min-height:22px;border:1px solid var(--rule);border-radius:999px;background:var(--surface);color:var(--accent);font-size:12.5px;font-weight:500;line-height:1.4;cursor:pointer;white-space:nowrap}
+.akf-b:hover{border-color:var(--accent)}
+.akf-b:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.akf-b .srcico{width:13px;height:13px;color:currentColor}
+.akf-n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+details.akfeit{margin:5px 0 2px}
+details.akfeit summary{cursor:pointer;width:max-content;max-width:100%;font-size:13px;color:var(--accent);font-weight:500}
+details.akfeit[open] summary{margin-bottom:6px}
+details.akfeit .akte-t{font-size:12.5px}
+@media (pointer:coarse){.akf-b{min-height:28px;padding:0 9px 0 7px}}
+
+/* ---- onze achternamen ---- */
+.an-lijst{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:18px;margin:8px 0 22px}
+.an-kaart{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--c);padding:16px 18px 12px}
+.an-kaart p{margin:0 0 10px}
+.an-naam{font-family:var(--display);font-weight:400;font-size:28px;margin:0 0 2px;line-height:1.15}
+.an-sub{margin:0 0 12px!important;color:var(--muted)}
+.an-h{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:12px 0 4px}
+.an-soort{margin-right:2px;white-space:normal;max-width:100%}
+.an-bron{color:var(--muted);overflow-wrap:anywhere;margin-top:12px!important}
+
+/* ---- download als GEDCOM ---- */
+.ged-blok{margin:14px 0 4px}
+.ged-rij{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.ged-blok .btn .nico{width:17px;height:17px}
+.ged-blok > p{margin:8px 0 0;max-width:64ch}
+.ged-ok{color:var(--good);overflow-wrap:anywhere}
+@media print{.ged-blok{display:none!important}}
+.toolbar.tb-split{justify-content:space-between;max-width:860px} /* even breed als de lijst eronder */
+.tb-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tb-actions .btn .nico{width:17px;height:17px}
+.tb-actions .ged-ok:empty{display:none}
+.tb-actions .ged-ok{flex-basis:100%;text-align:right}
+.ged-note{margin:-8px 0 16px;color:var(--muted);max-width:64ch}
+@media (max-width:520px){
+  .toolbar.tb-split > select,.tb-actions{flex:1 1 100%}
+  .tb-actions .btn{flex:1 1 100%;justify-content:center}
+  .tb-actions .ged-ok{text-align:left}
+}
+
+/* ---- voorlezen ---- */
+.vl-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0 6px}
+.vl-bar .btn{padding:5px 11px;font-size:13px}
+.vl-bar .btn .nico{width:16px;height:16px}
+.vl-bar .vl-play[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+#dBody .vl-bar{margin:0 0 12px}
+.vl-nu{background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent);border-radius:3px;transition:background .3s}
+.kort.vl-nu,.notes p.vl-nu{border-radius:0}
+@media (prefers-reduced-motion:reduce){.vl-nu{transition:none}}
+@media print{.vl-bar{display:none!important}.vl-nu{background:none;box-shadow:none}}
+
+/* ---- weet je meer ---- */
+.wjm > p{margin:0 0 8px}
+.wjm-rij{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.wjm-rij .btn{padding:5px 11px;font-size:13px}
+.wjm-rij .btn .nico{width:16px;height:16px}
+.wjm-ok{color:var(--good)}
+.zkcard .wjm-zk{margin-top:10px}
+@media print{.wjm,.wjm-zk{display:none!important}}
+#krKnip{margin:0 0 34px}
+.grond-fig{margin:18px 0 26px;max-width:560px}
+.grond-fig figcaption{margin-top:6px;color:var(--muted)}
+.grond-fig .grond-map{margin:0}
+.an-soort{border-radius:4px}
+
+/* ---------- voorpagina: ingang naar het boek ---------- */
+.ov-boek{display:flex;gap:22px;align-items:center;margin:0 0 16px;padding:18px 20px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;color:var(--ink);text-decoration:none}
+.ov-boek:hover{border-color:var(--muted)}
+.ov-boek:hover .ov-link{text-decoration:underline;text-underline-offset:3px}
+.ov-boek-omslag{flex:none;position:relative;width:92px;height:122px;background:var(--accent);color:var(--accent-ink);border-radius:2px 6px 6px 2px;box-shadow:inset 7px 0 0 color-mix(in srgb,var(--accent-ink) 14%,transparent),0 6px 16px color-mix(in srgb,var(--ink) 22%,transparent);display:flex;flex-direction:column;justify-content:space-between;padding:12px 9px 9px 15px;overflow:hidden}
+.ov-boek-t{font-family:var(--display);font-size:12.5px;line-height:1.15;text-wrap:balance}
+.ov-boek-rug{display:flex;gap:2px}
+.ov-boek-rug i{flex:1;height:5px;border-radius:1px}
+.ov-boek-tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ov-boek-tx .eyebrow{margin:0}
+.ov-boek-tx b{font-family:var(--display);font-weight:400;font-size:24px;line-height:1.1}
+.ov-boek-tx>span:not(.eyebrow):not(.ov-link){color:var(--muted);font-size:14.5px;max-width:62ch}
+.ov-boek-tx .ov-link{padding:2px 0 0}
+@media (max-width:560px){.ov-boek{gap:14px;padding:14px}.ov-boek-omslag{width:70px;height:94px;padding:9px 7px 7px 12px}.ov-boek-t{font-size:10px}.ov-boek-tx b{font-size:20px}.ov-boek-tx>span:not(.eyebrow):not(.ov-link){font-size:13.5px}}
+
+/* ---- stamreeks ---- */
+.sr-kies,.ps-keuzes{display:grid;gap:10px;margin:18px 0 20px;padding:14px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.sr-kies .chip[aria-current="true"],.ps-keuzes .chip[aria-current="true"]{color:var(--ink);border-color:var(--c,var(--accent));background:color-mix(in srgb,var(--c,var(--accent)) 12%,var(--surface))}
+.sr-lijst{display:flex;flex-direction:column;max-width:780px}
+.sr-kaart{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;align-items:baseline;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--c,var(--faint));border-radius:0;padding:11px 14px}
+.sr-g{display:flex;flex-direction:column;font-family:var(--mono);font-size:12px;line-height:1.35;color:var(--muted)}
+.sr-g small{font-size:11px;color:var(--faint)}
+.sr-b{min-width:0}
+.sr-b h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-family:var(--body);font-size:16px;font-weight:600;line-height:1.3}
+.sr-n{background:none;border:0;padding:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.sr-n:hover{text-decoration-color:var(--c,var(--accent))}
+b.sr-n{cursor:auto;text-decoration:none}
+.sr-patr{color:var(--muted)}
+.sr-j{margin:3px 0 0;font-size:14px;color:var(--muted)}
+.sr-pl{margin:2px 0 0;font-size:13.5px;overflow-wrap:anywhere}
+.sr-naamzin{margin:8px 0 0;padding:6px 10px;font-size:13.5px;background:var(--bg);border-left:3px solid var(--c,var(--accent))}
+/* de koppeling ouder–kind: doorgetrokken bij A/B, streepjes bij C, puntjes bij D (zoals de stamlijn op de lijnpagina) */
+.sr-stap{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-left:36px;padding:7px 0 7px 18px;border-left:2px solid var(--faint);font-size:12.5px;color:var(--muted)}
+.sr-stap-C{border-left:2px dashed var(--weak)}
+.sr-stap-D{border-left:2px dotted var(--hyp)}
+.sr-uitleg{max-width:70ch;margin-top:16px}
+@media (max-width:480px){.sr-kaart{grid-template-columns:52px minmax(0,1fr);gap:8px;padding:9px 10px}.sr-stap{margin-left:24px;padding-left:14px}.sr-b h3{font-size:15px}}
+@media print{
+  #v-stamreeks{--l8:#2D6D8C;--l9:#4F7631;--l10:#87569B;--l11:#9F5B26;--l12:#2A7968;--l13:#A23C55;--l14:#5F64AE;--l15:#7F6A1A;font-size:10pt}
+  #v-stamreeks .sr-kies,#v-stamreeks > .eyebrow,#v-stamreeks .sr-uitleg{display:none!important}
+  .sr-kop{font-family:var(--mono);font-size:8.5pt;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:4px;margin:0 0 10px}
+  #v-stamreeks .page-title{font-size:24pt}
+  #v-stamreeks .lede{font-size:10pt;margin:6px 0 12px}
+  #v-stamreeks .sr-rij{break-inside:avoid}
+  #v-stamreeks .sr-kaart{padding:5px 9px}
+  #v-stamreeks .sr-n{text-decoration:none}
+  #v-stamreeks .sr-b h3{font-size:11.5pt}
+  #v-stamreeks .sr-j,#v-stamreeks .sr-pl,#v-stamreeks .sr-naamzin{font-size:9pt}
+  #v-stamreeks .sr-stap{padding-block:3px;font-size:8.5pt}
+}
+
+/* ---- poster ---- */
+.ps-uitleg{margin:6px 0 0;font-size:13px;color:var(--muted);max-width:56em}
+.ps-kader{position:relative;width:min(100%,640px);margin:8px auto 0;overflow:hidden;background:var(--sunk);border:1px solid var(--rule);box-shadow:var(--shadow)}
+/* het vel: op ware grootte opgemaakt, altijd in de lichte inkt-tokens (zoals op papier) */
+.ps-vel{position:absolute;top:0;left:0;transform-origin:0 0;display:flex;flex-direction:column;overflow:hidden;line-height:1.35;font-family:var(--body);
+  --bg:#FFFFFF;--surface:#FFFFFF;--sunk:#EEEEEE;--ink:#111111;--muted:#444444;--faint:#777777;--rule:#BBBBBB;--accent:#1E4F74;--accent-ink:#F4F8FB;--gold:#7A520C;--good:#2D7A4D;--warn:#995F18;--weak:#647069;--hyp:#8A4FA0;--fan-gap:#FFFFFF;
+  --l8:#2D6D8C;--l9:#4F7631;--l10:#87569B;--l11:#9F5B26;--l12:#2A7968;--l13:#A23C55;--l14:#5F64AE;--l15:#7F6A1A;color-scheme:light;background:var(--surface);color:var(--ink)}
+.ps-kop{flex:none;height:var(--ps-kop);text-align:center}
+.ps-eyebrow{margin:0;font-family:var(--mono);font-size:calc(var(--u)*1.3);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.ps-titel{margin:calc(var(--u)*.8) 0 0;font-family:var(--display);font-weight:400;font-size:calc(var(--u)*5.2);line-height:1.05}
+.ps-sub{margin:calc(var(--u)*1) 0 0;font-size:calc(var(--u)*1.9);color:var(--muted)}
+.ps-midden{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.ps-fan svg{display:block;width:100%;height:100%}
+.ps-kw{display:block;overflow:visible}
+.ps-voet{flex:none;height:var(--ps-voet);display:flex;flex-direction:column;justify-content:flex-end;gap:calc(var(--u)*.8);font-size:max(6pt,calc(var(--u)*1.15));color:var(--muted)}
+.ps-voet p{margin:0}
+.ps-leg{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*.6) calc(var(--u)*2.2);font-size:max(6pt,calc(var(--u)*1.4));color:var(--ink)}
+.ps-leg span{display:inline-flex;align-items:center;gap:calc(var(--u)*.6)}
+.ps-leg i{width:calc(var(--u)*1.5);height:calc(var(--u)*1.5);border-radius:50%;background:var(--c)}
+.ps-bewijs{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:calc(var(--u)*.4) calc(var(--u)*1.6)}
+.ps-bewijs span{display:inline-flex;align-items:center;gap:calc(var(--u)*.5)}
+.ps-bewijs svg{width:calc(var(--u)*2.2);height:calc(var(--u)*1.4)}
+.ps-bewijs b{color:var(--ink);font-weight:600}
+.ps-bron{display:flex;flex-wrap:wrap;justify-content:space-between;gap:calc(var(--u)*.4) calc(var(--u)*2);padding-top:calc(var(--u)*.8);border-top:.3mm solid var(--rule);font-family:var(--mono);font-size:max(6pt,calc(var(--u)*1));color:var(--muted)}
+/* de stamreeks als poster: dezelfde kaarten, alle maten uit --fs (mm), nooit kleiner dan 6 pt */
+.ps-vel .sr-lijst{width:min(100%,calc(var(--fs)*34));max-width:none}
+.ps-vel .sr-kaart{grid-template-columns:calc(var(--fs)*3.6) minmax(0,1fr);gap:calc(var(--fs)*.6);padding:calc(var(--fs)*.45) calc(var(--fs)*.7);border:.3mm solid var(--rule);border-left:calc(var(--fs)*.22) solid var(--c,var(--faint))}
+.ps-vel .sr-g{font-size:max(6pt,calc(var(--fs)*.5))}
+.ps-vel .sr-g small{font-size:max(6pt,calc(var(--fs)*.42))}
+.ps-vel .sr-b h3{font-family:var(--display);font-weight:400;font-size:var(--fs);gap:calc(var(--fs)*.15) calc(var(--fs)*.35)}
+.ps-vel .tag{font-size:max(6pt,calc(var(--fs)*.42));padding:0 calc(var(--fs)*.25);border-width:.25mm}
+.ps-vel .sr-j,.ps-vel .sr-pl,.ps-vel .sr-naamzin,.ps-vel .sr-stap{font-size:max(6pt,calc(var(--fs)*.6))}
+.ps-vel .sr-j{margin-top:calc(var(--fs)*.1)}
+.ps-vel .sr-naamzin{margin-top:calc(var(--fs)*.3);padding:calc(var(--fs)*.2) calc(var(--fs)*.4);border-left-width:calc(var(--fs)*.12)}
+.ps-vel .sr-stap{margin-left:calc(var(--fs)*2.2);padding:calc(var(--fs)*.22) 0 calc(var(--fs)*.22) calc(var(--fs)*.9);border-left-width:.6mm;gap:0 calc(var(--fs)*.35)}
+@media print{
+  html.ps-print,html.ps-print body{background:var(--surface)}
+  html.ps-print body{margin:0}
+  html.ps-print body > :not(main),html.ps-print main > :not(#v-poster),html.ps-print #v-poster > :not(.ps-kader){display:none!important}
+  html.ps-print main{padding:0!important;margin:0!important;max-width:none!important}
+  html.ps-print .ps-kader{width:auto;max-width:none;aspect-ratio:auto!important;margin:0;border:0;box-shadow:none;overflow:visible;background:var(--surface)}
+  html.ps-print .ps-vel{position:relative;transform:none!important}
+}
+
+/* ---------- section guide: the other pages of a menu group ---------- */
+.section-guide{margin:18px 0 26px}
+.section-guide-head{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.section-guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.section-guide-item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;color:var(--ink);text-decoration:none}
+.section-guide-item:hover{border-color:var(--muted)}
+.section-guide-item .nico{flex:none;width:20px;height:20px;color:var(--accent);margin-top:1px}
+.section-guide-item b{display:block;font-weight:600;font-size:14.5px;line-height:1.3}
+.section-guide-item small{display:block;font-size:12.5px;line-height:1.35;color:var(--muted);margin-top:2px}
+.section-guide-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.section-guide-line{margin:34px 0 0;padding-top:14px;border-top:1px solid var(--rule);font-size:14px;line-height:1.9;color:var(--muted)}
+.section-guide-line>span:first-child{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+@media (max-width:560px){.section-guide-grid{grid-template-columns:1fr;gap:0;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}.section-guide-item{border:0;border-radius:0;background:none;padding:10px 12px;gap:10px}.section-guide-item+.section-guide-item{border-top:1px solid var(--rule)}.section-guide-item b{font-size:14.5px}.section-guide-item small{font-size:12.5px}}
+@media print{.section-guide,.section-guide-line{display:none}}
