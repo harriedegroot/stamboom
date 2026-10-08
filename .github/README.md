@@ -37,3 +37,8 @@ mensen op.
 
 Een statische website zonder bouwstap: `index.html` met `src/` (code en opmaak), `data/` (personen, plaatsen en
 verhalen) en `img/` (beelden). De site wordt gepubliceerd met GitHub Pages.
+
+## Licentie
+
+© 2026 Harrie de Groot. Alle rechten voorbehouden. Dit is geen open source: je mag de site bekijken, maar niets
+kopiëren, hergebruiken, bewerken of gebruiken voor AI-training zonder schriftelijke toestemming. Zie [LICENSE](../LICENSE).

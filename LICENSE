@@ -1,0 +1,102 @@
+Copyright © 2026 Harrie de Groot. Alle rechten voorbehouden.
+
+Dit is geen open-sourcelicentie. Er wordt niemand enig recht verleend.
+
+1. Waarop dit geldt
+
+   Alles in deze repository en op de website stamboom.harriedegroot.com, voor zover
+   hieronder niet uitgezonderd: de broncode (waaronder index.html en alles in src/),
+   de opmaak en vormgeving, de teksten (verhalen, beschrijvingen, bijschriften,
+   toelichtingen) en de verzameling, selectie en ordening van de gegevens in data/,
+   die als databank beschermd is.
+
+2. Wat niet mag
+
+   Zonder voorafgaande schriftelijke toestemming van Harrie de Groot is het niet
+   toegestaan om het geheel of enig deel daarvan:
+   - te kopiëren, te verveelvoudigen, te verspreiden of openbaar te maken;
+   - te bewerken, te vertalen of er een afgeleid werk van te maken;
+   - te gebruiken in of voor een eigen website, app, product of dienst, commercieel
+     of niet;
+   - op te vragen of te hergebruiken, geheel of voor een substantieel deel, ook niet
+     door herhaald opvragen van kleine delen, met de hand of automatisch (scrapen);
+   - te gebruiken voor tekst- en datamining of voor het trainen, verfijnen of voeden
+     van AI-systemen of andere modellen. Dit is een uitdrukkelijk voorbehoud in de zin
+     van artikel 15o van de Auteurswet en artikel 4 van Richtlijn (EU) 2019/790.
+
+3. Wat wel mag
+
+   - De website in een browser bekijken voor eigen, persoonlijk gebruik.
+   - Wat de gebruiksvoorwaarden van GitHub verplicht toestaan voor openbare
+     repositories: de repository op GitHub bekijken en binnen GitHub forken. Dat geeft
+     geen enkel recht om de inhoud verder te gebruiken, te verspreiden of te bewerken.
+   - Wat de wet dwingend toestaat, zoals citeren binnen de wettelijke grenzen, met
+     vermelding van de bron.
+
+4. Uitgezonderd
+
+   - Materiaal van derden, zoals scans van archiefstukken en foto's en prenten uit
+     archieven en beeldbanken: daarvoor gelden de voorwaarden van de bron die erbij
+     staat vermeld.
+   - src/vendor/paged.polyfill.min.js (Paged.js): valt onder de eigen licentie in
+     src/vendor/LICENSE-pagedjs.txt.
+
+5. Overig
+
+   Alles wordt geleverd zoals het is, zonder enige garantie. Op deze voorwaarden is
+   Nederlands recht van toepassing. Bij verschil tussen de Nederlandse en de Engelse
+   tekst gaat de Nederlandse tekst voor.
+
+   Toestemming vragen: via github.com/harriedegroot.
+
+-------------------------------------------------------------------------------
+
+Copyright © 2026 Harrie de Groot. All rights reserved.
+
+This is not an open-source licence. No rights are granted to anyone.
+
+1. Scope
+
+   Everything in this repository and on the website stamboom.harriedegroot.com,
+   except as excluded below: the source code (including index.html and everything in
+   src/), the layout and design, the texts (stories, descriptions, captions,
+   explanations) and the collection, selection and arrangement of the data in data/,
+   which is protected as a database.
+
+2. Not permitted
+
+   Without prior written permission from Harrie de Groot, you may not, in whole or in
+   part:
+   - copy, reproduce, distribute or publish it;
+   - modify or translate it, or create derivative works from it;
+   - use it in or for your own website, app, product or service, commercial or not;
+   - extract or re-use it, in whole or in substantial part, including by repeated
+     extraction of small parts, manually or automatically (scraping);
+   - use it for text and data mining, or to train, fine-tune or feed AI systems or
+     other models. This is an express reservation within the meaning of Article 15o of
+     the Dutch Copyright Act and Article 4 of Directive (EU) 2019/790.
+
+3. Permitted
+
+   - Viewing the website in a browser for your own personal use.
+   - What the GitHub Terms of Service require for public repositories: viewing the
+     repository on GitHub and forking it within GitHub. This grants no right to further
+     use, distribute or modify the contents.
+   - What mandatory law permits, such as quotation within legal limits, with
+     attribution.
+
+4. Excluded
+
+   - Third-party material, such as scans of archival records and photographs and
+     prints from archives and image banks: the terms of the source stated with it
+     apply.
+   - src/vendor/paged.polyfill.min.js (Paged.js): covered by its own licence in
+     src/vendor/LICENSE-pagedjs.txt.
+
+5. Other
+
+   Everything is provided as is, without any warranty. These terms are governed by
+   Dutch law. In case of any difference between the Dutch and the English text, the
+   Dutch text prevails.
+
+   To request permission: via github.com/harriedegroot.
