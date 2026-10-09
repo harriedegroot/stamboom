@@ -505,6 +505,7 @@ function go(token, opts = {}) {
   if (document.body && document.body.hasAttribute("data-zuiver")) return; /* het boek in drukmodus heeft de site vervangen */
   if (!archTekstOk && /^beeld(-|$)/.test(token)) { archTekst().then(() => go(token, opts)); return; } /* Beeld heeft de tekst van de archiefbeelden nodig */
   if (/^boek(--|$)/.test(token) && !opts.voorgeladen && typeof window.boekVoorladen === "function") { window.boekVoorladen().then(() => go(token, Object.assign({}, opts, { voorgeladen: true }))); return; } /* het boek: openingsbeelden en tekst eerst */
+  token = String(token).replace(/^waaier(?=$|-\d+$)/, "stamboom"); /* "Waaier" in the menu: #waaier is the same page as #stamboom (old links keep working) */
   let view = token, sub = null; const tok0 = token;
   if (/^lijn-\d+$/.test(token)) { view = "families"; sub = +token.slice(5); if (!LINES[sub]) view = "nietgevonden"; }
   else if (/^verhaal-/.test(token)) { view = "verhalen"; sub = token.slice(8); if (!STORIES.some(s => s.id === sub) && !widenTo(t => (t.STORIES || []).some(s => s.id === sub), "verhaal", token)) view = "nietgevonden"; } /* outside this focus: widen it */
@@ -2955,7 +2956,7 @@ const covStyle = c => [c.pos ? `object-position:${c.pos}` : "", c.zoom ? `transf
 const famOf = k => { const sur = q => { const x = q ? splitName(q.n).sur : ""; return x ? x[0].toUpperCase() + x.slice(1) : ""; };
   return [...new Set([sur(person(2 * k)), sur(person(2 * k + 1))].filter(Boolean))].join(" · "); };
 /* the tree on screen as a title: "Stamboom De Groot · Boersma" (its families); a chosen person or couple keeps their names */
-const treeTitle = () => T.focus ? "Stamboom van " + (typeof focusWho === "function" ? focusWho() : T.rootFull || T.root) : "Stamboom " + (T.brand || T.rootFull || T.root);
+const treeTitle = () => "Stamboom " + (fkLabel() || T.brand || T.rootFull || T.root); /* the header's name: "Stamboom De Groot · De Vries", "Stamboom Andre de Groot"; only called from go() and later */
 /* the name of a page = the label of its menu item (MENU): the menu, the tabs, the h1 and the document title never drift apart */
 const pageLabel = (view, fb) => { try { for (const [, its] of MENU) for (const it of its) if (it[1] === view) return it[0]; } catch (e) { } return fb || view; };
 const BRANCH_NAME = {};
@@ -5071,8 +5072,7 @@ function treeChrome() {
     x.innerHTML = `<svg class="tb-ic" viewBox="0 0 15 15" aria-hidden="true"><circle cx="7.5" cy="7.5" r="6"/><path d="${half}"/></svg><span class="tb-tx"><b>${esc(t.root)}</b><span>${esc(t.brand)}</span></span>`;
     x.title = `Familie ${t.brand}`; });
   const sl = $("#v-stamboom .lede"); if (sl) sl.textContent = `${T.rootFull || T.root} in het midden; elke ring is een generatie verder terug.`;
-  document.title = "Stamboom " + T.brand.replace(" · ", "-");
-  footLater();
+  footLater(); /* the document title is set by go() (menuNa), after the header exists */
 }
 function setTree(k) {
   if (!TREES[k] || T === TREES[k]) return false;
@@ -9397,7 +9397,7 @@ function menuNa(noFocus) {
 }
 /* open profiel: de naam in de titel; bij sluiten weer de titel van de pagina eronder */
 new MutationObserver(() => { if (drawer.hidden) { menuNa(true); return; }
-  const p = curKw && person(curKw); if (p) document.title = p.n + " · Stamboom van " + (T.rootFull || T.root);
+  const p = curKw && person(curKw); if (p) document.title = p.n + " · " + treeTitle();
 }).observe(drawer, { attributes: true, attributeFilter: ["hidden"], childList: true, subtree: true });
 /* na elke paginawissel en boomwissel: menu en boomkiezer opnieuw */
 function menuSync(stil) { /* stil: only the labels changed (Bewaard): nothing closes, the focus stays */
