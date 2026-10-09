@@ -42,9 +42,9 @@
       if (!p) continue; count.set(r, (count.get(r) || 0) + 1); if (!p.living) seen.add(r); if (genOf(pos) >= 4) lines.add(lineOf(pos)); } }
     if (st.rootKw >= 8) lines.add(lineOf(st.rootKw));
     /* the title: from the page when it has one (o.title, o.subtitle: the same title as the book, e.g. for a couple "De familie De Groot
-       · De Vries"), else "De voorouders van …" */
+       · De Vries", and o.brand: their surnames above it), else "De voorouders van …" with the brand of the tree */
     const title = o.title || "De voorouders van " + P.startName(data, o.start);
-    const head = S.header(ctx, L, w, data.brand, title, [o.subtitle, `${seen.size} voorouders in ${m} generaties`, o.subtitle ? "" : "elke ring is een generatie verder terug"].filter(Boolean).join(" · "));
+    const head = S.header(ctx, L, w, o.brand || data.brand, title, [o.subtitle, `${seen.size} voorouders in ${m} generaties`, o.subtitle ? "" : "elke ring is een generatie verder terug"].filter(Boolean).join(" · "));
     const cx = w / 2, cy = L.M + L.head + (h - 2 * L.M - L.head - L.foot) / 2;
     const pt = (r, a) => { const t = a * Math.PI / 180; return [cx + r * k * Math.cos(t), cy + r * k * Math.sin(t)]; };
     const col = kw => pal["l" + lineOf(kw)] || pal.faint || "#888";
@@ -100,15 +100,32 @@
       }
     }
     /* the centre: the start (or the main person with brothers and sisters) */
-    const rc = R[1] * k, centre = [];
+    const rc = R[1] * k, centre = []; let childless = false;
     if (st.rootKw === 1 && !st.pair) { (data.rootLines && data.rootLines.length ? data.rootLines : [data.root]).forEach(s => centre.push([s, 13.5, S.FONT.sansBold]));
       if (data.siblings && data.siblings.length) centre.push(["met " + data.siblings.join(", ").replace(/, ([^,]*)$/, " en $1"), 9.5, S.FONT.sans]); }
-    else if (st.pair) { /* the couple is the first ring; the centre stays empty (their child is not in the tree) */ }
+    else if (st.pair) { /* a couple: their children in the middle (Harrie): the chosen ones (o.persons), else the child in the line with
+         "+ n broers en zussen" from the father's or mother's list of children (without the stillborn ones) */
+      const fa = by.get(res(st.people[0])), mo = by.get(res(st.people[1])), child = by.get(res(st.rootKw));
+      const list = ((fa && (fa.kids || []).length ? fa.kids : mo && mo.kids) || []).map(x => String(typeof x === "string" ? x : x && x.n || "")).filter(x => x && !/levenloos/i.test(x));
+      if (o.persons && o.persons.length) { const ps = o.persons.slice(0, 3); ps.forEach(n => centre.push([n, ps.length > 2 ? 11 : 13.5, S.FONT.sansBold])); if (o.persons.length > 3) centre.push(["+ " + (o.persons.length - 3), 9.5, S.FONT.sans]); }
+      else if (!child && !list.length) childless = true; /* no children in the data: the rings sign and the family name (drawn below) */
+      else if (child || list.length) { centre.push([child ? S.firstName(child) : list[0].replace(/\s*[(,·].*$/, ""), 13.5, S.FONT.sansBold]);
+        const n = Math.max(0, list.length - 1); if (n) centre.push([`+ ${n} ${n === 1 ? "broer of zus" : "broers en zussen"}`, 9.5, S.FONT.sans]); } }
     else { const p = by.get(res(st.rootKw)); if (p) { centre.push([S.firstName(p), 13.5, S.FONT.sansBold], [S.shortSur(S.splitName(p.n).sur), 12, S.FONT.sansBold]); if (!p.living && S.lifeYears(p)) centre.push([S.lifeYears(p), 10.5, S.FONT.sans]); } }
     let cen = `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${rc.toFixed(2)}" fill="${pal.accent}"/>`;
-    const fitC = centre.map(([s, f, font]) => pf.fit(s, font, f * k / PT, rc * 1.75, min)), lh = fitC.map(x => x.pt * PT * 1.15), tot = lh.reduce((a, b) => a + b, 0);
-    let yy = cy - tot / 2;
-    fitC.forEach((x, i) => { yy += lh[i]; cen += S.text(cx, yy - lh[i] * 0.25, x.text, x.pt * PT, { font: centre[i][2], anchor: "middle", fill: pal.accentInk || "#F4F8FB" }); });
+    /* the lines that are really drawn (a line that cannot fit is left out), then the block centred exactly on the middle: each line on
+       its own middle (dominant-baseline central), so the name sits in the centre whatever the font's ascent and descent */
+    const fitC = centre.map(([s, f, font]) => [pf.fit(s, font, f * k / PT, rc * 1.75, min), font]).filter(([x]) => x.text && x.text !== "…");
+    /* a couple without children: two linked rings (drawn, so no glyph from a fallback font) above their family name */
+    if (childless) { const fam = o.brand || (st.people.map(kw => by.get(res(kw))).filter(Boolean).map(p => S.shortSur(S.splitName(p.n).sur)).join(" · "));
+      const f = pf.fit(fam, S.FONT.sansBold, 11 * k / PT, rc * 1.75, min); if (f.text) fitC.push([f, S.FONT.sansBold]); }
+    const ringH = childless ? rc * 0.42 : 0;
+    const lh = fitC.map(([x]) => x.pt * PT * 1.18), tot = lh.reduce((a, b) => a + b, 0) + ringH;
+    let top = cy - tot / 2;
+    if (childless) { const r = ringH * 0.32, sw = Math.max(0.25, r * 0.16), y0 = top + ringH / 2, ink = pal.accentInk || "#F4F8FB";
+      cen += `<circle cx="${(cx - r * 0.55).toFixed(2)}" cy="${y0.toFixed(2)}" r="${r.toFixed(2)}" fill="none" stroke="${ink}" stroke-width="${sw.toFixed(2)}"/><circle cx="${(cx + r * 0.55).toFixed(2)}" cy="${y0.toFixed(2)}" r="${r.toFixed(2)}" fill="none" stroke="${ink}" stroke-width="${sw.toFixed(2)}"/>`;
+      top += ringH; }
+    fitC.forEach(([x, font], i) => { cen += S.text(cx, top + lh[i] / 2, x.text, x.pt * PT, { font, anchor: "middle", fill: pal.accentInk || "#F4F8FB", extra: ' dominant-baseline="central"' }); top += lh[i]; });
     /* father's side and mother's side, at the shoulders of the fan */
     const kPt = Math.max(min, 14 * k / PT), kx = 0.72 * (R[m] + 14) * k, ky = -0.72 * (R[m] + 14) * k;
     const who = st.rootKw === 1 && !st.pair ? null : P.startName(data, o.start);

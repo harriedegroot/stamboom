@@ -6,7 +6,8 @@
    Every day shows who was born (*) or died (†) on that date, with the year: only the dead with a full date (privacy profile
    "calendar"; the core already removed the living, stillborn children and hypotheses). Pure: returns SVG strings in mm,
    measures text through ctx.platform, takes colours from ctx.palette (the light print palette). Text is never smaller than the
-   product's minimum (6 pt). Options: year (number, or "next" = next calendar year), start (a person or couple: only their ancestors). */
+   product's minimum (6 pt). Options: year (number, or "next" = next calendar year), start (a person or couple: only their ancestors),
+   and from the site title, subtitle and brand (the same title as the book and poster for that start). */
 (function (P) {
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const PT = 25.4 / 72;
@@ -32,7 +33,7 @@
      then the largest; one per month, as long as there are enough */
   const SCAN = /(^|[-_])(akte|scan|reg|bidprent)/i, GOOD_KIND = /^(place|plaats|map|kaart|stadsplan|church|kerk|plek|hist)/i;
   function picturesOf(data, n) {
-    const ok = (data.images || []).filter(im => im.src && !/^(persoon|person|portret)$/.test(im.kind || "") && !SCAN.test(im.id || "") && !SCAN.test(im.kind || "") && (im.w || 0) >= 800);
+    const ok = (data.images || []).filter(im => im.src && !/^(persoon|person|portret)$/.test(im.kind || "") && !SCAN.test(im.id || "") && !SCAN.test(im.kind || "") && !/^(akte|document|krant|register|rouw|graf|bidprentje)$/.test(im.group || "") && (im.w || 0) >= 800);
     const score = im => (GOOD_KIND.test(im.kind || "") ? 2 : 0) + ((im.w || 0) > (im.h || 0) * 1.15 ? 1 : 0);
     return ok.sort((a, b) => score(b) - score(a) || (b.w * b.h) - (a.w * a.h)).slice(0, n);
   }
@@ -42,6 +43,19 @@
     const w = String(n || "").replace(/\(.*?\)/g, "").trim().split(/\s+/); if (w.length <= 2) return w.join(" ");
     let i = w.length - 1; while (i > 1 && PREFIX.test(w[i - 1])) i--;
     return [w[0], ...w.slice(i)].join(" ");
+  }
+  /* "Ook gedenkdagen": a stillborn child on its day, with a quiet ring (°, in Latin-1, so in every font) instead of * or †,
+     named after its parents by first name as in the deed ("levenloos geboren kind van Herman en Mien"); only when asked for, and
+     only when the parent belongs to the start */
+  const first = p => p ? p.roep || String(p.n || "").split(/\s+/)[0] : "";
+  function addMemorials(ev, data, o, members) {
+    if (!o.memorials || !(data.memorials || []).length) return;
+    const byKw = new Map((data.people || []).map(p => [p.kw, p]));
+    data.memorials.forEach(mm => { const par = byKw.get(mm.kw); if (!par || par.living || (members && !members.has(mm.kw))) return;
+      const other = byKw.get(mm.kw % 2 ? mm.kw - 1 : mm.kw + 1), both = other && !other.living ? [first(mm.kw % 2 ? other : par), first(mm.kw % 2 ? par : other)] : [first(par)];
+      const list = ev[mm.m - 1][mm.d] = ev[mm.m - 1][mm.d] || [];
+      list.push({ sign: "°", y: mm.y, kw: mm.kw, name: `${mm.text || "levenloos geboren kind"} van ${both.join(" en ")}`, line: par.line, memo: true }); });
+    ev.forEach(mo => Object.values(mo).forEach(list => list.sort((a, b) => (a.sign === "*" ? 0 : 1) - (b.sign === "*" ? 0 : 1) || a.y - b.y)));
   }
   function resolveYear(o) { const y = +(o && o.year); return Number.isInteger(y) && y > 1800 ? y : new Date().getFullYear() + 1; }
 
@@ -54,9 +68,12 @@
     /* a start other than the main person (one person or a couple) keeps only their ancestors, and names them in the title */
     const st = P.startOf ? P.startOf(o.start) : { rootKw: 1, pair: false }, members = st.rootKw === 1 && !st.pair ? null : P.startMembers(data, o.start);
     const people = members ? data.people.filter(p => members.has(p.kw)) : data.people, root = P.startName ? P.startName(data, o.start) : data.root || "";
-    const ev = eventsOf({ ...data, people }), pics = picturesOf(data, 13), used = new Set();
+    const ev = eventsOf({ ...data, people }); addMemorials(ev, data, o, members);
+    const pics = (all => { /* the cover a photograph of a place (not one of the old maps the months show: they look alike), then the months */
+      const c = all.find(im => !/^(kaart|map|stadsplan)$/i.test(im.kind || "")) || all[0]; return c ? [c, ...all.filter(x => x !== c)].slice(0, 13) : all; })(picturesOf(data, 14)), used = new Set();
     /* a short name that is also the name of someone living ("Aaltje Jans Bakker" → "Aaltje Bakker") would confuse: then the full name */
     const livingNames = new Set([...(data.livingNames || []), ...data.people.filter(p => p.living).map(p => p.n)]), short = n => { const k = shortName(n); return livingNames.has(k) ? n : k; };
+    const label = e => e.memo ? e.name : short(e.name);              /* a memorial day keeps its own words */
     const inTree = new Set(people.map(p => p.line).filter(Boolean));
     const lines = Object.keys(data.lines || {}).map(Number).filter(l => data.lines[l] && (!members || inTree.has(l))).sort((a, c) => a - c);
     const pages = [];
@@ -70,19 +87,29 @@
     const foot = y => { const f = pf.fit(data.url || "", SANS, min, (w - 2 * M) * 0.45, min); return text(w - M, y, f.text, SANS, f.pt, faint, "end"); };
     const familyBar = (y, hh) => lines.length ? lines.map((l, i) => `<rect x="${(M + i * (w - 2 * M) / lines.length).toFixed(2)}" y="${y.toFixed(2)}" width="${((w - 2 * M) / lines.length - 0.6).toFixed(2)}" height="${hh.toFixed(2)}" fill="${col(l)}"/>`).join("") : "";
 
+    /* the title: "De voorouders van" + the name, or the title the site gives (o.title, e.g. "De familie De Groot · De Vries" for a
+       couple as start, with o.subtitle "Vanaf Herman en Mien"): a small line above and the large name, as on the book cover */
+    const coverTitle = (() => {
+      const t = String(o.title || ""), m = /^(De voorouders van|De familie|De families)\s+(.+)$/.exec(t);
+      if (!t) return { lead: wall ? "De voorouders van" : "Verjaardagen van de voorouders van", big: root, sub: o.subtitle || "", plain: "de voorouders van " + root };
+      const lead = m ? m[1] : "", big = m ? m[2] : t;
+      return { lead: wall ? lead : "Verjaardagen van " + (lead ? lead.charAt(0).toLowerCase() + lead.slice(1) : ""), big, sub: o.subtitle || "", plain: t.charAt(0).toLowerCase() + t.slice(1) };
+    })();
     /* ---- cover ---- */
     {
       const ph = h * (h / w > 1.8 ? 0.66 : 0.56); let g = picture(pics[0], ph);   /* a tall, narrow calendar gets a taller picture */
       if (!pics[0]) g += `<rect x="${-b}" y="${-b}" width="${w + 2 * b}" height="${ph + b}" fill="${pal.accent || "#1e4f74"}"/>`;
-      const lead = wall ? "De voorouders van" : "Verjaardagen van de voorouders van";
-      const l1 = pf.fit(lead, TEXT_I, 15 * s, w - 2 * M, min), l2 = pf.fit(root, DISPLAY, 38 * s, w - 2 * M, 14);
+      const { lead, big, sub } = coverTitle, brand = o.brand || data.brand || "";
+      const l1 = pf.fit(lead, TEXT_I, 15 * s, w - 2 * M, min), l2 = pf.fit(big, DISPLAY, 38 * s, w - 2 * M, 14), l3 = sub ? pf.fit(sub, TEXT_I, 12 * s, w - 2 * M, min) : null;
       /* the title block sits in the middle of the white below the picture */
-      const block = l1.pt * PT + l2.pt * PT * 1.05 + 13 * s + (wall ? 10 * s : 0) + (data.brand ? 6 * s : 0), avail = h - M - 9 * s - ph;
+      const block = l1.pt * PT + l2.pt * PT * 1.05 + (l3 ? l3.pt * PT * 1.5 : 0) + 13 * s + (wall ? 10 * s : 0) + (brand ? 6 * s : 0), avail = h - M - 9 * s - ph;
       let y = ph + Math.max(16 * s, (avail - block) / 2 + l1.pt * PT);
       g += text(w / 2, y, l1.text, TEXT_I, l1.pt, ink, "middle"); y += l2.pt * PT * 1.05;
-      g += text(w / 2, y, l2.text, DISPLAY, l2.pt, ink, "middle"); y += 13 * s;
+      g += text(w / 2, y, l2.text, DISPLAY, l2.pt, ink, "middle");
+      if (l3) { y += l3.pt * PT * 1.5; g += text(w / 2, y, l3.text, TEXT_I, l3.pt, muted, "middle"); }
+      y += 13 * s;
       if (wall) { g += text(w / 2, y, String(year), DISPLAY, 30 * s, pal.gold || "#8a5c0e", "middle"); y += 10 * s; }
-      if (data.brand) { const f = pf.fit(data.brand.toUpperCase(), SANS, Math.max(min, 7.5 * s), w - 2 * M, min); g += text(w / 2, y, f.text, SANS, f.pt, muted, "middle"); y += 6 * s; }
+      if (brand) { const f = pf.fit(brand.toUpperCase(), SANS, Math.max(min, 7.5 * s), w - 2 * M, min); g += text(w / 2, y, f.text, SANS, f.pt, muted, "middle"); y += 6 * s; }
       g += familyBar(h - M - 9 * s, 1.6 * s);
       g += credit(pics[0], h - M);
       page("omslag", g);
@@ -115,18 +142,20 @@
           const show = list.length > room ? Math.max(0, room - 1) : list.length, maxW = cw - 3.4 * s;
           /* a name that does not fit runs on to a second line, as long as the cell has room for all of them */
           const lines = list.slice(0, show).map(e => {
-            const one = `${e.sign} ${e.y} ${short(e.name)}`;
+            const one = `${e.sign} ${e.y} ${label(e)}`;
             if (pf.measure(one, SANS, evPt) <= maxW) return [one];
-            const words = short(e.name).split(" "), head = `${e.sign} ${e.y} ${words[0]}`, rest = words.slice(1).join(" ");
+            if (e.memo) return one.split(" ").reduce((ls, wd) => { const t = ls.length ? ls[ls.length - 1] + " " + wd : wd; /* a memorial day: its words over as many lines as needed */
+              if (ls.length && pf.measure(t, SANS, evPt) <= maxW - 1.6 * s) ls[ls.length - 1] = t; else ls.push(wd); return ls; }, []);
+            const words = label(e).split(" "), head = `${e.sign} ${e.y} ${words[0]}`, rest = words.slice(1).join(" ");
             return rest ? [head, rest] : [one];
           });
           const wrap = lines.reduce((a, l) => a + l.length, 0) <= room;
           let k = 0;
           list.slice(0, show).forEach((e, i) => {
-            const ls = wrap ? lines[i] : [`${e.sign} ${e.y} ${short(e.name)}`], ly = top0 + k * lineH;
-            g += `<rect x="${(cx + 1.2 * s).toFixed(2)}" y="${(ly - evPt * PT * 0.78).toFixed(2)}" width="${(0.7 * s).toFixed(2)}" height="${(evPt * PT * 0.9 + (ls.length - 1) * lineH).toFixed(2)}" fill="${col(e.line)}"/>`;
+            const ls = wrap ? lines[i] : [`${e.sign} ${e.y} ${e.memo ? "levenloos" : label(e)}`], ly = top0 + k * lineH; /* a full cell: a memorial day in one word */
+            g += `<rect x="${(cx + 1.2 * s).toFixed(2)}" y="${(ly - evPt * PT * 0.78).toFixed(2)}" width="${(0.7 * s).toFixed(2)}" height="${(evPt * PT * 0.9 + (ls.length - 1) * lineH).toFixed(2)}" fill="${e.memo ? rule : col(e.line)}"/>`;
             const ind = 1.6 * s;                                          /* a small hanging indent for the second line */
-            ls.forEach((l, j) => { const f = pf.fit(l, SANS, evPt, maxW - (j ? ind : 0), min); g += text(cx + 2.4 * s + (j ? ind : 0), ly + j * lineH, f.text, SANS, f.pt, ink); });
+            ls.forEach((l, j) => { const f = pf.fit(l, SANS, evPt, maxW - (j ? ind : 0), min); g += text(cx + 2.4 * s + (j ? ind : 0), ly + j * lineH, f.text, SANS, f.pt, e.memo ? muted : ink); });
             k += ls.length;
           });
           if (list.length > show) g += text(cx + 2.4 * s, top0 + k * lineH, `+ ${list.length - show} meer`, SANS, evPt, muted);
@@ -173,7 +202,7 @@
       page("jaaroverzicht", g);
     }
 
-    const title = wall ? `Wandkalender ${year}: de voorouders van ${root}` : `Verjaardagskalender: de voorouders van ${root}`;
+    const title = wall ? `Wandkalender ${year}: ${coverTitle.plain}` : `Verjaardagskalender: ${coverTitle.plain}`;
     return { pages, fonts: ["Libre Caslon Display 400", "Libre Caslon Text 400 italic", "IBM Plex Sans 400", "IBM Plex Sans 600", "IBM Plex Mono 400"],
       imagesUsed: [...used], title, stats: { year: wall ? year : null, events: ev.reduce((a, mo) => a + Object.values(mo).reduce((x, l) => x + l.length, 0), 0) } };
   }

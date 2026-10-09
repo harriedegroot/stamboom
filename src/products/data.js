@@ -46,5 +46,17 @@
     (data.images || []).forEach(im => { const l = P.licenceFor(im, o); if (l.allowed) { images.push(Object.assign({}, im, { credit: l.credit })); } });
     return Object.assign({}, data, { images });
   }
-  Object.assign(P, { filterPrivacy, filterLicences, mayBeAlive, PRIVACY_PROFILES: PROFILES });
+  /* memorial days (Harrie: a calendar shows stillborn children only when asked, "Ook gedenkdagen", as a quiet memorial day): from the
+     lists of children of the dead in the tree, the stillborn ones with a full date. [{ kw (the parent), m (1–12), d, y, text }];
+     the same child under both parents or under a brother counts once (by date). Never about the living. */
+  function memorialsOf(data) {
+    const out = new Map(), FULL = /\((\d{2})-(\d{2})-(\d{4})\)/;
+    (data.people || []).filter(p => !p.living).forEach(p => (p.kids || []).forEach(k => {
+      const s = String(typeof k === "string" ? k : k && k.n || ""); if (!STILLBORN.test(s)) return; const m = FULL.exec(s); if (!m) return;
+      const key = m[3] + m[2] + m[1]; if (out.has(key)) return;
+      out.set(key, { kw: p.kw, d: +m[1], m: +m[2], y: +m[3], text: s.replace(FULL, "").replace(/^een\s+/i, "").trim() });
+    }));
+    return [...out.values()].sort((a, b) => a.m - b.m || a.d - b.d);
+  }
+  Object.assign(P, { filterPrivacy, filterLicences, mayBeAlive, memorialsOf, PRIVACY_PROFILES: PROFILES });
 })(typeof window !== "undefined" ? (window.Products = window.Products || {}) : (globalThis.Products = globalThis.Products || {}));

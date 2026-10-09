@@ -40,7 +40,7 @@
       if (!narrow) svg += S.text(M + 4 * u, y + boxH / 2 + smallMm * 0.35, ROMAN(g), smallMm, { font: S.FONT.mono, anchor: "middle", fill: pal.muted });
       const pad = Math.min(3 * u, boxW * 0.05), maxW = boxW - 2 * pad;
       const nm = pf.fit(p.n, S.FONT.sansBold, nameMm / PT, maxW, min);
-      const yrs = S.lifeYears(p), places = p.living ? "" : [p.bp ? "° " + place(p.bp) : "", p.m && p.m.p ? "⚭ " + place(p.m.p) : "", p.dp ? "† " + place(p.dp) : ""].filter(Boolean).join("  ");
+      const yrs = S.lifeYears(p), places = p.living ? "" : [p.bp ? "° " + place(p.bp) : "", p.m && p.m.p ? "× " + place(p.m.p) : "" /* × for married: ⚭ is not in the print fonts (a system font stood in) */, p.dp ? "† " + place(p.dp) : ""].filter(Boolean).join("  ");
       const occ = p.living ? "" : String(p.occ || "").split(";")[0].trim();
       const lines = [[nm.text, nm.pt * PT, S.FONT.sansBold, pal.ink], ...[[[yrs, p.st && p.st !== "A" && !p.living ? "bewijs " + p.st : ""].filter(Boolean).join("  · "), smallMm], [places, smallMm], [occ, smallMm]]
         .filter(([t]) => t).map(([t, mm]) => { const f = pf.fit(t, S.FONT.sans, mm / PT, maxW, min); return [f.text, f.pt * PT, S.FONT.sans, pal.muted]; })];

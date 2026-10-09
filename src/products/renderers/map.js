@@ -37,7 +37,8 @@
     const base = data.mapBase || {}, B = base.bounds || { lo0: 4.6, lo1: 7.3, la0: 51.9, la1: 53.6 };
     const KX = Math.cos(((B.la0 + B.la1) / 2) * Math.PI / 180);
     /* title (one or two lines) and subtitle; the map frame comes below them */
-    const who = line && data.lines && data.lines[line] ? "de familie " + data.lines[line].name : "de voorouders van " + P.startName(data, o.start);
+    /* o.family: the start is a family (Harrie: a couple or the whole tree, not chosen as a person) → "de families De Groot · Boersma" */
+    const who = line && data.lines && data.lines[line] ? "de familie " + data.lines[line].name : o.family ? "de families " + o.family : "de voorouders van " + P.startName(data, o.start);
     const title = pf.wrap("Waar " + who + " woonden", TITLE, titlePt, w - 2 * M, 2, Math.max(min, titlePt * 0.6)), tLh = title.pt * PT * 1.12;
     const subY = M + title.pt * PT + (title.lines.length - 1) * tLh + subPt * PT * 1.6;
     const top = subY + subPt * PT * 1.2, foot = legPt * PT * 7;

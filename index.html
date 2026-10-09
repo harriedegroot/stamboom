@@ -126,10 +126,10 @@
 
   <section class="view" id="v-kaart" hidden>
     <div class="eyebrow">Kaart</div>
-    <h1 class="page-title">Wie woonde waar</h1>
+    <h1 class="page-title">Kaart</h1>
     <p class="lede">Geboorte, huwelijk, woonplaats en overlijden, per dorp. Zo zie je hoe de families zich door de tijd verplaatsten.</p>
     <div class="toolbar">
-      <div class="slider"><button class="btn" id="play">Afspelen</button><input type="range" id="yr" min="1730" max="2026" step="1" value="2026" aria-label="Jaar"><output id="yrOut">2026</output></div>
+      <div class="slider"><button class="btn" id="play" aria-pressed="false">Afspelen</button><input type="range" id="yr" min="1730" max="2026" step="1" value="2026" aria-label="Jaar"><output id="yrOut">2026</output></div>
       <div class="seg" role="group" aria-label="Wie staat er op de kaart"><button id="mAll" aria-pressed="true">Iedereen tot dit jaar</button><button id="mAlive" aria-pressed="false">Alleen wie in dit jaar leeft</button></div>
       <label class="small" style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="moves" checked> verhuizingen tonen</label>
     </div>
@@ -175,6 +175,7 @@
 <!-- databestanden -->
 <script src="data/01-meta.js"></script>
 <script src="data/02-places.js"></script>
+<script src="data/05-descendants.js"></script>
 <script src="data/10-people-gen1-4.js"></script>
 <script src="data/11-people-gen5.js"></script>
 <script src="data/12-people-gen6.js"></script>
@@ -205,17 +206,25 @@
 <script src="src/products/data.js"></script>
 <script src="src/products/platform.js"></script>
 <script src="src/products/engine.js"></script>
+<script src="src/products/kwrefs.js"></script>
+<script src="src/products/focus.js"></script>
 <script src="src/products/print.js"></script>
+<script src="src/products/export.js"></script>
+<script src="src/products/mockup.js"></script>
 <script src="src/products/renderers/sheet.js"></script>
 <script src="src/products/renderers/fan.js"></script>
 <script src="src/products/renderers/lineage.js"></script>
 <script src="src/products/renderers/map.js"></script>
 <script src="src/products/renderers/calendar.js"></script>
+<script src="src/products/renderers/card.js"></script>
+<script src="src/products/renderers/fillin.js"></script>
+<script src="src/products/renderers/families.js"></script>
 <script src="src/products/renderers/text.js"></script>
 <script src="src/products/book/text.js"></script>
 <script src="src/products/book/build.js"></script>
 <script src="src/products/ui.js"></script>
 <script src="src/products/book/front.js"></script>
+<script src="src/products/book/photo.js"></script>
 <script src="src/app.js"></script>
 </body>
 </html>

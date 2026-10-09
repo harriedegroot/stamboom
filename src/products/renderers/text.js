@@ -70,9 +70,17 @@
     return { lines: wrap(pf, f.text, font, minPt, maxW, maxLines + 1) || [f.text], pt: minPt, text: f.text };
   }
 
+  /* only what is proven (A) or well supported (B) goes on a mug or a tile */
   function factsFor(data, kw) {
-    const fs = (data.facts || []).filter(f => f.kw === kw && f.text);
+    const fs = (data.facts || []).filter(f => f.kw === kw && f.text && (f.st === "A" || f.st === "B"));
     return fs.filter(f => f.kind === "fact").concat(fs.filter(f => f.kind !== "fact"));
+  }
+  /* the source of a fact: a source of the person that names the year of the fact, as its archive reference
+     ("Tresoar, toegang 13-05, inv. 32, fol. 23"); without one, the sources are in the profile on the site */
+  function sourceOf(p, f) {
+    const L = (p.src || []).map(x => Array.isArray(x) ? x[0] : x && (x.t || x.label) || x).filter(x => typeof x === "string");
+    const y = f && (f.year || f.y) ? String(f.year || f.y).replace(/\D/g, "").slice(0, 4) : "", hit = y && L.find(l => l.includes(y)) || (!f && L[0]);
+    return hit ? "Bron: " + String(hit).split(" · ").pop().trim() : "";
   }
   function advise(data, o, ctx) {
     const { w, h } = ctx.size, alive = new Set((data.people || []).filter(p => p.living).map(p => p.kw));
@@ -117,8 +125,8 @@
         g += text(x1, y, kicker, SANS_B, 7.5, accent, null, ` letter-spacing="0.6"`); y += 3.2;
         if (t) { balance(pf, t.lines, DISPLAY, t.pt).forEach(l => { y += t.pt * PT * 1.08; g += text(x1, y, l, DISPLAY, t.pt, ink); }); y += 2; }
         body.lines.forEach(l => { y += body.pt * PT * 1.38; g += text(x1, y, l, TEXT, body.pt, ink); });
-        const lab = LABEL[f.st] ? `${f.st} · ${LABEL[f.st]}` : "";
-        if (lab) g += text(x1, bottom, lab, SANS, Math.max(min, 7), muted);
+        const lab = [LABEL[f.st] ? `${f.st} · ${LABEL[f.st]}` : "", sourceOf(p, f) || "bronnen in het profiel op de site"].filter(Boolean).join(" · ");
+        const lf = pf.fit(lab, SANS, Math.max(min, 7), pw, min); g += text(x1, bottom, lf.text, SANS, lf.pt, muted);
       }
       /* right: the person */
       {
@@ -129,12 +137,12 @@
         if (yrs) { y += 7.5; g += text(x2 + pw / 2, y, yrs, TEXT_I, 14, gold, "middle"); }
         if (role) { y += 6.5; const r = pf.fit(role, SANS, 9, pw, min); g += text(x2 + pw / 2, y, r.text, SANS, r.pt, muted, "middle"); }
         g += `<rect x="${(x2 + pw / 2 - 14).toFixed(2)}" y="${(bottom - 8.6).toFixed(2)}" width="28" height="1.1" fill="${accent}"/>`;
-        const foot = pf.fit(`Uit de stamboom van ${data.root || ""}`, SANS, Math.max(min, 7), pw, min);
+        const foot = pf.fit(`Uit de stamboom ${data.brand || ""}`.trim(), SANS, Math.max(min, 7), pw, min);
         g += text(x2 + pw / 2, bottom - 2.6, foot.text, SANS, foot.pt, muted, "middle");
         if (data.url) { const u = pf.fit(String(data.url).replace(/^https?:\/\//, "").replace(/\/?#?$/, ""), SANS, min, pw, min); g += text(x2 + pw / 2, bottom + 0.6, u.text, SANS, u.pt, muted, "middle"); }
       }
       return { pages: [{ name: "wikkel", svg: svg(g, pal.paper || "#fff") }], fonts: ["Libre Caslon Display 400", "Libre Caslon Text 400", "Libre Caslon Text 400 italic", "IBM Plex Sans 400", "IBM Plex Sans 600"],
-        imagesUsed: [], title: `Mok: ${p.n}` };
+        imagesUsed: [], title: `Mok: ${p.n}`, stats: { source: f ? sourceOf(p, f) : "" } };
     }
 
     /* ---- tile ---- */
@@ -173,8 +181,8 @@
       if (data.brand) { const f = pf.fit(String(data.brand).toUpperCase(), SANS, Math.max(min, 6.5 * s), inner * 0.6, min);
         g += text(cx, cy + r0 - 8 * s, f.text, SANS, f.pt, blue, "middle", ` letter-spacing="${(0.5 * s).toFixed(2)}" fill-opacity="0.85"`); }
       return { pages: [{ name: "tegel", svg: svg(g, DELFT.glaze) }], fonts: ["Libre Caslon Display 400", "Libre Caslon Text 400", "Libre Caslon Text 400 italic", "IBM Plex Sans 400"],
-        imagesUsed: [], title: `Tegeltje: ${p.n}` };
+        imagesUsed: [], title: `Tegeltje: ${p.n}`, stats: { source: sourceOf(p, null) } }; /* the tile has no room for it: the page shows it */
     }
   }
-  (P.renderers = P.renderers || {}).text = { advise, render, roleOf, yearsOf };
+  (P.renderers = P.renderers || {}).text = { advise, render, roleOf, yearsOf, factsFor, sourceOf };
 })(typeof window !== "undefined" ? (window.Products = window.Products || {}) : (globalThis.Products = globalThis.Products || {}));

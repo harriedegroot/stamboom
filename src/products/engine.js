@@ -88,6 +88,10 @@
     const product = prod(productId), r = P.renderers[product.renderer];
     if (!r) throw new Error(`product ${productId}: renderer ${product.renderer} is not loaded`);
     const data = P.filterLicences(P.filterPrivacy(treeData, product.privacy), { strict: !!o.strictLicences });
+    /* a preview (o.preview): the small images (thumbs), with the sizes of the full ones, so a renderer picks the same pictures and judges
+       sharpness the same; a pdf or png is made again without it */
+    if (o.preview) data.images = data.images.map(im => im.thumb ? Object.assign({}, im, { src: im.thumb }) : im);
+    if (options && options.memorials && P.memorialsOf) data.memorials = P.memorialsOf(treeData); /* only when asked (calendar: "Ook gedenkdagen") */
     const opts = Object.assign(defaults(product), options || {}), page = pageOf(product, opts);
     const ctx = { size: { w: page.w, h: page.h }, bleed: page.bleed, safe: page.safe, platform, product, palette: o.palette || {} };
     if (r.advise) { const adv = r.advise(data, opts, ctx) || {}; Object.keys(adv).forEach(k => { if (opts[k] === "advice" || opts[k] === null) opts[k] = adv[k]; }); opts.advice = adv; }

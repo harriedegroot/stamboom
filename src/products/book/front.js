@@ -54,7 +54,8 @@
     }
     /* the chapters of this book in the order of build(); [id, title, sub] */
     function chapters(B) {
-      const h = [], last = lastPart(B);
+      const h = [], last = lastPart(B), who = String(B.titel || "").replace(/^Ter herinnering aan /, "");
+      if (B.delen.has("leven") && B.soort === "gedenk" && firstPart(B)) h.push(["bk-leven", "Hun leven", who]);
       if (B.delen.has("kaart") && firstPart(B)) h.push(["bk-kaart", "Waar ze woonden", "De dorpen van de families op een kaart"]);
       if (B.delen.has("kruis") && firstPart(B) && data.tree === "s" && !B.lijn && !startOn(B)) h.push(["bk-kruis", "Waar de families elkaar kruisten", "De dorpen waar beide kanten woonden"]);
       if (B.delen.has("fam")) fams(B).forEach(l => h.push(["bk-lijn-" + l, "Familie " + LINES[l].name, LINES[l].sub ? "met " + LINES[l].sub : ""]));
@@ -65,10 +66,20 @@
       if (B.delen.has("bron") && last) h.push(["bk-bronnen", "Bronnen", "Archieven en genealogieën"]);
       if (numbersOn(B)) h.push(["bk-getallen", "In getallen", "Leeftijden, namen, beroepen en plaatsen"]);
       if (B.delen.has("begr") && last) h.push(["bk-begrippen", "Begrippen", ""]);
-      h.push(["bk-register", "Register van namen", ""]);
+      if (B.soort !== "foto") h.push(["bk-register", "Register van namen", ""]); /* a photo book has no profiles to point to */
       return h;
     }
 
+    /* "Zo lees je dit boek" (not in a photo book: it has no generations, numbers or labels) */
+    function howToRead(B, st) {
+      const R = reach(B);
+      return `  <h3 class="bk-h3">Zo lees je dit boek</h3>
+  ${B.soort === "gedenk" && B.delen.has("leven") ? `<p>Het boek begint bij het leven van ${esc(String(B.titel || "").replace(/^Ter herinnering aan /, ""))}: wie ze waren, waar ze woonden en wat er over hen bewaard is. Daarna volgen hun voorouders, familie voor familie, en hun tijd.</p>` : ""}
+  <p>${R.whole ? "Het boek volgt de families van het kwartier: elke overgrootouder opent een eigen familie, en daarin" : R.fams.length > 1 ? "Het boek volgt de families een voor een; in elke familie" : "In de familie"} staan de voorouders van jong naar oud, generatie na generatie. Wie verder terug ligt dan het volledige deel, staat er kort in; niemand valt weg.</p>
+  <p>Elke voorouder heeft een <b>kwartiernummer</b> (kw). De vader van nummer <i>n</i> heeft 2<i>n</i>, de moeder 2<i>n</i>&nbsp;+&nbsp;1. Zo is elk nummer één plek in de stamboom, en kom je met halveren altijd terug bij het begin.</p>
+  <p>Bij elke voorouder staat een <b>bewijslabel</b>: hoe sterk het bewijs is dat deze persoon bestond en de ouder is van wie eronder staat. Een zin die niet letterlijk in een bron staat, maar uit de gegevens is afgeleid, heeft het woord <span class="bk-soort">afgeleid</span>; een vermoeden heet <span class="bk-soort">hypothese</span>.</p>
+  <dl class="bk-labels">${st}</dl>`;
+    }
     function voorwerk(B) {
       const { titel, sub, jaren, heel } = title(B);
       return `
@@ -96,7 +107,7 @@
       return `
 <section class="bk-hfst bk-inleiding" data-bk="inleiding" id="bk-inleiding" data-kop-l="${esc(titel)}" data-kop-r="Over dit boek">
   <h2 class="bk-h2">Over dit boek</h2>
-  ${lede ? `<p class="bk-lede bk-ini">${esc(lede)}</p>` : ""}
+  ${(B.soort === "foto" && P.bookPhoto ? P.bookPhoto(data, B.S).intro : lede) ? `<p class="bk-lede bk-ini">${esc(B.soort === "foto" && P.bookPhoto ? P.bookPhoto(data, B.S).intro : lede)}</p>` : ""}
   <div class="bk-kern">${R.whole ? `
     <div><b>${nl(H.n || 0)}</b><span>voorouders</span></div>
     <div><b>${H.genProven || 0}</b><span>generaties bewezen</span></div>
@@ -105,11 +116,7 @@
     <div><b>${R.fams.length}</b><span>${R.fams.length === 1 ? "familie" : "families"}</span></div>
     ${B.oudste ? `<div><b>${B.oudste}</b><span>oudste bewezen jaar</span></div>` : ""}`}
   </div>
-  <h3 class="bk-h3">Zo lees je dit boek</h3>
-  <p>${R.whole ? "Het boek volgt de families van het kwartier: elke overgrootouder opent een eigen familie, en daarin" : R.fams.length > 1 ? "Het boek volgt de families een voor een; in elke familie" : "In de familie"} staan de voorouders van jong naar oud, generatie na generatie. Wie verder terug ligt dan het volledige deel, staat er kort in; niemand valt weg.</p>
-  <p>Elke voorouder heeft een <b>kwartiernummer</b> (kw). De vader van nummer <i>n</i> heeft 2<i>n</i>, de moeder 2<i>n</i>&nbsp;+&nbsp;1. Zo is elk nummer één plek in de stamboom, en kom je met halveren altijd terug bij het begin.</p>
-  <p>Bij elke voorouder staat een <b>bewijslabel</b>: hoe sterk het bewijs is dat deze persoon bestond en de ouder is van wie eronder staat. Een zin die niet letterlijk in een bron staat, maar uit de gegevens is afgeleid, heeft het woord <span class="bk-soort">afgeleid</span>; een vermoeden heet <span class="bk-soort">hypothese</span>.</p>
-  <dl class="bk-labels">${st}</dl>
+  ${B.soort === "foto" ? "" : howToRead(B, st)}
 </section>`;
     }
     const inhoud = B => `
@@ -189,11 +196,11 @@ ${firstPart(B) ? inleiding(B) : ""}`;
       const group = {}; rows.forEach(([k, p]) => { const L = (norm(k)[0] || "?").toUpperCase(); (group[L] = group[L] || []).push([k, p]); });
       const item = ([k, p]) => `<a class="bk-ref bk-reg" href="#bk-kw-${p.kw}"><span class="bk-reg-n">${esc(k)}</span>${p.living ? "" : `<span class="bk-reg-j">${esc(X.lifeYears(p))}</span>`}<span class="bk-reg-pn bk-pn" href="#bk-kw-${p.kw}"></span></a>`;
       return `${numbersOn(B) ? numbers() : ""}${B.delen.has("begr") && lastPart(B) ? glossary() : ""}
-<section class="bk-hfst bk-register" data-bk="register" id="bk-register" data-kop-l="Register" data-kop-r="Register van namen">
+${B.soort === "foto" ? "" : `<section class="bk-hfst bk-register" data-bk="register" id="bk-register" data-kop-l="Register" data-kop-r="Register van namen">
   <h2 class="bk-h2">Register van namen</h2>
   <p class="bk-reg-uitleg">Achternaam, voornaam; vóór 1811 vaak het patroniem. Het getal is de pagina van het profiel.</p>
   ${Object.keys(group).map(L => `<div class="bk-reg-l"><span class="bk-reg-begin"><h3 class="bk-reg-letter">${L}</h3>${group[L].slice(0, 2).map(item).join("")}</span>${group[L].slice(2).map(item).join("")}</div>`).join("")}
-</section>
+</section>`}
 <section class="bk-hfst bk-slot" data-bk="slot">
   <h2 class="bk-h2">Voor wie na ons komt</h2>
   <p class="bk-slot-uitleg">Ruimte voor de namen, data en verhalen die na dit boek komen.</p>

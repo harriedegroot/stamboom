@@ -221,7 +221,7 @@ p{margin:0}
 .bk-titelblad{page:stil;break-before:right;padding-top:62mm;text-align:center}
 .bk-titel-h{font-family:var(--bk-kop);font-weight:400;font-size:38pt;line-height:1.08;text-wrap:balance;max-width:125mm;margin:4mm auto 6mm}
 .bk-titel-fam{font-family:var(--bk-sans);font-size:8pt;letter-spacing:.2em;text-transform:uppercase;color:var(--bk-grijs);margin:0}
-.bk-titel-deel{font-family:var(--bk-kop);font-style:italic;font-size:14pt;color:var(--lc,#5a605d);margin:0 0 2mm}
+.bk-titel-deel{font-family:var(--bk-tekst);font-style:italic;font-size:14pt;color:var(--lc,#5a605d);margin:0 0 2mm}
 .bk-titel-deel span{display:block;text-wrap:balance}
 .bk-titel-deel .bk-titel-na{font-size:11.5pt;margin-top:1.5mm;color:var(--bk-grijs)}
 .bk-titel-jaren{font-family:var(--bk-kop);font-size:15pt;color:var(--bk-grijs);font-variant-numeric:lining-nums}
@@ -312,6 +312,7 @@ body[data-formaat="vierkant"] .bk-verhaal>.bk-h2,body[data-formaat="vierkant"] .
 /* ---- boek: "Waar de families elkaar kruisten" en de tijdlijn (tekst; tekeningen en maten in het beeldblok) ---- */
 .bkb-kruis .bkb-vb-lede{font-family:var(--bk-tekst);font-size:10pt;line-height:14.5pt;max-width:120mm;text-wrap:pretty}
 .bkb-kruis .bkb-vb-kop{font-family:var(--bk-kop);font-weight:400;font-size:11pt;line-height:1.25;hyphens:none}
+.bkb-kruis .bkb-vb-kop b{font-weight:400} /* Caslon Display has no bold (a faked one becomes a Type 3 font) */
 .bkb-kruis .bkb-vb-kop span{font-family:var(--bk-tekst);font-size:9pt;color:var(--bk-grijs)}
 .bkb-kruis .bkb-vb-paar{font-size:8.6pt;line-height:12pt}
 .bkb-tijd .bkb-ti-uitleg{font-family:var(--bk-tekst);font-size:9.5pt;line-height:13.5pt;max-width:140mm;text-wrap:pretty}
@@ -521,7 +522,34 @@ window.BOEK_CSS_BEELD = String.raw`
 .bkb-om-c{--bkb-grond:#d9cfb9;--bkb-accent:#7a5c26;--ink:#1d2320;--muted:#56605b;--faint:#8a918d;--rule:#c9bfa8;--surface:#f6f0e2;--sunk:#e6dcc6;--gold:#a8823a;--accent:#1d2320;--accent-ink:#f6f0e2;--fan-gap:#f6f0e2;
   background-image:linear-gradient(rgba(217,207,185,.55),rgba(217,207,185,.55)),var(--bkb-kaart,none);background-size:cover;background-position:center;justify-content:center;align-items:center}
 .bkb-om-kader{width:80%;background:rgba(246,240,226,.94);border:.35mm solid #8a6a2e;outline:.2mm solid #8a6a2e;outline-offset:1.6mm;padding:12mm 9mm 9mm;display:flex;flex-direction:column;align-items:center;gap:6mm}
-.bkb-om-c .bkb-om-waaier{width:98%} /* groot genoeg voor de namen van de grootouders (6 pt) */
+.bkb-om-c .bkb-om-waaier{width:98%}
+/* het beeld in het midden per boeksoort (in plaats van de waaier): vierkant, zoals de waaier */
+.bkb-om-beeld{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden}
+.bkb-om-beeld>img{display:block;width:100%;height:100%;object-fit:cover}
+.bkb-om-prent>img,.bkb-om-akte>img{box-sizing:border-box;border:.4mm solid var(--rule)}
+.bkb-om-akte{width:78%;margin:0 auto}.bkb-om-akte>img{object-fit:contain;background:none;border:0}
+.bkb-om-raster{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:1.2mm}
+.bk-fotos{margin:6mm 0 4mm}
+.bk-fotos>.bk-h2{margin:6mm 0 3mm}
+.bk-foto-rij{display:flex;justify-content:center;align-items:flex-start;gap:5mm;margin:0 0 6mm;break-inside:avoid}
+.bk-foto{margin:0;flex:none;break-inside:avoid}
+.bk-foto img{display:block;width:100%;height:auto;box-sizing:border-box;border:.25mm solid var(--rule)}
+.bk-foto figcaption{margin-top:1.8mm;font-family:"Libre Caslon Text",serif;font-size:8.5pt;line-height:1.35;color:var(--ink)}
+.bk-foto figcaption small{display:block;margin-top:.8mm;font-family:"IBM Plex Sans",sans-serif;font-size:6.5pt;line-height:1.3;color:var(--muted)}
+.bkb-om-portret{display:flex;justify-content:center;align-items:flex-start;gap:7mm;margin:0 auto}
+.bkb-om-portret figure{margin:0;flex:none}
+.bkb-om-portret img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 28%;box-sizing:border-box;border:.4mm solid var(--rule)}
+.bkb-om-portret figcaption{margin-top:2.6mm;text-align:center;font-family:"Libre Caslon Text",serif;font-size:11pt;line-height:1.25;color:var(--ink)}
+.bkb-om-portret figcaption b{display:block;font-weight:400}
+.bkb-om-portret figcaption span{display:block;margin-top:.8mm;font-family:"IBM Plex Mono",monospace;font-size:8pt;color:var(--muted)}
+.bkb-om-raster>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.bkb-om-kwst svg,.bkb-om-ruggen svg{display:block;width:100%;height:100%}
+.bkb-om-ruglabels{position:absolute;left:0;right:0;top:12%;bottom:12%;display:flex}
+.bkb-om-ruglabels span{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Sans",sans-serif;font-size:7pt;letter-spacing:.06em;color:#fff;text-transform:uppercase}
+.bkb-om-b .bkb-om-waaier:has(.bkb-om-beeld){width:min(70%,calc(var(--bk-ph,297mm) - 120mm))}
+.bkb-om-a .bkb-om-waaier:has(.bkb-om-portret){width:auto;margin-top:auto} /* between the top and the title */
+.bkb-om-b .bkb-om-waaier:has(.bkb-om-portret){width:auto;bottom:20%} /* the portraits of a memorial book: in the middle of the room below the title */
+ /* groot genoeg voor de namen van de grootouders (6 pt) */
 /* rug en achterkant per omslag */
 .bkb-sp-a{background:#17221e;color:#efe9db}
 .bkb-sp-b{background:#f3ebd9;color:#1d2320}.bkb-sp-b .bk-sp-fam span,.bkb-sp-b .bk-sp-versie{color:#56605b}.bkb-sp-b .bk-sp-rug{border-color:#c9bfa8}.bkb-sp-b .bk-sp-rug span{color:#1d2320}

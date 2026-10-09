@@ -15,7 +15,7 @@
       let em = cache.get(key);
       if (em === undefined) {
         if (ctx) { ctx.font = `${f.style || "normal"} ${f.weight || 400} 100px "${f.family || "IBM Plex Sans"}"`; em = ctx.measureText(String(text)).width / 100; }
-        else em = String(text).length * (/Caslon/.test(f.family || "") ? 0.44 : /Mono/.test(f.family || "") ? 0.6 : (f.weight || 400) >= 600 ? 0.58 : 0.54); /* average letter width per family */
+        else em = String(text).length * (/Caslon/.test(f.family || "") ? 0.51 : /Mono/.test(f.family || "") ? 0.6 : (f.weight || 400) >= 600 ? 0.58 : 0.54); /* average letter width per family */
         cache.set(key, em);
       }
       return em * pt * MM_PER_PT;
@@ -27,10 +27,10 @@
       while (t.length > 2 && measure(t + "…", font, p) > maxMm) t = t.slice(0, -1).trimEnd();
       return { text: t + "…", pt: p };
     }
-    /* wrap(text, font, pt, maxMm, maxLines, minPt) → { lines, pt }: break at spaces; smaller (never below minPt) until it fits
+    /* wrap(text, font, pt, maxMm, maxLines, minPt) → { lines, pt }: break at spaces (never at a no-break space); smaller (never below minPt) until it fits
        in maxLines, else the last line is shortened with "…" */
     function wrap(text, font, pt, maxMm, maxLines = 2, minPt = pt) {
-      const words = String(text).split(/\s+/).filter(Boolean);
+      const words = String(text).split(/[ \t\r\n]+/).filter(Boolean);
       const lay = q => { const lines = []; let cur = ""; words.forEach(w => { const t = cur ? cur + " " + w : w; if (cur && measure(t, font, q) > maxMm) { lines.push(cur); cur = w; } else cur = t; }); if (cur) lines.push(cur); return lines; };
       let q = pt, lines = lay(q);
       while ((lines.length > maxLines || lines.some(l => measure(l, font, q) > maxMm)) && q > minPt) { q = Math.max(minPt, q * 0.95); lines = lay(q); }

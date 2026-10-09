@@ -31,14 +31,15 @@
     const own = doc.options && Number.isInteger(+doc.options.year) ? String(doc.options.year) : null;
     const living = new Set([...(data && data.people || []).filter(p => p.living && p.n).map(p => p.n), ...(data && data.livingNames || [])]);
     living.forEach(n => {
-      let at = plain.indexOf(n);
-      while (at >= 0) {
-        const ys = (plain.slice(at + n.length, at + n.length + 40).match(/\b(1[5-9]\d\d|20\d\d)\b/g) || []).filter(y => y !== own);
+      /* the name as a whole word ("Andre" is not in "Claas Andrees") */
+      const re = new RegExp("(^|[^\\p{L}])" + String(n).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\p{L}])", "gu");
+      for (const m of plain.matchAll(re)) {
+        const at = m.index + m[0].length;
+        const ys = (plain.slice(at, at + 40).match(/\b(1[5-9]\d\d|20\d\d)\b/g) || []).filter(y => y !== own);
         if (ys.length) { issues.push(`Bij ${n} (levend) staat een jaartal.`); break; }
-        at = plain.indexOf(n, at + n.length);
       }
     });
-    if (data && (data.profile === "calendar" || data.profile === "game") && /levenloos/i.test(plain)) issues.push("Er staat iets over een levenloos geboren kind op; dat hoort niet op een kalender of spel.");
+    if (data && (data.profile === "calendar" || data.profile === "game") && !(doc.options && doc.options.memorials) && /levenloos/i.test(plain)) issues.push( /* unless the memorial days were asked for */"Er staat iets over een levenloos geboren kind op; dat hoort niet op een kalender of spel.");
     return { issues, ok: !issues.length };
   }
 
@@ -49,7 +50,7 @@
     const have = new Set([...document.querySelectorAll('link[rel="stylesheet"]')].map(l => l.href));
     P.PRINT_FONT_URLS.forEach(u => { if (have.has(u)) return; const l = document.createElement("link"); l.rel = "stylesheet"; l.href = u; document.head.appendChild(l); });
     fontsP = !document.fonts ? Promise.resolve() : new Promise(res => setTimeout(res, 50))
-      .then(() => Promise.all([[400, "IBM Plex Sans"], [600, "IBM Plex Sans"], [400, "IBM Plex Mono"], [400, "Libre Caslon Display"]].map(([w, f]) => document.fonts.load(`${w} 16px "${f}"`, "Aéë"))))
+      .then(() => Promise.all([[400, "IBM Plex Sans"], [600, "IBM Plex Sans"], [400, "IBM Plex Mono"], [400, "Libre Caslon Display"], [400, "Libre Caslon Text"], ["italic 400", "Libre Caslon Text"], [500, "IBM Plex Sans"]].map(([w, f]) => document.fonts.load(`${w} 16px "${f}"`, "Aéë"))))
       .catch(() => {}).then(() => document.fonts.ready);
     return fontsP;
   }
@@ -66,7 +67,7 @@
       if (e instanceof SVGElement && e.getScreenCTM) { const m = e.getScreenCTM(); if (m) px = px * Math.hypot(m.a, m.b) / scale; }
       const pt = px * mmPerPx / 25.4 * 72; if (pt < smallestPt) smallestPt = pt;
       const fam = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim(), key = fam.toLowerCase();
-      if (!fams.has(key)) fams.set(key, { family: fam, weights: new Set() }); fams.get(key).weights.add(cs.fontWeight);
+      if (!fams.has(key)) fams.set(key, { family: fam, weights: new Set() }); fams.get(key).weights.add((cs.fontStyle === "italic" ? "italic " : "") + cs.fontWeight); /* style and weight: an italic-only face is not the upright one */
     }
     const fonts = [...fams.values()].map(f => ({ family: f.family, static: !VARIABLE.has(f.family.toLowerCase()),
       loaded: !document.fonts || [...f.weights].every(w => document.fonts.check(`${w} 12px "${f.family}"`)) }));
@@ -93,7 +94,7 @@
   function printLine(r, extra = [], o = {}) {
     const issues = [...(r.issues || []), ...extra], lowest = (r.images || []).length ? Math.min(...r.images.map(b => b.dpi)) : null;
     const facts = [`kleinste letter ${r.smallestPt ? nl(r.smallestPt) + " pt" : "–"}`, `${r.fonts.length} ${r.fonts.length === 1 ? "lettertype" : "lettertypes"}`,
-      r.images.length ? `laagste ${lowest} dpi` : "alles vector"].join(" · ");
+      r.images.length ? `laagste ${lowest} dpi` : "alle lijnen scherp"].join(" · ");
     if (!issues.length) return `<span class="bk-controle print-line" role="status" title="${esc(facts)}">✓ ${o.bleed ? "Klaar voor de drukker" : "Klaar om af te drukken"}</span>`;
     return `<details class="bk-controle bk-let-op print-line" role="status"><summary title="${esc(facts)}">! ${esc(issues[0])}${issues.length > 1 ? ` · nog ${issues.length - 1}` : ""}</summary>${issues.length > 1 ? `<ul>${issues.slice(1).map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}</details>`;
   }

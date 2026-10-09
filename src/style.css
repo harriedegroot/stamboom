@@ -15,7 +15,7 @@
   --card-tone:grayscale(1) sepia(.38) contrast(.9) brightness(1.03);
   /* beelden: op een foto en in de lightbox (altijd donker, in beide thema's gelijk) */
   --photo-ink:#FFFFFF; --photo-shade:rgba(8,14,12,.78);
-  --lb-bg:rgba(6,10,9,.95); --lb-ink:#E6ECE9; --lb-muted:#BAC5C0; --lb-faint:#9AA7A1; --lb-line:rgba(255,255,255,.3); --lb-btn:rgba(20,28,25,.6); --lb-btn-hover:rgba(40,52,48,.85); --lb-img:#222;
+  --lb-bg:rgba(6,10,9,.95); --lb-solid:#060a09; --lb-ink:#E6ECE9; --lb-muted:#BAC5C0; --lb-faint:#9AA7A1; --lb-line:rgba(255,255,255,.3); --lb-btn:rgba(20,28,25,.6); --lb-btn-hover:rgba(40,52,48,.85); --lb-img:#222;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0F1513; --surface:#161E1B; --sunk:#1D2723; --ink:#E5ECE8; --muted:#A1AEA8; --faint:#848F89; --rule:#2B3833;
@@ -68,7 +68,7 @@ nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--
 .searchbtn svg{width:15px;height:15px}
 /* thema: knop met keuzemenu (automatisch, licht, donker); het pictogram op de knop toont de gekozen stand */
 .thm{position:relative;flex:none}
-.themebtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--surface);border-radius:8px;width:36px;height:34px;padding:0;cursor:pointer;color:var(--muted)}
+.themebtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--surface);border-radius:8px;width:40px;height:38px;padding:0;cursor:pointer;color:var(--muted)}
 .themebtn:hover,.themebtn[aria-expanded="true"],.searchbtn:hover{color:var(--ink);border-color:var(--faint)}
 .themebtn svg{width:17px;height:17px}
 .themebtn svg > g{display:none}
@@ -190,7 +190,12 @@ select option{background:var(--surface);color:var(--ink)}
 .fact h3{font-size:19px;line-height:1.2}
 .fact p{margin:0;font-size:14px;color:var(--muted)}
 .fact .acts{margin-top:auto;display:flex;gap:14px;flex-wrap:wrap;font-size:13.5px}
-.storycard{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;cursor:pointer;text-align:left;display:flex;flex-direction:column;min-width:0;padding:0}
+.storycard{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;cursor:pointer;text-align:left;display:flex;flex-direction:column;min-width:0;padding:0;position:relative}
+.storycard h3 .hoofd{color:inherit;text-decoration:none}
+.storycard h3 .hoofd::after{content:"";position:absolute;inset:0}
+.storycard h3 .hoofd:focus-visible{outline:none}
+.storycard:focus-within:has(.hoofd:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.storycard:hover h3 .hoofd{color:var(--accent)}
 .storycard:hover{border-color:var(--accent)}
 .storycard .art{background:var(--sunk);color:var(--accent);display:flex;align-items:center;justify-content:center;aspect-ratio:16/7;max-width:100%}
 .storycard .art svg{width:70%;height:auto;max-height:100%}
@@ -200,15 +205,8 @@ select option{background:var(--surface);color:var(--ink)}
 /* verhaalkaarten: stamboom, onderwerpen en feiten; filter boven het overzicht */
 .storycard .tx{flex:1}
 .vmeta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
-.vside{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--sc)}
-.vside svg{width:13px;height:13px;flex:none}
-.vside svg circle{fill:none;stroke:currentColor;stroke-width:1.4}
-.vside svg path{fill:currentColor}
-.vside-h{--sc:var(--l8)}
-.vside-a{--sc:var(--l12)}
 .storycard .vfacts{margin-top:auto;padding-top:6px;font-family:var(--mono);font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
 .vfilter{display:flex;flex-direction:column;gap:8px;margin:22px 0 16px}
-.vfilter .chip .vside{text-transform:none;letter-spacing:0;font-family:var(--body);font-size:13px}
 .vfilter .chip .mono{font-size:11.5px;color:var(--faint)}
 .story .vcover img{filter:var(--img-tone)}
 .storycard .tx{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
@@ -305,8 +303,9 @@ svg text{font-family:var(--body)}
 /* zoom on the map: + and − (44 px), drag and pinch when zoomed in */
 .map{position:relative}
 .map-zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
-.map-zoom .btn{min-width:44px;min-height:44px;padding:0;font-size:22px;line-height:1;background:var(--surface);color:var(--ink);border:1px solid var(--rule);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.map-zoom .btn{min-width:44px;min-height:44px;padding:0;justify-content:center;font-size:22px;line-height:1;background:var(--surface);color:var(--ink);border:1px solid var(--rule);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .map-zoom .btn:disabled{opacity:.45}
+.map-zoom .btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .map-side{border-left:1px solid var(--rule);padding:18px;min-width:0;display:flex;flex-direction:column;gap:12px}
 /* de zijbalk scrolt niet zelf maar groeit mee met de pagina; op brede schermen blijft de kaart ernaast staan (sticky; clip i.p.v. hidden, anders werkt sticky niet) */
 @media (min-width:861px){.pane:has(>.map-wrap){overflow:clip}.map{position:sticky;top:calc(57px + env(safe-area-inset-top,0px));align-self:start}}
@@ -377,6 +376,14 @@ svg text{font-family:var(--body)}
 .sres mark{background:color-mix(in srgb,var(--gold) 28%,transparent);color:inherit;border-radius:2px}
 
 .tip{position:fixed;z-index:70;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:6px 9px;border-radius:6px;max-width:280px;line-height:1.35}
+.mn-top,.mn-panel h6{position:relative}
+.mn-badge{position:absolute;top:8px;right:-7px;display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;padding:0 3.5px;border-radius:8px;pointer-events:none;background:var(--gold);color:var(--bg);font:600 10px/1 var(--body);font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;box-sizing:border-box} /* floats at the top-right corner of the label, half past the last letter: costs no width */
+.mn-panel h6 .mn-badge{position:static;margin:0 0 0 6px;vertical-align:1px}
+.itip{position:fixed;z-index:400;pointer-events:none;display:flex;align-items:baseline;gap:10px;background:var(--ink);color:var(--bg);font:500 12.5px/1.3 var(--body);padding:5px 8px;border-radius:5px;max-width:min(240px,calc(100vw - 16px));overflow-wrap:anywhere;box-shadow:0 3px 10px color-mix(in srgb,#000 28%,transparent)}
+.itip-k{font:500 11px/1 var(--mono);color:color-mix(in srgb,var(--bg) 62%,var(--ink));margin-left:auto;white-space:nowrap}
+.itip::after{content:"";position:absolute;left:var(--ax,50%);bottom:100%;margin-left:-5px;border:5px solid transparent;border-bottom-color:var(--ink)}
+.itip.itip-boven::after{bottom:auto;top:100%;border-bottom-color:transparent;border-top-color:var(--ink)}
+@media print{.itip{display:none!important}}
 footer{border-top:1px solid var(--rule);padding-block:26px 30px;color:var(--muted);font-size:13px}
 /* voettekst: drie kolommen, op de telefoon onder elkaar */
 .ft{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr) minmax(0,1fr);gap:22px 36px}
@@ -398,6 +405,8 @@ footer{border-top:1px solid var(--rule);padding-block:26px 30px;color:var(--mute
 @media (max-width:820px){.ft{grid-template-columns:1fr 1fr}.ft-kaart{grid-column:1/-1;grid-row:1}}
 @media (max-width:520px){.ft{grid-template-columns:1fr;gap:18px}.ft-kaart>ul{columns:2}.ft-kaart>ul>li{margin-bottom:8px}.ft-kaart ul ul{display:none}}
 @media print{footer .ft-kaart,footer .ft-top{display:none}}
+/* footer on a touch screen or a phone: every link 44 px high (the text stays the same size) */
+@media (pointer:coarse),(max-width:520px){.ft a,.ft button.link{display:inline-block;min-height:44px;padding-block:12px;box-sizing:border-box}.ft-kaart>ul>li{margin-bottom:0}.ft-kaart ul ul li{margin-top:0}.ft p{margin-bottom:2px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 /* ---------- beeld (v3) ---------- */
@@ -607,7 +616,11 @@ ul.touch li{grid-template-columns:64px minmax(0,1fr);padding:9px 0}
 .lbbtn:hover{background:var(--lb-btn-hover)}
 .lbclose{top:calc(10px + env(safe-area-inset-top,0px));right:14px}
 .lbprev{left:14px;top:45%}.lbnext{right:14px;top:45%}
-@media (max-width:560px){.lbprev,.lbnext{top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px))}.lbprev{left:auto;right:66px}.lbcap{padding-right:120px}}
+/* on a phone ‹ › halfway the picture at its edges (swiping works too), so the caption keeps the full width */
+@media (max-width:560px){.lbprev,.lbnext{top:calc(28px + env(safe-area-inset-top,0px) + 30vh)}.lbprev{left:4px}.lbnext{right:4px}.lbcap{padding-right:0}}
+.lbacts .btn{min-height:44px}
+/* on a phone the drawer behind the lightbox does not show through the caption */
+@media (max-width:600px){.lb{background:var(--lb-solid)}}
 .notable .credit,.ph .credit,p.credit{font-size:11.5px;line-height:1.45;color:var(--muted)}
 
 /* overzicht: status per generatie, opvallend inklappen */
@@ -685,7 +698,10 @@ ol.kpath .kp-nu b{font-weight:650}
 .namereg .dots{display:inline-flex;gap:3px}
 .namereg .dots i{width:8px;height:8px;border-radius:50%;display:block}
 .namereg .who{font-size:13px;color:var(--muted);margin-top:2px}
-@media (max-width:900px){.letters{position:static;padding:0}}
+/* phone and tablet: a compact bar of small letter buttons that stays under the header, so every letter is one tap away */
+@media (max-width:900px){#v-namen .letters{padding:6px 0;margin:4px 0 12px;gap:4px 3px}#v-namen .letters .chip{min-width:24px;padding:6px 0;font-size:13px;border-radius:7px}
+  #v-namen .namereg>section{scroll-margin-top:calc(var(--vast,57px) + 104px)}}
+@media (max-width:900px) and (pointer:coarse){.letters .chip{padding:7px 0}.letters .chip::after{inset:-2px -1px}}
 /* kwartierstaat als lijst */
 .klijst{max-width:860px}
 .kgen h2{font-size:24px;margin:26px 0 8px;border-bottom:1px solid var(--rule);padding-bottom:4px}
@@ -735,6 +751,7 @@ ol.kpath .kp-nu b{font-weight:650}
 .gallery.portraits{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .gallery.portraits .phb{aspect-ratio:3/4;border-radius:10px;outline:3px double color-mix(in srgb,var(--gold) 55%,transparent);outline-offset:-7px}
 .gallery.portraits .phb img{height:100%;object-fit:cover;object-position:50% 30%}
+.gallery.portraits .phb:focus-visible{outline:2px solid var(--accent);outline-offset:2px} /* the gold border must not hide the focus */
 /* archiefgalerij: lange titels inkorten, credits mogen afbreken */
 .pgal.arch figcaption .t{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .ph .credit,.pgal figcaption{overflow-wrap:anywhere}
@@ -761,15 +778,17 @@ ol.kpath .kp-nu b{font-weight:650}
   .capped.grid-3>:nth-child(n+2){display:none}
 }
 /* Personen: inklapbare oudere generaties */
-.gen-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:6px}
-.gen-fold>summary::-webkit-details-marker{display:none}
-.gen-fold>summary h3{margin:0}
-.gen-fold>summary h3::before{content:"▸";display:inline-block;width:1em;color:var(--muted);font-size:.8em}
-.gen-fold[open]>summary h3::before{content:"▾"}
+.gen-fold h3{margin:0;border-bottom:1px solid var(--rule);padding-bottom:6px}
+.gf-btn{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:baseline;gap:12px;width:100%;min-height:44px;font:inherit;color:inherit}
+.gf-t{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px}
+.gf-btn::before{content:"▸";display:inline-block;width:1em;color:var(--muted);font-size:.8em}
+.gen-fold.open .gf-btn::before{content:"▾"}
+.gf-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .gen-fold .gf-hint{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--accent)}
-.gen-fold[open] .gf-hint{display:none}
-.gen-fold>summary:hover h3{color:var(--accent)}
+.gen-fold.open .gf-hint{display:none}
+.gf-btn:hover{color:var(--accent)}
 .gen-fold .cards{margin-top:14px}
+.gen-fold .cards[hidden="until-found"]{display:grid!important;content-visibility:hidden;margin-top:0}
 
 /* heel kleine beelden: gecentreerd op hooguit dubbele grootte (zie tinyCss in app.js) */
 .ph.tiny .phb{display:flex;align-items:center;justify-content:center;min-height:120px}
@@ -952,8 +971,10 @@ details.akte[open] summary,details.lbakte[open] summary{margin-bottom:8px}
 .vb-map svg{width:100%;height:auto;display:block}
 @media (min-width:861px){.vb-map{position:sticky;top:calc(70px + env(safe-area-inset-top,0px))}}
 .vb-dot{cursor:pointer}
+/* the side of Alies lighter (dark: darker) than that of Harrie, so the two sides differ in more than hue */
+:root{--side-a:color-mix(in srgb,var(--l12) 50%,var(--surface))}
 .vb-dot .vb-h{fill:var(--l8)}
-.vb-dot .vb-a{fill:var(--l12)}
+.vb-dot .vb-a{fill:var(--side-a)}
 .vb-dot .vb-ring{fill:none;stroke:var(--surface);stroke-width:1.5}
 .vb-dot:hover .vb-ring,.vb-dot:focus .vb-ring{stroke:var(--ink);stroke-width:2}
 .vb-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
@@ -967,11 +988,11 @@ details.akte[open] summary,details.lbakte[open] summary{margin-bottom:8px}
 .vb-strook .vb-win{fill:var(--sunk)}
 .vb-strook .vb-t{stroke-width:2;vector-effect:non-scaling-stroke}
 .vb-strook .vb-h{stroke:var(--l8)}
-.vb-strook .vb-a{stroke:var(--l12)}
+.vb-strook .vb-a{stroke:var(--side-a)}
 .vb-paar{margin:0;font-size:14px;line-height:1.55}
 .vb-pt{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
 .vb-pt-h{background:var(--l8)}
-.vb-pt-a{background:var(--l12)}
+.vb-pt-a{background:var(--side-a)}
 .vb-as-leg{margin-top:12px}
 .vb-hier{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:14px;margin:4px 0 10px}
 .vb-lbl{paint-order:stroke;stroke:var(--land);stroke-width:3px;pointer-events:none}
@@ -1190,7 +1211,7 @@ nav.tabs{overflow:visible!important;-webkit-mask-image:none!important;mask-image
 .mn-it:focus-visible,.tp-it:focus-visible,.mn-tree:focus-visible,.mn-seg button:focus-visible,.mn-close:focus-visible,.mn-btn:focus-visible,.tp-btn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:0}
 .mn-it[aria-current]{box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
 .mn-it[aria-current] b{color:var(--accent)}
-.mn-btn{display:none;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--surface);border-radius:8px;width:44px;height:40px;padding:0;cursor:pointer;color:var(--ink);flex:none}
+.mn-btn{display:none;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--surface);border-radius:8px;width:44px;height:44px;padding:0;cursor:pointer;color:var(--ink);flex:none}
 .mn-btn svg{width:20px;height:20px}
 .mn-scrim{position:fixed;inset:0;z-index:90;background:var(--photo-shade);opacity:.5}
 .mn-scrim[hidden],.mn-panel[hidden]{display:none}
@@ -1207,7 +1228,7 @@ nav.tabs{overflow:visible!important;-webkit-mask-image:none!important;mask-image
 .mn-trees{border-bottom:1px solid var(--rule);padding-bottom:8px!important}
 .mn-thema{border-top:1px solid var(--rule);margin-top:6px;padding-top:4px!important}
 .mn-seg{display:flex;gap:2px;background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:3px;margin:4px 6px}
-.mn-seg button{flex:1;background:none;border:0;border-radius:2px;padding:8px 6px;font:inherit;font-size:14px;color:var(--muted);cursor:pointer}
+.mn-seg button{flex:1;min-height:44px;background:none;border:0;border-radius:2px;padding:8px 6px;font:inherit;font-size:14px;color:var(--muted);cursor:pointer}
 .mn-seg button[aria-checked="true"]{background:var(--surface);color:var(--accent);font-weight:600;box-shadow:0 1px 3px color-mix(in srgb,var(--ink) 16%,transparent)}
 .mn-li{display:flex;align-items:stretch}
 .mn-lbl{padding-right:2px}
@@ -1233,7 +1254,7 @@ nav.tabs{overflow:visible!important;-webkit-mask-image:none!important;mask-image
 .subtabs a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:0}
 .sb-u{align-self:center;margin-left:auto;font-size:12.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding-left:12px}
 html.sub-op main > .view > .eyebrow:first-child{display:none}
-main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* programmatische focus na een navigatie: geen rand, de schermlezer leest de kop wel voor */
+main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus,:is(h1,h2,h3,h4)[tabindex="-1"]:focus,.p-name[tabindex="-1"]:focus{outline:none} /* programmatische focus na een navigatie: geen rand, de schermlezer leest de kop wel voor */
 @media (min-width:1021px) and (max-height:700px){.subbar{position:static}}
 .letters{top:var(--vast,57px)}
 .mcard,.bpcard{scroll-margin-top:calc(var(--vast,57px) + 33px)}
@@ -1249,17 +1270,23 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
   .subtabs ul.sb-n3{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subtabs ul.sb-n5 li:last-child{grid-column:1/-1}
   .subtabs li{display:block;min-width:0}
-  .subtabs a{display:flex;justify-content:center;width:100%;min-height:34px;padding:4px 8px;margin:0;border:1px solid var(--rule);border-bottom-width:1px;background:var(--surface);white-space:normal;text-align:center;line-height:1.2;font-size:13.5px}
+  .subtabs a{display:flex;justify-content:center;align-items:center;width:100%;min-height:44px;padding:4px 8px;margin:0;border:1px solid var(--rule);border-bottom-width:1px;background:var(--surface);white-space:normal;text-align:center;line-height:1.2;font-size:13.5px}
   .subtabs a[aria-current]{border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 }
 @media (max-width:400px){.subtabs a .nico{display:none}}
-@media (max-width:1240px) and (min-width:1021px){.searchbtn .lbl,.searchbtn kbd{display:none}.searchbtn{width:40px;height:36px;justify-content:center;padding:0}.mn-top{padding-left:6px;padding-right:6px}.mn-lbl{padding-right:1px}.mn-chev{padding-left:2px;padding-right:4px}}
+@media (max-width:599px){.subtabs ul.sb-kort{grid-template-columns:repeat(3,minmax(0,1fr))}.subtabs ul.sb-kort li:last-child{grid-column:auto}} /* five or more short labels: three columns, two rows */
+@media (min-width:600px) and (max-width:1020px){ /* tablet: one row, each button as wide as its text */
+  .subtabs ul,.subtabs ul.sb-n3{display:flex;flex-wrap:wrap;gap:6px}
+  .subtabs li,.subtabs ul.sb-n5 li:last-child{flex:0 1 auto}
+  .subtabs a{width:auto;padding:4px 14px}
+}
+@media (max-width:1240px) and (min-width:1021px){.searchbtn .lbl,.searchbtn kbd{display:none}.searchbtn{width:44px;height:40px;justify-content:center;padding:0}.mn-top{padding-left:6px;padding-right:6px}.mn-lbl{padding-right:1px}.mn-chev{padding-left:2px;padding-right:4px}}
 /* smal: boomkiezer links, zoeken en ☰ rechts, één regel (8 hoofdgroepen passen pas vanaf ±1020 px) */
 @media (max-width:1020px){
   nav.tabs,#thm{display:none!important}
   .top .wrap{flex-wrap:nowrap!important;padding-top:0!important;min-height:52px;gap:8px}
   .tp{order:1;min-width:0;flex:0 1 auto}
-  .searchbtn{order:2;margin-left:auto!important;width:44px;height:40px;justify-content:center;padding:0}
+  .searchbtn{order:2;margin-left:auto!important;width:44px;height:44px;justify-content:center;padding:0}
   .searchbtn .lbl,.searchbtn kbd{display:none}
   .mn-btn{display:inline-flex;order:3}
   .tp-btn{max-width:100%;min-width:0}
@@ -1415,6 +1442,12 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
   .arv{grid-template-columns:minmax(0,1fr);gap:14px}
   .arv-f>summary{display:block;cursor:pointer;font-weight:600}
   .arv-f[open]>summary{margin-bottom:10px}
+/* on a phone: chips and the summary large enough to tap, and a fixed button that closes the panel and shows the result */
+.arv-toon{display:none}
+/* touch: chips in the explorer and "Op deze pagina" 36 px to see, 44 px to tap */
+@media (pointer:coarse){.arv-f .chip,.arv-act .chip,#mToc .chip{position:relative;min-height:36px}.arv-f .chip::after,.arv-act .chip::after,#mToc .chip::after{content:"";position:absolute;inset:-4px 0}}
+@media (max-width:899px){.arv-f .chips{gap:8px}.arv-f .chip{min-height:36px;padding:6px 12px}.arv-f>summary{min-height:44px;display:flex;align-items:center}
+  .arv-toon{display:block;position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0px));margin:6px 0 0;z-index:2}.arv-toon .btn{width:100%;min-height:44px}}
   .arv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
 
@@ -1634,6 +1667,7 @@ main h1[tabindex="-1"]:focus,main [tabindex="-1"].fact:focus{outline:none} /* pr
 /* boek: explanation on request, a "?" next to the label of a row (works on touch and keyboard), and how to save as pdf next to the button */
 .bk-help{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;padding:0;vertical-align:1px;border:1px solid var(--rule);border-radius:50%;background:none;color:var(--muted);font:600 11px/1 var(--body);letter-spacing:0;cursor:pointer}
 .bk-help::after{content:"";position:absolute;inset:-8px}
+@media (pointer:coarse){.bk-help::after{inset:-13px}.pc-acties .btn{min-height:44px}} /* 18 px button, 44 px to tap; the action buttons too */
 .bk-help:hover{color:var(--ink);border-color:var(--muted)}
 .bk-help[aria-expanded="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
 .bk-help:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -1712,7 +1746,7 @@ details.akfeit .akte-t{font-size:12.5px}
 .vl-bar .btn{padding:5px 11px;font-size:13px}
 .vl-bar .btn .nico{width:16px;height:16px}
 .vl-bar .vl-play[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
-#dBody .vl-bar{margin:0 0 12px}
+:is(#dBody,.p-body) .vl-bar{margin:0 0 12px}
 .vl-nu{background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 10%,transparent);border-radius:3px;transition:background .3s}
 .kort.vl-nu,.notes p.vl-nu{border-radius:0}
 @media (prefers-reduced-motion:reduce){.vl-nu{transition:none}}
@@ -1875,17 +1909,17 @@ b.sr-n{cursor:auto;text-decoration:none}
 .pn-ib:disabled{color:var(--faint);opacity:.45;cursor:default}
 .pn-ico{width:18px;height:18px;flex:none}
 .pn-ib:focus-visible,.pn-b:focus-visible,.pn-win .vl-ico .btn:focus-visible,.pn-crumbs .link:focus-visible,.mf-tog:focus-visible,button.mf-box:focus-visible,.src-scanb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#dHead.pn-head{padding-top:14px;gap:10px}
-#dHead.pn-head .eyebrow,#dHead.pn-head .dtitle.withport .eyebrow,#dHead.pn-head h2{padding-right:0}
-#dHead.pn-head .dhelp{position:relative;left:auto;right:auto;top:auto;margin:0} /* opens in place, under the "?" (the row of buttons follows) */
+:is(#dHead,.p-head).pn-head{padding-top:14px;gap:10px}
+:is(#dHead,.p-head).pn-head .eyebrow,:is(#dHead,.p-head).pn-head .dtitle.withport .eyebrow,:is(#dHead,.p-head).pn-head h2{padding-right:0}
+:is(#dHead,.p-head).pn-head .dhelp{position:relative;left:auto;right:auto;top:auto;margin:0} /* opens in place, under the "?" (the row of buttons follows) */
 .pn-crumbs{flex:1 1 auto;min-width:0;padding:0 6px}
 .pn-crumbs ol{display:flex;flex-wrap:nowrap;overflow:hidden;align-items:baseline;gap:2px 0;list-style:none;margin:0;padding:0;font-size:13.5px;color:var(--muted);line-height:1.4}
 .pn-crumbs li{margin:0;white-space:nowrap;flex:none}
 .pn-crumbs ol.pn-tight>li:first-child{flex:0 1 auto;min-width:2.5em;overflow:hidden;text-overflow:ellipsis}
 .pn-crumbs ol.pn-open{flex-wrap:wrap}
 /* the short top line: kw in mono, the relation in plain text */
-#dHead .pn-eb{font-family:var(--body);font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted);padding-right:0}
-#dHead .pn-eb abbr{font-family:var(--mono);font-size:12px}
+:is(#dHead,.p-head) .pn-eb{font-family:var(--body);font-size:13px;letter-spacing:0;text-transform:none;color:var(--muted);padding-right:0}
+:is(#dHead,.p-head) .pn-eb abbr{font-family:var(--mono);font-size:12px}
 /* share and read aloud: icons in the top row, the same size as page and close */
 .pn-win{position:relative;align-items:center}
 .pn-win .vl-ico{margin:0;gap:6px}
@@ -1945,39 +1979,39 @@ html.pn-tip-off .pn-tip{display:none}
   .pn-bar{flex-wrap:wrap;row-gap:8px}
   .pn-crumbs{order:3;flex-basis:100%;padding:0}
   .pn-ib,.pn-win .vl-ico .btn{width:44px;height:44px}
-  .drawer>#dNav,.pf-wrap>#dNav{flex:none;margin:0;background:var(--surface);border-top:1px solid var(--rule);padding:0 4px env(safe-area-inset-bottom,0px);box-shadow:0 -6px 18px color-mix(in srgb,var(--ink) 8%,transparent)}
-  .pf-wrap>#dNav{position:sticky;bottom:0;z-index:5;margin-inline:-16px}
-  .drawer:has(>#dNav) .body{padding-bottom:24px}
-  #dNav .pn-row{grid-template-columns:repeat(6,minmax(0,1fr));border:0;border-radius:0;background:none}
-  #dNav .pn-b{flex-direction:column;justify-content:center;gap:3px;min-height:56px;min-width:44px;padding:6px 2px;border-left:0;text-align:center}
-  #dNav .pn-b .pn-ico{width:22px;height:22px}
-  #dNav .pn-t{align-items:center}
-  #dNav .pn-w{font-family:inherit;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink)}
-  #dNav .pn-b:disabled .pn-w{color:var(--faint)}
-  #dNav .pn-n{display:none}
-  #dNav .pn-prev .pn-t,#dNav .pn-next .pn-t{position:static;width:auto;height:auto;clip:auto}
+  .drawer>:is(#dNav,.p-nav),.pf-wrap>:is(#dNav,.p-nav){flex:none;margin:0;background:var(--surface);border-top:1px solid var(--rule);padding:0 4px env(safe-area-inset-bottom,0px);box-shadow:0 -6px 18px color-mix(in srgb,var(--ink) 8%,transparent)}
+  .pf-wrap>:is(#dNav,.p-nav){position:sticky;bottom:0;z-index:5;margin-inline:-16px}
+  .drawer:has(>:is(#dNav,.p-nav)) .body{padding-bottom:24px}
+  :is(#dNav,.p-nav) .pn-row{grid-template-columns:repeat(6,minmax(0,1fr));border:0;border-radius:0;background:none}
+  :is(#dNav,.p-nav) .pn-b{flex-direction:column;justify-content:center;gap:3px;min-height:56px;min-width:44px;padding:6px 2px;border-left:0;text-align:center}
+  :is(#dNav,.p-nav) .pn-b .pn-ico{width:22px;height:22px}
+  :is(#dNav,.p-nav) .pn-t{align-items:center}
+  :is(#dNav,.p-nav) .pn-w{font-family:inherit;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink)}
+  :is(#dNav,.p-nav) .pn-b:disabled .pn-w{color:var(--faint)}
+  :is(#dNav,.p-nav) .pn-n{display:none}
+  :is(#dNav,.p-nav) .pn-prev .pn-t,:is(#dNav,.p-nav) .pn-next .pn-t{position:static;width:auto;height:auto;clip:auto}
 }
-@media (max-width:360px){#dNav .pn-w{font-size:10px}}
+@media (max-width:360px){:is(#dNav,.p-nav) .pn-w{font-size:10px}}
 
 /* ---------- profile as a full page (#profiel-<kw>) ---------- */
 .pf{max-width:1180px;margin:0 auto}
 .pf-wrap{display:flex;flex-direction:column}
-.pf #dHead{display:flex;flex-direction:column;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--rule);position:relative}
-.pf h1#dName{font-size:clamp(30px,4.2vw,48px);line-height:1.05;margin:0;font-weight:400}
+.pf :is(#dHead,.p-head){display:flex;flex-direction:column;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--rule);position:relative}
+.pf h1:is(#dName,.p-name){font-size:clamp(30px,4.2vw,48px);line-height:1.05;margin:0;font-weight:400}
 .pf .alt{font-size:14px;color:var(--muted);font-style:italic}
-.pf #dBody h5{margin:0 0 8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
-.pf #dBody{display:flex;flex-direction:column;gap:22px;padding-top:20px}
-.pf #dBody ul{margin:0;padding-left:18px}
-.pf #dBody li{margin:4px 0}
+.pf :is(#dBody,.p-body) h5{margin:0 0 8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pf :is(#dBody,.p-body){display:flex;flex-direction:column;gap:22px;padding-top:20px}
+.pf :is(#dBody,.p-body) ul{margin:0;padding-left:18px}
+.pf :is(#dBody,.p-body) li{margin:4px 0}
 .pf .kort{font-size:20px;max-width:62ch}
-.pf #dHead .pn-nav{max-width:760px}
+.pf :is(#dHead,.p-head) .pn-nav{max-width:760px}
 .pf-panel{padding:6px 12px;font-size:13px;gap:6px}
 .pf-leeg{padding-block:20px}
 @media (min-width:900px){
-  .pf #dBody.pf-cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:56px;row-gap:0;grid-auto-rows:4px;grid-auto-flow:row dense;align-items:start}
-  .pf #dBody.pf-cols>*{grid-column:2;min-width:0}
-  .pf #dBody.pf-cols>.pf-l{grid-column:1}
-  .pf #dBody.pf-cols>.pf-full{grid-column:1/-1}
+  .pf :is(#dBody,.p-body).pf-cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:56px;row-gap:0;grid-auto-rows:4px;grid-auto-flow:row dense;align-items:start}
+  .pf :is(#dBody,.p-body).pf-cols>*{grid-column:2;min-width:0}
+  .pf :is(#dBody,.p-body).pf-cols>.pf-l{grid-column:1}
+  .pf :is(#dBody,.p-body).pf-cols>.pf-full{grid-column:1/-1}
 }
 @media (max-width:560px){.pf-panel span{display:none}.pf-panel{width:44px;height:44px;padding:0;justify-content:center}.pf .kort{font-size:17px}}
 
@@ -1987,8 +2021,8 @@ html.pn-tip-off .pn-tip{display:none}
 .mf-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .mf-tree{position:relative}
 .mf-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
-.mf ul,#dBody .mf ul{list-style:none;margin:0;padding:0}
-.mf li,#dBody .mf li{margin:0}
+.mf ul,:is(#dBody,.p-body) .mf ul{list-style:none;margin:0;padding:0}
+.mf li,:is(#dBody,.p-body) .mf li{margin:0}
 .mf-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--mf-gap);align-items:stretch;position:relative;z-index:1}
 .mf-row.mid{align-items:start}
 .mf-row .mf-span{grid-column:1/3}
@@ -2036,8 +2070,8 @@ button.mf-box:hover .mf-n{color:var(--accent)}
 .mf-wed.mf-ov{border-style:dashed;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
 .mf-wnote{width:fit-content;max-width:88%;margin:-2px auto 8px;padding:0 8px;background:var(--mf-bg);font-size:12px;line-height:1.4;color:var(--muted);text-align:center}
 .mf-tog{background:none;border:0;padding:4px 0;font:inherit;font-size:12.5px;color:var(--accent);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:2px;font-weight:500;align-self:flex-start}
-#dBody .mf .mf-sibs{display:flex;flex-direction:column;gap:5px;font-size:12.5px;line-height:1.35;padding-left:12px;border-left:1px solid var(--rule)}
-#dBody .mf .mf-kids{position:relative;z-index:1;margin:0;padding-left:calc(50% + 12px);display:flex;flex-direction:column;gap:6px}
+:is(#dBody,.p-body) .mf .mf-sibs{display:flex;flex-direction:column;gap:5px;font-size:12.5px;line-height:1.35;padding-left:12px;border-left:1px solid var(--rule)}
+:is(#dBody,.p-body) .mf .mf-kids{position:relative;z-index:1;margin:0;padding-left:calc(50% + 12px);display:flex;flex-direction:column;gap:6px}
 .mf-kids>li{position:relative}
 .mf-kids .mf-box{width:100%}
 .mf-naam{font-size:13px;line-height:1.35;padding:1px 0}
@@ -2053,7 +2087,7 @@ button.mf-box:hover .mf-n{color:var(--accent)}
   .mf-box{padding:6px 22px 7px 12px;min-height:54px}
   .mf-n{font-size:13px}
   .mf-box.zelf .mf-n{font-size:14px}
-  #dBody .mf .mf-kids{padding-left:calc(50% + 10px)}
+  :is(#dBody,.p-body) .mf .mf-kids{padding-left:calc(50% + 10px)}
 }
 
 /* ---------- profile: the sources per kind ---------- */
@@ -2061,13 +2095,13 @@ button.mf-box:hover .mf-n{color:var(--accent)}
 .src-gk{display:flex;align-items:center;gap:6px;margin:0 0 2px;font-size:13px;font-weight:500;color:var(--muted)}
 .src-gk .srcico,.src-gk .nico{width:15px;height:15px;flex:none}
 .src-gk .src-n{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-weight:400}
-#dBody ul.src-l{list-style:none;padding:0;margin:0}
+:is(#dBody,.p-body) ul.src-l{list-style:none;padding:0;margin:0}
 /* one line: title and details on the left, the scan in a fixed column on the right */
-#dBody ul.src-l li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:start;margin:7px 0;overflow-wrap:anywhere}
+:is(#dBody,.p-body) ul.src-l li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:start;margin:7px 0;overflow-wrap:anywhere}
 .src-x{display:flex;flex-direction:column;min-width:0}
-#dBody .src-l .src-t{font-size:14px;line-height:1.4;color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent);font-weight:400;text-align:left;padding:0}
-#dBody .src-l span.src-t{color:var(--ink);text-decoration:none}
-#dBody .src-l .src-t:hover{text-decoration-color:currentColor}
+:is(#dBody,.p-body) .src-l .src-t{font-size:14px;line-height:1.4;color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent);font-weight:400;text-align:left;padding:0}
+:is(#dBody,.p-body) .src-l span.src-t{color:var(--ink);text-decoration:none}
+:is(#dBody,.p-body) .src-l .src-t:hover{text-decoration-color:currentColor}
 .src-d{font-size:12.5px;line-height:1.4;color:var(--muted)}
 .src-vk{margin:8px 0 0;font-size:12px;font-style:italic;color:var(--muted)}
 .src-scan{display:flex}
@@ -2104,7 +2138,7 @@ details.pc-step[open] .pc-sum{display:none}
 }
 @media (max-width:1023px){
   .pc-tabs{display:flex;gap:4px;margin:6px 0 14px;padding:3px;border:1px solid var(--rule);border-radius:999px;background:var(--bg);position:sticky;top:calc(var(--vast,57px) + env(safe-area-inset-top,0px));z-index:4}
-  .pc-tabs [role=tab]{flex:1;min-height:40px;border:0;border-radius:999px;background:none;font:inherit;font-size:14.5px;color:var(--muted);cursor:pointer}
+  .pc-tabs [role=tab]{flex:1;min-height:44px;border:0;border-radius:999px;background:none;font:inherit;font-size:14.5px;color:var(--muted);cursor:pointer}
   .pc-tabs [role=tab][aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px color-mix(in srgb,var(--ink) 16%,transparent)}
   /* hidden tab: out of view but still laid out (the preview keeps building in its iframe) */
   .pc[data-tab="keuzes"] .pc-voorbeeld{position:absolute;left:-300vw;width:calc(100vw - 32px);visibility:hidden}
@@ -2127,6 +2161,7 @@ details.pc-step[open] .pc-sum{display:none}
 .bk-hfst-kies select{max-width:14rem;min-height:36px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:4px 8px}
 .bk-controle{font-size:13.5px;color:var(--ok,var(--accent))}
 .bk-controle.bk-let-op{color:var(--warn)}
+.pw:not(:has(.pw-stap[data-step="ready"])) .bk-controle:not(.bk-let-op){display:none} /* "klaar om af te drukken" only on the step Klaar; a warning on every step */
 .bk-hoe-pdf{position:relative}
 .bk-hoe-pdf>summary{display:inline-grid;place-items:center;width:32px;height:32px;border:1px solid var(--rule);border-radius:50%;text-decoration:none;font-weight:600;color:var(--muted)}
 .bk-hoe-pdf>summary::before{content:none!important}
@@ -2233,8 +2268,8 @@ details.pc-step>summary .pc-sum{margin-left:56px}
 .bk-mini .bk-omslag-blad{box-shadow:none}
 .pc .bk-blad .bk-omslag-knop[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
 /* profile: links in lists stay quiet (light and dark): a thin, faint underline that fills on hover */
-#dBody .kpath .link,#dBody .mf .link,#dBody .pn-vanaf .link,#dBody .pn-vanaf .ov-link{text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent)}
-#dBody .kpath .link:hover,#dBody .mf .link:hover,#dBody .pn-vanaf .link:hover,#dBody .pn-vanaf .ov-link:hover{text-decoration-color:currentColor}
+:is(#dBody,.p-body) .kpath .link,:is(#dBody,.p-body) .mf .link,:is(#dBody,.p-body) .pn-vanaf .link,:is(#dBody,.p-body) .pn-vanaf .ov-link{text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+:is(#dBody,.p-body) .kpath .link:hover,:is(#dBody,.p-body) .mf .link:hover,:is(#dBody,.p-body) .pn-vanaf .link:hover,:is(#dBody,.p-body) .pn-vanaf .ov-link:hover{text-decoration-color:currentColor}
 
 /* product choice (Boek · Poster · …) under the title of the configurator */
 .pc-producten ul{display:inline-flex;gap:2px;margin:10px 0 2px;padding:3px;list-style:none;border:1px solid var(--rule);border-radius:999px;background:var(--bg);max-width:100%;overflow-x:auto}
@@ -2255,9 +2290,12 @@ details.pc-step>summary .pc-sum{margin-left:56px}
 .mf-nw{white-space:nowrap}
 .pn-stand{white-space:nowrap}
 /* a child without a place in the tree: a compact card with what the text says */
-#dBody .mf .mf-kid{display:flex;flex-direction:column;gap:1px;padding:5px 10px 6px;border:1px solid var(--rule);border-radius:2px;background:var(--mf-bg)}
+:is(#dBody,.p-body) .mf .mf-kid{display:flex;flex-direction:column;gap:1px;padding:5px 10px 6px;border:1px solid var(--rule);border-radius:2px;background:var(--mf-bg)}
 .mf-kid .mf-n{font-size:12.5px}
 .mf-kid .mf-meta{font-size:11.5px}
+/* the youngest generations: grandchildren under their parent, names only */
+.mf-gk{display:block;font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
+.mf-gk .mf-gp{color:var(--faint)}
 
 /* breadcrumb and "other product" on a product page */
 .pc-kruimel ol{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 6px;padding:0;list-style:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -2268,27 +2306,27 @@ details.pc-step>summary .pc-sum{margin-left:56px}
 .pc-ander{white-space:nowrap}
 .bk-voorwie-regel{margin:0;font-size:14.5px;padding-top:4px}
 .bk-voorwie-regel .link{margin-left:8px;font-size:13.5px}
-/* profile: one scroll area. Only the bar (#dTop) and, on a wide screen, the row of buttons (#dNav) stay; the header scrolls */
+/* profile: one scroll area. Only the bar (:is(#dTop,.p-top)) and, on a wide screen, the row of buttons (:is(#dNav,.p-nav)) stay; the header scrolls */
 #drawer.drawer{display:block;overflow-y:auto;overscroll-behavior:contain}
-#drawer #dBody{overflow:visible}
+#drawer :is(#dBody,.p-body){overflow:visible}
 .pn-top{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:6px;min-height:54px;box-sizing:border-box;padding:10px 22px;background:var(--surface);border-bottom:1px solid transparent}
 .pn-top.pn-named{border-bottom-color:var(--rule)}
 .pn-tname{flex:1 1 auto;min-width:0;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--display);font-size:17px;color:var(--ink);opacity:0;transition:opacity .15s}
 .pn-top.pn-named .pn-tname{opacity:1}
-#dHead.pn-head{padding:0 22px 12px;border-bottom:0;gap:8px}
-#dHead .pn-crumbs{padding:0;order:0;flex-basis:auto}
-#dHead .pn-stand{color:var(--muted)}
+:is(#dHead,.p-head).pn-head{padding:0 22px 12px;border-bottom:0;gap:8px}
+:is(#dHead,.p-head) .pn-crumbs{padding:0;order:0;flex-basis:auto}
+:is(#dHead,.p-head) .pn-stand{color:var(--muted)}
 @media (min-width:561px){
-  .drawer>#dNav{position:sticky;top:54px;z-index:5;margin:0;padding:0 22px 10px;background:var(--surface);border-bottom:1px solid var(--rule)}
-  .pf-wrap>#dNav{position:sticky;top:calc(var(--vast,0px) + 54px);z-index:5;margin:0;padding:0 0 10px;background:var(--bg);border-bottom:1px solid var(--rule)}
+  .drawer>:is(#dNav,.p-nav){position:sticky;top:54px;z-index:5;margin:0;padding:0 22px 10px;background:var(--surface);border-bottom:1px solid var(--rule)}
+  .pf-wrap>:is(#dNav,.p-nav){position:sticky;top:calc(var(--vast,0px) + 54px);z-index:5;margin:0;padding:0 0 10px;background:var(--bg);border-bottom:1px solid var(--rule)}
 }
 @media (max-width:560px){
   .pn-top{padding:8px 16px;min-height:60px}
-  .drawer>#dNav{position:sticky;bottom:0;z-index:5}
-  #dHead.pn-head{padding:0 16px 12px}
+  .drawer>:is(#dNav,.p-nav){position:sticky;bottom:0;z-index:5}
+  :is(#dHead,.p-head).pn-head{padding:0 16px 12px}
 }
 .pf .pn-top{top:var(--vast,0px);padding-inline:0;background:var(--bg)}
-.pf #dHead.pn-head{padding-inline:0;border-bottom:0}
+.pf :is(#dHead,.p-head).pn-head{padding-inline:0;border-bottom:0}
 
 /* ---- laten maken: hub ---- */
 .mk-voor{border:0;padding:0;margin:8px 0 34px;max-width:760px}
@@ -2323,37 +2361,99 @@ a.mk-kaart:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:520px){.mf-knote{padding-left:calc(50% + 10px)}}
 /* the line under the sub tabs only when the page has no lede of its own (the lede says more, with the numbers) */
 main:has(> .view:not([hidden]) .lede:not(:empty)) > .sb-uitleg{display:none}
-@media (max-width:560px){.pn-top .pn-hist .pn-ib:disabled{display:none}} /* phone: room for the small name */
 
 /* while the book builds, the main button is visibly off (Stop sits with the progress) */
 .pc-acties .btn.primary:disabled{background:var(--surface);color:var(--muted);border-color:var(--rule);cursor:progress;box-shadow:none}
+/* ---------- wizard (Products.ui.wizard): one step on screen, the other steps as summary lines, Terug / Volgende ---------- */
+.pw-lijst{list-style:none;margin:0;padding:0}
+.pw-lijst li{border-bottom:1px solid var(--rule)}
+.pw-boven .pw-lijst{border-top:1px solid var(--rule)}
+.pw-onder .pw-lijst{margin-top:18px;border-top:1px solid var(--rule)}
+.pw-sum{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline;min-height:44px;padding:9px 2px;color:var(--ink);text-decoration:none}
+.pw-sum-t{grid-column:1/-1;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.pw-sum-v{min-width:0;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pw-wijzig{font-size:13px;color:var(--accent)}
+.pw-sum:hover .pw-wijzig{text-decoration:underline}
+.pw-sum:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.pw-ok{color:var(--accent);margin-right:6px}
+.pw-stap{padding:20px 0 6px}
+.pw-nr{margin:0 0 4px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.pw-vraag{margin:0 0 16px;font-family:var(--display);font-weight:400;font-size:23px;line-height:1.2;color:var(--ink)}
+.pw-vraag:focus{outline:none}
+.pw-vraag:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.pw-meer{margin-top:20px;border-top:1px solid var(--rule)}
+.pw-meer>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-size:14.5px;color:var(--accent)}
+.pw-meer[open]>summary{margin-bottom:8px}
+.pw-nav{display:flex;gap:8px}
+.pw-nav:empty{display:none}
+.pw-nav .btn{display:inline-flex;align-items:center;justify-content:center;gap:0;min-height:44px;white-space:nowrap;text-decoration:none}
+.pw-nav .pw-volgende{flex:1}
+.pw .pc-acties{display:flex;flex-wrap:wrap;gap:6px 8px} /* status on its own line, then Terug, Volgende and the product's buttons in one row */
+.pw .pc-status{flex-basis:100%}
+.pw .pc-status:empty{display:none}
+.pw .pw-nav{flex:1 1 auto;min-width:0}
+.pw .pc-knoppen{flex:0 0 auto}
+.pw .pc-knoppen #bkPdf{flex:none}
+@media (max-width:1023px){.pc.pw[data-tab="voorbeeld"] :is(.pw-boven,.pw-stap,.pw-onder){display:none}}
+.pw .bk-preset b{overflow-wrap:anywhere;hyphens:auto}
+/* the step already asks "Voor wie …?": the label of the choice only for screen readers */
+/* wide: a compact head (no menu line, a smaller title), the sidebar and the preview exactly as high as the window below the head
+   (--pw-h, measured by the shell), the sidebar on the left line of the head; the preview may run on to the right */
+@media (min-width:1024px){
+  main:has(> .view:not([hidden]) .pc.pw) > .sb-uitleg{display:none}
+  .pw .pc-kop{margin-bottom:12px}
+  .pw .pc-kop .page-title{font-size:34px;margin:4px 0 0}
+  .pw .pc-kop .lede:empty{display:none}
+  .pw .pc-keuzes{height:var(--pw-h,auto);max-height:var(--pw-h,none);display:flex;flex-direction:column}
+  .pw .pc-keuzes > .pc-acties{margin-top:auto}
+  .pw .pc-voorbeeld{height:var(--pw-h,auto);display:flex;flex-direction:column;justify-content:center}
+  .pw .bk-voorbeeld{flex:1;display:flex;flex-direction:column;min-height:0}
+  .pc.pw .bk-voorbeeld #bkFrame{flex:1;height:auto;min-height:0}
+}
+@media (min-width:1240px){.pc.pw .pc-grid{margin-inline:0 calc((100% - 100vw) / 2 + 24px)}} /* the left line of the head; the extra room to the right */
+@media (max-width:1023px){.pc.pw{padding-bottom:calc(var(--pw-bar,110px) + 24px)}}
+.pw .bk-lang{display:none} /* "Maak pdf": the long label stays in the aria-label */
+/* step 2 of the book: the kinds of book as cards with their cover and promise, as on the hub */
+.pw-soorten{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pw-soort{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:start;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none}
+.pw-soort:hover{border-color:var(--faint)}
+.pw-soort[aria-current]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pw-soort:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pw-soort-mini{display:block;line-height:0}
+.pw-soort-mini iframe{pointer-events:none}
+.pw-soort-t{display:grid;gap:2px}
+.pw-soort-t b{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.2}
+.pw-soort-t span{font-size:13px;line-height:1.35;color:var(--muted)}
+.pw-soort-t .bk-pp{font-size:12px}
+.pw .pw-omvang{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pw-stap[data-step="which"] :is(.bk-voorwie-dicht > .op-l, .bk-voorwie > legend){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* living people and groups: only the buttons that exist, side by side */
-#dNav .pn-row.pn-few{display:flex}
-#dNav .pn-row.pn-few>.pn-b{flex:1 1 0}
-#dNav .pn-row.pn-few>.pn-prev,#dNav .pn-row.pn-few>.pn-next{flex:0 0 44px}
-@media (max-width:560px){#dNav .pn-row.pn-few>.pn-prev,#dNav .pn-row.pn-few>.pn-next{flex:1 1 0}}
+:is(#dNav,.p-nav) .pn-row.pn-few{display:flex}
+:is(#dNav,.p-nav) .pn-row.pn-few>.pn-b{flex:1 1 0}
+:is(#dNav,.p-nav) .pn-row.pn-few>.pn-prev,:is(#dNav,.p-nav) .pn-row.pn-few>.pn-next{flex:0 0 44px}
+@media (max-width:560px){:is(#dNav,.p-nav) .pn-row.pn-few>.pn-prev,:is(#dNav,.p-nav) .pn-row.pn-few>.pn-next{flex:1 1 0}}
 /* touch targets of at least 44 × 44 px in the profile; small marks keep their look and get a larger invisible hit area */
 .pn-ib,.pn-win .vl-ico .btn{width:44px;height:44px}
 .pn-top{min-height:56px;padding-block:6px}
-@media (min-width:561px){.drawer>#dNav{top:56px}.pf-wrap>#dNav{top:calc(var(--vast,0px) + 56px)}}
+@media (min-width:561px){.drawer>:is(#dNav,.p-nav){top:56px}.pf-wrap>:is(#dNav,.p-nav){top:calc(var(--vast,0px) + 56px)}}
 .pf-panel,.dacts .btn{min-height:44px}
 .mf-box.klein{min-height:44px}
-.qhelp,.src-scanb,.pn-dot,.mf-tog,.pn-crumbs .link,#dBody .kpath .link,#dBody .pn-vanaf .link,#dBody .pn-vanaf .ov-link,.dmd button.src-t,#dHead .chip{position:relative}
+.qhelp,.src-scanb,.pn-dot,.mf-tog,.pn-crumbs .link,:is(#dBody,.p-body) .kpath .link,:is(#dBody,.p-body) .pn-vanaf .link,:is(#dBody,.p-body) .pn-vanaf .ov-link,.dmd button.src-t,:is(#dHead,.p-head) .chip{position:relative}
 .qhelp::after{content:"";position:absolute;inset:-10px}
 .src-scanb::after{content:"";position:absolute;inset:-9px}
 .pn-dot::after{content:"";position:absolute;inset:-12px 0}
-.mf-tog::after,.pn-crumbs .link::after,#dBody .kpath .link::after,#dBody .pn-vanaf .link::after,#dBody .pn-vanaf .ov-link::after,.dmd button.src-t::after,#dHead .chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
+.mf-tog::after,.pn-crumbs .link::after,:is(#dBody,.p-body) .kpath .link::after,:is(#dBody,.p-body) .pn-vanaf .link::after,:is(#dBody,.p-body) .pn-vanaf .ov-link::after,.dmd button.src-t::after,:is(#dHead,.p-head) .chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;transform:translateY(-50%)}
 /* print with the profile open: only the profile, full width, without the bar, the buttons and the navigation */
 @media print{
   html:has(#drawer:not([hidden])) body>*:not(#drawer){display:none!important}
   html:has(#drawer:not([hidden])) #drawer{display:block!important;position:static!important;width:auto!important;height:auto!important;overflow:visible!important;box-shadow:none!important;padding:0!important}
-  #dTop,#dNav,.dacts,.pn-gen,.pn-crumbs,.qhelp,.dhelp,.mf-tog,.src-scanb,.src-scan,.vl-bar,.wjm,.mf-lines{display:none!important}
-  #dBody{overflow:visible!important;padding:0!important}
-  #dHead.pn-head{padding:0!important}
-  #dBody .lifemap{max-width:120mm}
-  #dBody .btn,#dBody .akf,#dBody .akfeit,#dBody .kp-tog,#dHead .dport,.pn-tname,.pf-panel{display:none!important}
-  #dBody section:has(> .links > a.chip){display:none!important} /* Zoek verder */
-  .pn-vanaf,#dArch,#dTijd,#dWerk,#dBody section:has(> .pstrip){display:none!important} /* links onward and the image strips of their world */
+  :is(#dTop,.p-top),:is(#dNav,.p-nav),.dacts,.pn-gen,.pn-crumbs,.qhelp,.dhelp,.mf-tog,.src-scanb,.src-scan,.vl-bar,.wjm,.mf-lines{display:none!important}
+  :is(#dBody,.p-body){overflow:visible!important;padding:0!important}
+  :is(#dHead,.p-head).pn-head{padding:0!important}
+  :is(#dBody,.p-body) .lifemap{max-width:120mm}
+  :is(#dBody,.p-body) .btn,:is(#dBody,.p-body) .akf,:is(#dBody,.p-body) .akfeit,:is(#dBody,.p-body) .kp-tog,:is(#dHead,.p-head) .dport,.pn-tname,.pf-panel{display:none!important}
+  :is(#dBody,.p-body) section:has(> .links > a.chip){display:none!important} /* Zoek verder */
+  .pn-vanaf,#dArch,#dTijd,#dWerk,:is(#dBody,.p-body) section:has(> .pstrip){display:none!important} /* links onward and the image strips of their world */
   #dMap{display:none!important}
 }
 
@@ -2393,14 +2493,454 @@ main:has(> .view:not([hidden]) .lede:not(:empty)) > .sb-uitleg{display:none}
 #cardsOut .empty p{margin:0 0 10px}
 
 /* het vel past in het voorbeeldvak: zo breed als kan, maar nooit hoger dan het scherm onder de kop (staand en liggend) */
-#v-poster .pc-voorbeeld .ps-kader{max-width:none;width:min(100%, calc((100vh - var(--vast, 100px) - 48px) * var(--ps-asp, .7)));margin:0 auto}
+#v-poster .pc-voorbeeld .ps-kader{max-width:none;width:min(100%, calc((var(--pc-h, calc(100vh - var(--vast, 100px) - 24px)) - 24px) * var(--ps-asp, .7)));margin:0 auto} /* --pc-h: the height the wizard measured for the preview */
 @media (max-width:1023px){#v-poster .pc-voorbeeld .ps-kader{width:100%}}
 
 /* de korte statusregel onder "Maken" (poster; zelfde opmaak als het boek) */
 details.print-line > summary{cursor:pointer;list-style:none}
 details.print-line ul{margin:4px 0 0;padding-left:18px;font-size:13px}
 .print-help{margin:6px 0 0}
+.pc-knoppen > .print-help{flex-basis:100%;min-width:0} /* always on its own line under the button, never cut off */
+.pw .pc-knoppen{max-width:100%}
 
 .an-algemeen{max-width:70ch;margin:0 0 18px;color:var(--muted)}
-.print-help-vraag{display:none}
-@media (max-width:1023px){.print-help{display:none}.print-help-vraag{display:inline-block}}
+.print-help-vraag{display:inline-block} /* the help only behind the "?", on every width */
+
+/* ---------- poster: the wizard's choice cards ---------- */
+.ps-keuzes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ps-keuze{display:flex;flex-direction:column;align-items:stretch;gap:2px;text-align:left;padding:8px 8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.ps-keuze:hover{border-color:var(--accent)}
+.ps-keuze[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.ps-keuze:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ps-keuze b{font-weight:600;margin-top:6px}
+.ps-keuze small{color:var(--muted);line-height:1.35}
+.ps-keuze[aria-pressed="true"] small{color:var(--ink)} /* on the tinted ground muted is only 3.3:1 */
+.ps-keuze .mk-mini{border-radius:4px;pointer-events:none}
+.ps-maten{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.ps-maat{align-items:center;text-align:center}
+.ps-maat svg{width:70px;height:70px}
+.ps-maat rect{fill:var(--sunk);stroke:var(--muted);stroke-width:.6}
+.ps-maat[aria-pressed="true"] rect{fill:color-mix(in srgb,var(--accent) 22%,var(--surface));stroke:var(--accent)}
+.ps-bestel{margin-top:12px}
+.ps-bestel summary{cursor:pointer;font-weight:600}
+.ps-bestel-p h3{font-size:1rem;margin:12px 0 2px}
+.ps-bestel-p h3 a{position:relative}.ps-bestel-p h3 a::after{content:"";position:absolute;inset:-12px -4px} /* a 44 px target around the printer name */
+.ps-bestel-p ol{margin:4px 0 0;padding-left:1.3em}
+.ps-bestel-p li{margin:2px 0}
+@media (max-width:440px){.ps-keuzes{grid-template-columns:1fr 1fr}.ps-maten{grid-template-columns:repeat(3,1fr)}}
+/* print: the timeline fits the paper (no cut-off right edge), and links that only work on screen stay off the paper */
+@media print{
+  .tl-bars{overflow:visible!important}
+  .tl-bars svg{width:100%!important;height:auto}
+  .ov-more,#v-verhalen .cta{display:none!important}
+}
+/* ---------- laten maken: a product from the engine (calendar …): one sheet large, all sheets in a strip ---------- */
+.mp-vel{position:absolute;top:0;left:0;transform-origin:0 0}
+.mp-blad{position:absolute;top:0;left:0;visibility:hidden;background:#fff}
+.mp-blad.nu{visibility:visible}
+.mp-blad > svg{display:block;width:100%;height:100%}
+.mp-view .pc-voorbeeld .ps-kader{max-width:none;width:min(100%, calc((var(--pc-h, calc(100vh - var(--vast, 100px) - 24px)) - 128px) * var(--ps-asp, .7)));margin:0 auto} /* room for the strip of sheets below */
+@media (max-width:1023px){.mp-view .pc-voorbeeld .ps-kader{width:100%}}
+.mp-strook{display:flex;flex-wrap:wrap;gap:6px;padding:12px 2px 6px;margin-top:6px;min-width:0} /* all sheets in view, in rows; never wider than the column */
+.mp-duim{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;width:56px;padding:3px;border:1px solid transparent;border-radius:6px;background:none;color:var(--muted);font:inherit;cursor:pointer}
+.mp-duim:hover{border-color:var(--rule)}
+.mp-duim[aria-pressed="true"]{border-color:var(--accent);color:var(--ink)}
+.mp-duim:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.mp-duim-vel{display:block;width:100%;background:#fff;box-shadow:0 1px 3px color-mix(in srgb,var(--ink) 20%,transparent);overflow:hidden}
+.mp-duim-vel svg{display:block;width:100%;height:100%}
+.mp-duim small{font-size:11px;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media print{
+  html.mp-print,html.mp-print body{background:#fff}
+  html.mp-print body{margin:0}
+  html.mp-print body > :not(main),html.mp-print main > :not(.mp-view:not([hidden])){display:none!important}
+  html.mp-print main{padding:0!important;margin:0!important;max-width:none!important}
+  html.mp-print .mp-view > .pc{display:block!important}
+  html.mp-print .mp-view .pc-kop,html.mp-print .mp-view .pc-tabs,html.mp-print .mp-view .pc-keuzes,html.mp-print .mp-strook{display:none!important}
+  html.mp-print .mp-view .pc-grid,html.mp-print .mp-view .pc-voorbeeld{display:block!important;position:static!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+  html.mp-print .ps-kader{width:auto!important;max-width:none;aspect-ratio:auto!important;margin:0;border:0;box-shadow:none;overflow:visible;background:none}
+  html.mp-print .mp-vel{position:static;transform:none!important}
+  html.mp-print .mp-blad{position:relative;visibility:visible;break-after:page;page-break-after:always}
+  html.mp-print .mp-blad:last-child{break-after:auto;page-break-after:auto}
+}
+.mp-png{margin:0 0 12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+/* ---------- "Voor wie": the family pyramid (1 · 2 · 4), cards in the style of the family cards (.fam) ---------- */
+.vw-piramide{container-type:inline-size;display:grid;gap:8px;border:0;margin:0;padding:0;min-width:0}
+.vw-rij{display:grid;gap:8px;grid-template-columns:repeat(var(--k,1),minmax(0,1fr))}
+.vw-r1{justify-items:center}
+.vw-r1 .vw-kaart{width:min(100%,26rem)}
+.vw-r2{--k:2}
+.vw-r3{--k:4}
+@container (max-width:600px){.vw-r3{--k:2}}
+@container (max-width:280px){.vw-r2,.vw-r3{--k:1}}
+.vw-ra{margin-top:4px}
+.vw-kaart{position:relative;display:flex;font:inherit;width:100%;flex-direction:column;gap:4px;min-width:0;padding:12px 14px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.vw-kaart:hover{border-color:var(--muted)}
+.vw-kaart:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vw-kaart.vw-aan,.vw-kaart[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.vw-strook{display:flex;gap:1px;width:max(28px,min(100%,calc(var(--n,2) * 9px)));height:4px;margin-bottom:6px}
+.vw-strook i{flex:1;border-radius:1px}
+.vw-strook:empty{display:none}
+.vw-kt{display:grid;gap:2px;min-width:0;padding-right:18px}
+.vw-kt b{font-family:var(--display);font-weight:400;font-size:19px;line-height:1.2;text-wrap:balance}
+.vw-r3 .vw-kt b{font-size:17px}
+.vw-kt > span{text-wrap:pretty}
+.vw-kt > span{font-size:13px;line-height:1.35;color:var(--muted)}
+.vw-ok{position:absolute;top:9px;right:11px;font-size:14px;color:var(--accent);visibility:hidden}
+.vw-kaart[aria-pressed="true"] .vw-ok,.vw-kaart.vw-aan .vw-ok{visibility:visible}
+.vw-ra .vw-kaart{border-style:dashed;background:none}
+.vw-ra .vw-kaart[aria-pressed="true"]{border-style:solid}
+.vw-piramide .bk-zoek{margin-top:6px}
+/* the compact form on the hub: one line, the pyramid as a panel (a sheet from below on a phone) */
+.vw-compact{position:relative}
+.vw-voor{display:inline-flex;flex-wrap:nowrap;align-items:center;gap:10px;max-width:100%;min-height:44px;padding:8px 14px;border:1px solid var(--rule);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;text-align:left}
+.vw-voor:hover{border-color:var(--muted)}
+.vw-voor b{font-family:var(--display);font-weight:400;font-size:18px}
+.vw-voor-l,.vw-voor-x{color:var(--muted);font-size:14px}
+.vw-pijl{color:var(--muted)}
+.vw-voor[aria-expanded="true"] .vw-pijl{transform:rotate(180deg)}
+.vw-paneel{position:absolute;z-index:30;top:calc(100% + 8px);left:0;width:min(46rem,calc(100vw - 32px));max-height:min(80vh,44rem);overflow:auto;padding:14px 16px 16px;border:1px solid var(--rule);border-radius:12px;background:var(--bg);box-shadow:0 10px 30px color-mix(in srgb,var(--ink) 18%,transparent)}
+.vw-paneel-kop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.vw-paneel-kop b{font-family:var(--display);font-weight:400;font-size:20px}
+.vw-dicht{width:44px;height:44px;border:0;background:none;font-size:24px;line-height:1;color:var(--muted);cursor:pointer}
+.vw-paneel .vw-piramide > legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){.vw-paneel{position:fixed;left:0;right:0;top:auto;bottom:0;width:auto;max-height:85vh;border-radius:14px 14px 0 0;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
+.vw-compact .bk-zoek{display:none}
+.vw-compact .vw-piramide:has(.vw-ra [aria-pressed="true"]) .bk-zoek{display:block}
+.bk-groep-f.vw-piramide{grid-template-columns:minmax(0,1fr)} /* one column: the label above (or hidden), the pyramid the full width */
+.bk-groep-f.vw-piramide>*:not(legend){grid-column:1}
+.bk-groep-f.vw-piramide>legend{float:none;padding:0;margin-bottom:2px}
+.vw-voor-t{min-width:0}
+.vw-voor-t b{margin-inline:2px}
+.vw-pijl{flex:none}
+.vw-nm{white-space:nowrap}
+@media (max-width:640px){.vw-voor-x{display:block;font-size:13px}}
+.ps-bestel-noot{color:var(--muted);margin:6px 0 0}
+/* FK1: the family choice in the header; the dropdown holds the pyramid */
+#tpList .vw-kop{width:min(44rem,calc(100vw - 48px));padding:4px 4px 8px}
+#tpList .vw-piramide > legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.mn-fk .vw-piramide > legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.mn-fk .vw-kaart{padding:10px 12px}
+.fk-regel{margin:-6px 0 16px;color:var(--muted)}
+@media (max-width:520px){.tp-lang{display:inline}}
+@media (max-width:400px){.tp-tx small{display:none}}
+.mn-fk-d>summary{display:flex;flex-direction:column;gap:2px;min-height:44px;padding:8px 2px;cursor:pointer;list-style:none}
+.mn-fk-d>summary::-webkit-details-marker{display:none}
+.mn-fk-d>summary small{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mn-fk-d>summary b{font-family:var(--display);font-weight:400;font-size:20px}
+.mn-fk-d>summary b::after{content:" ▾";font-size:13px;color:var(--muted)}
+.mn-fk-d[open]>summary b::after{content:" ▴"}
+.fk-regel{margin-top:-6px}
+/* hub: "Zo werkt het" in one line, and "Begin hier" with the family book large */
+.mk-zo{margin:10px 0 20px;color:var(--muted);font-size:14px}
+.mk-zo span{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+.mk-zo b{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--sunk);color:var(--ink);font-size:12px;font-weight:600;margin-right:2px}
+.mk-groot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);align-items:stretch;max-width:860px}
+.mk-groot .mk-mini{aspect-ratio:auto;min-height:260px}
+.mk-groot .mk-tekst{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:20px 24px}
+.mk-groot h3{font-size:1.5rem}
+.mk-start{align-self:flex-start;margin-top:12px}
+@media (max-width:640px){.mk-groot{grid-template-columns:1fr}.mk-groot .mk-mini{min-height:200px}}
+/* the family in the header: one line, never wider than this; the full name in the title */
+.tp-tx b{max-width:min(var(--tp-max,280px),clamp(110px,22vw,280px))}
+@media (max-width:1020px){.tp-tx b{max-width:100%}.tp,.tp-btn,.tp-tx{min-width:0}} /* phone: the name takes the free width; ellipsis only when it really does not fit */
+.tp-tx b .tp-lang{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* measured: when the menu does not fit next to the family (a long name), the header switches to ☰ sooner (html.kop-smal) */
+html.kop-smal nav.tabs,html.kop-smal #thm{display:none!important}
+html.kop-smal .top .wrap{flex-wrap:nowrap!important;padding-top:0!important;min-height:52px;gap:8px}
+html.kop-smal .tp{order:1;min-width:0;flex:0 1 auto}
+html.kop-smal .searchbtn{order:2;margin-left:auto!important;width:44px;height:44px;justify-content:center;padding:0}
+html.kop-smal .searchbtn .lbl,html.kop-smal .searchbtn kbd{display:none}
+html.kop-smal .mn-btn{display:inline-flex;order:3}
+html.kop-smal .tp-btn{max-width:100%;min-width:0}
+/* "Iemand anders…": the chosen person as a card, the chips "Wie staat er centraal?" and one line with the effect */
+.vw-zoek{display:grid;gap:10px}
+.vw-zoek .vw-field label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.vw-pers{display:grid;gap:8px}
+.vw-pers-k{position:relative;display:grid;gap:2px;padding:10px 44px 10px 14px;border:1px solid var(--accent);border-radius:10px;background:var(--surface)}
+.vw-pers-k b{font-family:var(--display);font-weight:400;font-size:19px}
+.vw-pers-k span{font-size:13px;color:var(--muted)}
+.vw-pers-x{position:absolute;top:2px;right:2px;width:40px;height:40px;border:0;background:none;color:var(--muted);font-size:16px;cursor:pointer;border-radius:8px}
+.vw-pers-x:hover{color:var(--ink)}
+.vw-chips{display:flex;flex-wrap:wrap;gap:6px}
+.vw-chip{min-height:36px}
+.vw-res{margin:0;font-size:13.5px;color:var(--muted)}
+.vw-res i{color:var(--ink)}
+
+/* family focus: the line under the title of a page that shows only one branch */
+.fk-tak{margin:6px 0 14px;color:var(--muted)}
+.fk-tak b{color:var(--ink);font-weight:600}
+/* the family block on the overview: the same pyramid as in the header */
+.ov-fk{margin:0 0 28px}
+.ov-fk .vw-piramide > legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.vw-nu{display:block;font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+
+/* a side of the family on a card: its family names with a small strip in its family colours (as in the family choice) */
+.vtak{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0}
+.vtak-kl{display:inline-flex;gap:1px;flex:none}
+.vtak-kl i{width:4px;height:10px;border-radius:1px;background:var(--c)}
+.v-tel{margin:0 0 10px;color:var(--muted)}
+.v-tel b{color:var(--ink);font-weight:600}
+.mk-voorregel{margin:0 0 6px;font-size:14px;color:var(--muted)}.mk-voorregel b{color:var(--ink);font-weight:600}
+.mk-voorregel [data-fk-wijzig]{position:relative}.mk-voorregel [data-fk-wijzig]::after{content:"";position:absolute;inset:-11px -4px} /* a 44 px target, as in .pw-voor */
+.fk-kop{margin:0 0 6px}
+.fk-kop .mn-g{margin:0;padding:0}
+/* the fixed line at the top of a product wizard: for whom, with a link to the family choice in the header */
+.pw-voor{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.pw-voor b{font-weight:600;color:var(--ink)} /* as .mk-voorregel on the poster and the calendar */
+.pw-voor-vak:empty{display:none}
+/* profile: a living child or sibling without a kw is a small button card (opens a name-only profile) */
+:is(#dBody,.p-body) .mf .mf-kid.mf-desc{padding:0}
+.mf-dbtn{display:block;width:100%;min-height:44px;padding:5px 10px 6px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:2px}
+.mf-dbtn:hover .mf-n{color:var(--accent)}
+.mf-dbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* the colours of the chosen branch, small, next to "Familie" in the header, in the phone menu and in the line "Voor:" */
+.fk-strook{display:inline-flex;vertical-align:middle;width:calc(var(--n,2) * 6px);min-width:12px;height:3px;margin:0 0 1px 6px}
+.pw-voor .fk-strook{margin:0 6px 2px 0}
+.pw-voor [data-fk-wijzig]{position:relative}.pw-voor [data-fk-wijzig]::after{content:"";position:absolute;inset:-11px -4px} /* a 44 px target around the link */
+/* profile: "Stamboom vanaf …" first in the action row; the couple as a quieter second choice */
+.dacts .btn-klein{font-size:13px;color:var(--muted)}
+.dacts .btn-klein:hover{color:var(--ink)}
+/* compare: two profiles side by side; the button only on a wide screen */
+.dacts .cmp-open{display:none}
+@media (min-width:1100px){.dacts .cmp-open{display:inline-flex}}
+.cmp-grid{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:16px;margin:18px 0 10px}
+.cmp-h{border:1px solid var(--rule);border-radius:10px;padding:14px 16px;background:var(--surface)}
+.cmp-h h2{font-size:22px;margin:4px 0 2px}
+.cmp-h h2 .link{font:inherit;color:inherit}
+.cmp-t{width:100%;border-collapse:collapse;font-size:14.5px}
+.cmp-t th,.cmp-t td{padding:8px 10px;border-top:1px solid var(--rule);vertical-align:top;text-align:left}
+.cmp-t tbody th{color:var(--muted);font-weight:500;width:9em}
+.cmp-t td{width:calc(50% - 4.5em)}
+.cmp-tl thead th{color:var(--muted);font-weight:500;font-size:13px}
+.cmp-tl tbody th{width:4.5em;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--gold)}
+.cmp-tl td:last-child{text-align:left}
+.cmp-kies{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.cmp-hits{list-style:none;padding:0;margin:8px 0}
+.cmp-hits li{padding:6px 0;border-top:1px solid var(--rule)}
+.cmp-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+@media (max-width:640px){.cmp-grid{grid-template-columns:1fr}}
+@media print{.cmp-acts,.cmp-kies,#cmpQ{display:none}}
+.cmp-h{position:relative}
+.cmp-x{position:absolute;top:6px;right:6px;width:44px;height:44px;border:0;background:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;border-radius:8px}
+.cmp-x:hover{color:var(--ink);background:var(--sunk)}
+.cmp-t.cmp-n td{width:auto}
+.cmp-tl.cmp-n tbody th{width:4.5em}
+@media (max-width:900px){.cmp-grid{grid-template-columns:repeat(min(var(--n,2),2),minmax(0,1fr))}}
+/* compare: heads in the same grid as the facts and the time axis; the × beside the eyebrow, not over it */
+.cmp-t{table-layout:fixed;min-width:640px}
+.cmp-t col.cmp-c0{width:8em}
+.cmp-t thead th.cmp-hc{padding:0 6px 10px;border-top:0;font-weight:400;vertical-align:bottom}
+.cmp-facts thead td{border-top:0}
+.cmp-hc .cmp-h{height:100%}
+.cmp-h .eyebrow{padding-right:40px}
+.cmp-tl tbody th{width:auto;text-align:left}
+.mp-bron{color:var(--muted);text-align:center;margin:8px 0 0}
+/* sub tabs: a short label on a phone (SUB_SHORT); a screen reader always hears the long one */
+.sb-kort-l{display:none}
+@media (max-width:560px){.sb-n a:has(.sb-kort-l) .sb-lang{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.sb-n .sb-kort-l{display:inline}}
+/* touch screens: 44 px to tap for the remaining small controls (header family button, names and places in lists, the
+   family list beside the fan, archive list, Grond headings). Rows get a little more air; the hit area grows with ::after,
+   so the text and the layout stay the same. */
+@media (pointer:coarse){
+  .tp-btn{min-height:44px}
+  .evlist li{padding-block:11px}
+  .evlist li button,.evlist .t .link,ol.rank li .link,ul.facts li .link,.fact .acts .link:not(.hoofd),.grond-kop .hoofd,.arch-list li>a:first-child{position:relative}
+  .evlist li button::after,.evlist .t .link::after,ol.rank li .link::after,ul.facts li .link::after,.fact .acts .link:not(.hoofd)::after,.grond-kop .hoofd::after,.arch-list li>a:first-child::after{content:"";position:absolute;inset:-11px -2px}
+  ol.rank li,ul.facts li{margin:0;padding-block:11px}
+  .fact .acts{row-gap:16px}
+  .arch-list li{padding-block:12px}
+  .fk-fam .fk-it,.fk-col .fk-it,.seg button{min-height:44px}
+  .pn-crumbs ol{min-height:44px;align-items:center}
+  .pn-crumbs .link{position:relative}
+  .pn-crumbs .link::after{content:"";position:absolute;inset:-12px -3px}
+}
+/* MK book: on a phone the controls under the preview wrap, so the preview never gets wider than the screen */
+@media (max-width:1023px){.pc .bk-blad{flex-wrap:wrap;justify-content:center;row-gap:6px}.pc .bk-voorbeeld,.pc .bk-voorbeeld #bkFrame{max-width:100%;min-width:0}.pc .bk-hfst-kies select{max-width:100%}}
+/* the action bar of the wizard in one row: next to Volgende the button just says "Maak pdf" (the long label in its aria-label) */
+.pw .pc-acties:has(.pw-volgende) .bk-lang{display:none}
+/* profile: the actions in three groups (look · explore · centre), every button with an 18 px line icon */
+.dacts{gap:8px 16px}
+.dacts-g{display:flex;flex-wrap:wrap;gap:6px}
+.dacts .btn{gap:6px}
+.dacts .dact-ico{width:18px;height:18px;flex:none}
+/* ---------- several profiles side by side (#profielen) ---------- */
+.pps{max-width:none}
+.pp-bar{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:0 0 14px}
+.pp-kop{margin:0;font-family:var(--body);font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}
+.pp-seg{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+.pp-seg button{min-height:44px;padding:0 16px;border:0;background:none;color:var(--ink);font:inherit;font-size:13.5px;cursor:pointer}
+.pp-seg button+button{border-left:1px solid var(--rule)}
+.pp-seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.pp-seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.pp-cols{display:grid;grid-template-columns:repeat(var(--n,1),minmax(0,1fr));gap:20px;align-items:start}
+.pps .pp-col{max-width:none;margin:0;min-width:0;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:0 18px 24px;--mf-bg:var(--surface)}
+.pps .pp-col>.p-top{position:sticky;top:var(--vast,0px);z-index:6;background:var(--surface);padding-inline:0}
+.pps .pp-col>.p-nav{position:sticky;top:calc(var(--vast,0px) + 56px);z-index:5;margin:0;padding:0 0 10px;background:var(--surface);border-bottom:1px solid var(--rule)}
+.pps .pp-col>.p-head{padding:0 0 12px;border-bottom:0}
+.pps .pp-col h2.p-name{font-size:clamp(24px,2.2vw,32px);line-height:1.1;margin:0;font-weight:400}
+.pps .pp-col .mf{--mf-bg:var(--surface)}
+.pps .pp-col .pn-top{background:var(--surface)}
+/* narrow: the open profiles as tabs */
+.pp-tabs{display:flex;gap:4px;overflow-x:auto;margin:0 0 10px;border-bottom:1px solid var(--rule)}
+.pp-tab{display:inline-flex;align-items:stretch;flex:none;border:1px solid var(--rule);border-bottom:0;border-radius:8px 8px 0 0;background:var(--sunk)}
+.pp-tab.on{background:var(--surface);border-color:var(--accent)}
+.pp-tab [role=tab]{min-height:44px;padding:0 4px 0 12px;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.pp-tab.on [role=tab]{color:var(--accent)}
+.pp-tx{display:inline-grid;place-items:center;width:44px;min-height:44px;padding:0;border:0;background:none;color:var(--muted);cursor:pointer}
+.pp-tx .pn-ico{width:16px;height:16px}
+.pp-tab [role=tab]:focus-visible,.pp-tx:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.pp-narrow .pp-col{padding:0 14px 20px}
+@media (max-width:560px){
+  .pps .pp-col>.p-nav{position:sticky;top:auto;bottom:0;z-index:5;margin:0 -14px;padding:0 4px env(safe-area-inset-bottom,0px);border-top:1px solid var(--rule);border-bottom:0}
+  .pps .pp-col{border:0;border-radius:0;padding:0 14px 0;margin-inline:-16px}
+}
+/* compare on a narrow screen: the rows stacked, every cell with the name of its person */
+@media (max-width:1099px){
+  .pp-cmp table,.pp-cmp tbody,.pp-cmp tr,.pp-cmp th,.pp-cmp td{display:block;width:auto}
+  .pp-cmp thead,.pp-cmp colgroup{display:none}
+  .pp-cmp tr{padding:8px 0;border-bottom:1px solid var(--rule)}
+  .pp-cmp tbody th{font-size:12px;color:var(--muted);text-transform:none}
+  .pp-cmp td[data-l]::before{content:attr(data-l);display:block;font-size:12px;color:var(--muted)}
+}
+/* in a column the row of buttons is compact, as on a phone: icon and word */
+.pps .pp-col .pn-row{grid-template-columns:repeat(6,minmax(0,1fr));border:0;border-radius:0;background:none}
+.pps .pp-col .pn-b{flex-direction:column;justify-content:center;gap:3px;min-height:52px;padding:6px 2px;border-left:0;text-align:center}
+.pps .pp-col .pn-t{align-items:center}
+.pps .pp-col .pn-w{font-family:inherit;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink)}
+.pps .pp-col .pn-b:disabled .pn-w{color:var(--faint)}
+.pps .pp-col .pn-n{display:block;max-width:100%;font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pps .pp-col .pn-prev .pn-t,.pps .pp-col .pn-next .pn-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pps .pp-col .pn-row:not(.pn-few){grid-template-columns:36px repeat(4,minmax(0,1fr)) 36px}
+.pps .pp-col .pn-row.pn-few{display:flex}
+.pps .pp-col{container-type:inline-size}
+.pps .pp-col .pn-dots{display:none} /* in a column the generation as words only; the arrows of the row step through it */
+/* a narrow column (four side by side): the icon and the first name, without the word */
+@container (max-width:299px){.pps .pp-col .pn-w{display:none}.pps .pp-col .pn-b{min-height:48px}}
+/* Maken as a mega menu: columns per category, one link per product with its hint */
+.mn-drop.mn-mega{right:auto;width:min(1040px,calc(100vw - 48px));max-height:calc(100vh - var(--kop-h,57px) - 16px);overflow:auto;padding:14px 16px 12px} /* centred on the screen by dropOpen (left in px) */
+.mm-top{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.mm-kols{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px 18px}
+.mm-kop{margin:0 0 4px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mm-kop small{display:block;font-family:var(--body);font-size:12px;letter-spacing:0;text-transform:none;color:var(--faint);margin-top:2px}
+.mm-kol ul{list-style:none;margin:0;padding:0}
+.mm-it{display:grid;gap:1px;padding:6px 8px;margin:0 -8px;border-radius:6px;color:var(--ink);text-decoration:none;min-height:40px}
+.mm-it b{font-weight:500;font-size:14px}
+.mm-it small{font-size:12px;color:var(--muted)}
+a.mm-it:hover,a.mm-it:focus-visible{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+a.mm-it:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.mm-later .mm-it b,.mm-later .mn-it b{color:var(--muted)}
+.mm-later .tag{font-size:10.5px}
+.mm-voet{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
+.mm-alles{font-weight:500;color:var(--accent)}
+.mm-voet small{color:var(--muted);font-size:12px}
+.mm-groep>summary{display:flex;align-items:center;gap:11px;min-height:44px;padding:10px 10px 10px 13px;cursor:pointer;font-size:16px;list-style:none;color:var(--ink)}
+.mm-groep>summary::-webkit-details-marker{display:none}
+.mm-groep>summary .nico{flex:none;width:20px;height:20px;color:var(--muted)}
+.mm-chev{margin-left:auto;flex:none;width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.mm-groep[open] .mm-chev{transform:rotate(90deg)}
+@media (prefers-reduced-motion:reduce){.mm-chev{transition:none}}
+.mn-panel .mn-it.mm-alles{padding-left:44px}
+.mm-groep .mn-it{display:grid;gap:1px}
+.mm-groep .mn-it small{font-size:12px;color:var(--muted)}
+.mm-groep ul{list-style:none;margin:0;padding:0 0 6px 31px}
+.mm-later .mm-it{display:block}
+.mm-later .mm-it small{display:block}
+.mm-later .tag{display:inline-block;margin-left:4px;vertical-align:1px}
+/* who does not fit as a column: a row of tabs above the columns ("+1: Herman") */
+.pp-more{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px}
+.pp-more-n{font-size:13px;font-weight:600;color:var(--muted)}
+.pp-more .btn{min-height:44px;padding:0 14px;font-size:13.5px}
+.pp-kop:focus{outline:none}
+.pp-kop:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* the bar of the profile: loose icons while the small name fits, otherwise "⋯" with a small menu */
+.pn-inl{display:contents}
+.pn-inl>.pn-off{display:none}
+/* while reading aloud the controls (pause, stop) stay loose in the bar, also after scrolling */
+.pn-inl>.vl-ico.pn-off:has(.vl-stop:not([hidden])){display:inline-flex}
+.pn-more-w{position:relative;display:none}
+.pn-packed .pn-more-w{display:inline-block}
+.pn-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;min-width:220px;display:flex;flex-direction:column;padding:6px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow)}
+.pn-menu[hidden]{display:none}
+.pn-menu [role^=menuitem]{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border:0;background:none;border-radius:6px;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer;white-space:nowrap}
+.pn-menu [role^=menuitem][hidden]{display:none}
+.pn-menu [role^=menuitem]:hover,.pn-menu [role^=menuitem]:focus-visible{background:var(--sunk);outline:none}
+.pn-menu [role^=menuitem]:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.pn-menu .pn-ico{width:18px;height:18px;flex:none;color:var(--accent)}
+.pn-more-b[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+/* the change between loose icons and "⋯": a short fade (none with reduced motion) */
+@keyframes pnFade{from{opacity:0;transform:translateY(-2px)}}
+.pn-inl>*,.pn-more-w{animation:pnFade .15s ease-out}
+@media (prefers-reduced-motion:reduce){.pn-inl>*,.pn-more-w{animation:none}}
+.pn-menu [role^=menuitem].pn-mi-off{color:var(--muted);cursor:default}
+.pn-menu [role^=menuitem].pn-mi-off .pn-ico{color:var(--muted)}
+/* the mockup next to the flat preview ("Zo ziet het eruit") */
+.mp-zicht{justify-content:center;margin:0 0 10px}
+.mp-mock{width:100%;max-width:100%;margin:0 auto}
+.mp-mock > svg{display:block;width:100%;height:auto;max-height:calc(var(--pc-h, 80vh) - 60px)}
+@media print{html.mp-print .mp-zicht,html.mp-print .mp-mock{display:none!important}html.mp-print .mp-view .mp-kader[hidden]{display:block!important}}
+/* bewaren: the people you keep */
+.bw-lijst{list-style:none;margin:16px 0;padding:0;max-width:640px}
+.bw-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.bw-naam{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bw-naam small{color:var(--muted)}
+.bw-weg{flex:none;width:36px;height:36px;border:1px solid var(--rule);border-radius:50%;background:var(--surface);color:var(--muted);font-size:18px;cursor:pointer}
+.bw-weg:hover{color:var(--ink);border-color:var(--muted)}
+.bw-knoppen{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.bw-zeker{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bw-leeg{color:var(--muted);margin:24px 0}
+/* Bewaren: an empty star, filled (gold) when kept */
+.pn-keep[aria-pressed="true"]{color:var(--gold)}
+.pn-keep[aria-pressed="true"] .pn-ico path,.pn-menu [aria-checked="true"] .pn-ico path{fill:currentColor}
+.pn-menu [aria-checked="true"] .pn-ico{color:var(--gold)}
+/* the star next to the name (and next to the small name in the bar once it shows) */
+.pn-nmrow{display:flex;align-items:center;gap:4px;min-width:0}
+.pn-nmrow>.p-name{min-width:0}
+.pn-star{flex:none;border-color:transparent;background:none;color:var(--muted)}
+.pn-star:hover:not(:disabled){color:var(--gold);border-color:transparent}
+.pn-star[aria-pressed="true"]{color:var(--gold)}
+.pn-star[aria-pressed="true"] .pn-ico path{fill:currentColor}
+.pn-top:not(.pn-named) .pn-tstar{display:none}
+.pn-top .pn-tname{flex:0 1 auto}
+/* leaving (✕, "Terug naar het paneel") is not an action on the person: apart, after a thin line, without a frame */
+.pn-win>.pn-leave{position:relative;margin-left:14px;border-color:transparent;background:none;box-shadow:none}
+.pn-win>.pn-leave::before{content:"";position:absolute;left:-8px;top:10px;bottom:10px;border-left:1px solid var(--rule)}
+.pn-win>.pn-leave:hover,.pn-win>.pn-leave:focus-visible{background:var(--sunk);border-color:transparent;color:var(--ink)}
+/* the actions under the small tree: a quiet surface of its own; the groups as rows with a thin line between them, side by side
+   (with a thin upright line) when the surface is wide enough for all of them on one line */
+:is(#dBody,.p-body) .dacts{display:block;margin:8px 0;padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--surface) 70%,var(--sunk));container-type:inline-size}
+.dacts-in{display:flex;flex-direction:column}
+.dacts-in>.dacts-g{padding:10px 0;align-items:center}
+.dacts-in>.dacts-g:first-child{padding-top:0}
+.dacts-in>.dacts-g:last-child{padding-bottom:0}
+.dacts-in>.dacts-g+.dacts-g{border-top:1px solid var(--rule)}
+@container (min-width:860px){
+  .dacts-in{flex-direction:row;flex-wrap:wrap}
+  .dacts-in>.dacts-g{padding:0 14px}
+  .dacts-in>.dacts-g:first-child{padding-left:0}
+  .dacts-in>.dacts-g+.dacts-g{border-top:0;border-left:1px solid var(--rule)}
+}
+
+/* ---- keep toast ---- */
+/* the short message after the star, above the profile's bottom bar on a phone */
+.keep-toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom, 0px) + 84px);transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:14px;
+  max-width:calc(100% - 32px);padding:10px 16px;border-radius:8px;background:var(--ink);color:var(--bg);font:500 14px/1.3 var(--body);box-shadow:var(--shadow);
+  transition:opacity .25s ease}
+.keep-toast a{color:inherit;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.keep-toast a:focus-visible{outline:2px solid var(--bg);outline-offset:2px;border-radius:2px}
+.keep-toast.keep-toast-weg{opacity:0}
+@media (min-width:900px){.keep-toast{bottom:calc(env(safe-area-inset-bottom, 0px) + 28px)}}
+@media (prefers-reduced-motion:reduce){.keep-toast{transition:none}}
+/* the star in the "Bewaard" badge only where the badge stands next to a heading (the phone menu), not on the top bar */
+.mn-badge .mn-badge-ster{display:none}
+.mn-panel h6 .mn-badge .mn-badge-ster{display:inline}
+
+/* ---- compare on a phone ---- */
+/* the stacked rows use the whole width: no minimum width (that cut long lines off), long words may break */
+@media (max-width:1099px){
+  .pp-cmp .cmp-t{min-width:0;table-layout:auto}
+  .pp-cmp .cmp-t td{overflow-wrap:anywhere}
+}
+
+/* ---- widen note ---- */
+/* the line above a page that was opened in a wider focus than the link asked for */
+.widen-note{margin:0 0 14px;padding:8px 12px;border-left:3px solid var(--accent);background:var(--sunk);color:var(--ink);font-size:14px;line-height:1.45}
