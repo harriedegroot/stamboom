@@ -113,7 +113,7 @@ const AKTETEKST = {
    "a-171"
   ],
   "tekst": "In het jaar een duizend acht honderd en zeventien den Vijfentwintigsten der maand Mei […]\nJouke Johannes Ackerman, oud zes en dertig jaren geboren in Rohel binnen deze Grietenij, meerderjarige Zoon van Johannes Jans Ackerman huisman aldaar en van Saakjen Douwes overleeden, Boereknegt […]\nEn\nNiesje Hendriks Wind, oud vier en twintig jaren geboren te Sintjohannisga mede binnen deze Grietenij, meerderjarige dochter van Hendrik Jans Wind veenbaas en van Lysbeth Jans Michel Echtelieden aldaar, zonder beroep",
-  "uitleg": "De huwelijksakte van 25 mei 1817. De boerenknecht Jouke Akkerman uit Rohel trouwt met Niesje Wind, dochter van een veenbaas uit Sintjohannesga. De akte noemt de ouders van allebei; Jouke en Niesje staan twee keer in de stamboom van Alies, aan de kant van Franke én aan de kant van Aaltje.",
+  "uitleg": "De huwelijksakte van 25 mei 1817. De boerenknecht Jouke Akkerman uit Rohel trouwt met Niesje Wind, dochter van een veenbaas uit Sintjohannesga. De akte noemt de ouders van allebei; Jouke en Niesje staan twee keer in de stamboom, aan de kant van Franke én aan de kant van Aaltje.",
   "gelezen": "scan",
   "bron": "https://allefriezen.nl/zoeken/deeds/a6000c46-94ac-7a2b-54bc-5277ca169eb1",
   "st": "A"
@@ -792,7 +792,7 @@ const AKTETEKST = {
   "kws": [
    "451"
   ],
-  "tekst": "Memorie van aangeving van zoodanige goederen, als nagelaten bij den overledene Sijbren Murks […]\nOp heden den 13 Junij 1808 geeft aan Sjoerd Gerbens woonagtig te Oudega(?) in qualiteit van Bewindhebbende en door lastgeving van de erfgenamen,\nDat op den 18 Maart 1808 onder den dorpe […]ega is komen te overlijden Sijbren Murks\nnalatende ex Testamento tot erfgenamen Sjoerd, Klaske en Antje Murks ieder voor een vierde gedeelte, Zijnde volle Broeder & Zusters van den overledene,\nen de resteerende een vierde gedeelte aan deszelfs Nicht Wijtske Rients Dogter van wijlen Hijlkjen Murks.\nEn het vrugtgebruik te Lijftocht gelegateerd aan deszelfs huisvrouw Lijkeltje Rinnerts(?)",
+  "tekst": "Memorie van aangeving van zoodanige goederen, als nagelaten bij den overledene Sijbren Murks […]\nOp heden den 13 Junij 1808 geeft aan Sjoerd Gerbens woonagtig te Oudega in qualitait van Bewindhebbende en door lastgeving van de erfgenamen,\nDat op den 18 Maart 1808 onder den dorpe Idzega is komen te overlijden Sijbren Murks\nnalatende ex Testamento tot erfgenamen Sjoerd, Klaske en Antje Murks ieder voor een vierde gedeelte, Zijnde volle Broeder & Zusters van den overledene,\nen de resteerende een vierde gedeelte aan deszelfs Nicht Wijtske Rients Dogter van wijlen Hijlkjen Murks.\nEn het vrugtgebruik te Lijftocht gelegateerd aan deszelfs huisvrouw Lijkeltje Ruurds",
   "uitleg": "Sijbren Murks, een broer van Hylkjen Murks, stierf in 1808 zonder kinderen. Zijn erfenis ging naar zijn broer en zussen; het deel van de al overleden Hylkjen ging naar haar dochter Wijtske Rients. Zo bevestigt deze memorie dat Hylkjen een zus van Sijbren was en Wijtske haar dochter. Zijn vrouw kreeg het vruchtgebruik.",
   "gelezen": "scan+index",
   "bron": "https://www.openarchieven.nl/frl:ec4c4ab8-baa7-498c-9409-dfd816a17fcc",

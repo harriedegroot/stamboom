@@ -65,7 +65,7 @@ const ZOEKLIJST = [
   "bron": "Doopboek Giethoorn (hervormd), 29-04-1742: Johannes, vader Jan Paulus Akkerman, moeder Willempje Roelofs, getuige Jantje Paulus Akkerman",
   "link": "https://collectieoverijssel.nl/zoekhulp/doop-trouw-en-begraafboeken/",
   "online": "vrij online",
-  "hoe": "Zoek in de doopboeken van Giethoorn de doop van 29 april 1742. Staan de vader Jan Paulus, de moeder Willempje Roelofs en de getuige Jantje Paulus Akkerman erbij?",
+  "hoe": "Zoek in de doopboeken van Giethoorn de doop van 29 april 1742. Staan de vader Jan Paulus, de moeder Willempje Roelofs en de getuige Jantje Paulus Akkerman erbij? De inventaris op archieven.nl werkt alleen in een gewone browser (met JavaScript).",
   "pri": 1
  },
  {
@@ -276,11 +276,11 @@ const ZOEKLIJST = [
    "a-128"
   ],
   "vraag": "Waar kwam Tjeerd Wybes vandaan, de oudste Hoekstra in de stamboom?",
-  "beslist": "Brengt de naamlijn Hoekstra een generatie verder, en laat zien waar de naam Hoekstra in 1811 werd vastgelegd.",
+  "beslist": "Brengt de naamlijn Hoekstra een generatie verder.",
   "archief": "FamilySearch (scans van Tresoar); AlleFriezen",
-  "bron": "DTB Schoterland en Haskerland ca. 1735–1740 (doop van Tjeerd, vader Wybe) en de trouw van 1764; register van naamsaanneming Schoterland 1811",
+  "bron": "DTB Schoterland en Haskerland ca. 1735–1740 (doop van Tjeerd, vader Wybe) en de trouw van 1764",
   "online": "online met inlog",
-  "hoe": "Zoek een doop van Tjeerd met vader Wybe rond 1735–1740. Kijk daarna in het register van naamsaanneming van 1811 wie de naam Hoekstra aannam.",
+  "hoe": "Zoek een doop van Tjeerd met vader Wybe rond 1735–1740. In het register van naamsaanneming van 1811 staat alleen zijn zoon Jan Tjeerds (Oudeschoot, 10 december 1811), niet Tjeerd zelf.",
   "pri": 2
  },
  {
@@ -461,12 +461,12 @@ const ZOEKLIJST = [
    "515"
   ],
   "vraag": "Wie waren de ouders van Hylcke Jans (Oudehaske), en die van Beint Hanses en Auckjen Beints uit Haskerhorne?",
-  "beslist": "De ouders van Aefke Beits zijn gevonden: Beint Hanses, huisman in Haskerhorne, en Auckjen Beints (inventaris van 13 juni 1677). Nu nog de vorige generatie, en de vader van Hylcke Jans (een Jan in Oudehaske).",
+  "beslist": "De ouders van Aefke Beits zijn gevonden: Beint Hanses, huisman in Haskerhorne, en Auckjen Beints (inventaris van 13 juni 1677). Nu nog de vorige generatie, en de vader van Hylcke Jans (misschien Jan Jansen in Haskerhorne, overleden vóór december 1695).",
   "archief": "Tresoar, via AlleFriezen",
-  "bron": "Nedergerecht Haskerland: het weesboek 1671–1678 (inv. 041) en het inventarisatieboek 1673–1681 (inv. 050) zijn via hun registers bekeken. Nog niet gezien: de weesboeken 1643–1667 (inv. 035–040), de sententieboeken 1651–1658 (inv. 026) en de proclamatieboeken 1661–1689 (inv. 053, 054), alle zonder index.",
+  "bron": "Nedergerecht Haskerland: het weesboek 1671–1678 (inv. 041) en het inventarisatieboek 1673–1681 (inv. 050) zijn via hun registers bekeken. In het weesboek inv. 035 (fol. 74–76, december 1695) staan de erfgenamen van Jan Jansen en Hijlck Hijlckes in Haskerhorne, met twee zoons Hijlcke Jans. Nog niet gezien: de rekeningen van hun voogden, de weesboeken inv. 036 en 038–040, de sententieboeken 1651–1658 (inv. 026) en de proclamatieboeken 1661–1689 (inv. 053, 054), alle zonder index.",
   "link": "https://www.allefriezen.nl/",
   "online": "vrij online",
-  "hoe": "Zoek in de oudere weesboeken een curatele of boedel met Beint Hanses of Auckjen Beints (hun huwelijk was rond 1655–1660), en een boedel van een Jan in Oudehaske met een zoon Hylcke. Hylke Jans Offringe (getrouwd 1654) is het niet: hij overleed vóór 1658.",
+  "hoe": "Zoek in de oudere weesboeken een curatele of boedel met Beint Hanses of Auckjen Beints (hun huwelijk was rond 1655–1660), en de rekeningen van de voogden over de jongste kinderen van Jan Jansen en Hijlck Hijlckes (ca. 1696–1705): welke van de twee zoons Hijlcke Jans trouwde met Aefke Beits? Hylke Jans Offringe (getrouwd 1654) is het niet: hij overleed vóór 1658.",
   "pri": 3
  },
  {
@@ -648,26 +648,12 @@ const ZOEKLIJST = [
  {
   "boom": "a",
   "kws": [
-   "a-10"
-  ],
-  "vraag": "Welke plek in Schoterland is het 'Gaast' waar Franke Akkerman in 1894 werd geboren?",
-  "beslist": "Waar de familie Akkerman toen woonde: niet Gaast aan het IJsselmeer, maar een plek in Schoterland (misschien Rotstergaast; dat is een hypothese).",
-  "archief": "Tresoar, via AlleFriezen",
-  "bron": "Geboorteakte Schoterland 1894 (scan) en het bevolkingsregister van Schoterland 1890–1900",
-  "link": "https://www.allefriezen.nl/",
-  "online": "vrij online",
-  "hoe": "Lees op de scan van de geboorteakte de wijk of het dorp, en zoek het gezin daarna in het bevolkingsregister.",
-  "pri": 3
- },
- {
-  "boom": "a",
-  "kws": [
    "a-5"
   ],
   "vraag": "Wat staat er in de geboorteakte van Jantje Akkerman (Delfstrahuizen, 11 januari 1921)?",
   "beslist": "Bevestigt haar geboortedatum en geboorteplaats. De datum komt nu uit het bevolkingsregister van Schoterland; een geboorteplaats staat daar niet bij.",
   "archief": "Tresoar (Leeuwarden)",
-  "bron": "Burgerlijke stand Schoterland (toegang 30-31), geboorten 1921: Delfstrahuizen hoorde toen bij Schoterland. Openbaar, maar nog niet in de online index",
+  "bron": "Burgerlijke stand Schoterland (toegang 30-31), geboorten 1921: Delfstrahuizen hoorde toen bij Schoterland. Openbaar, maar niet online: bij AlleFriezen loopt het geboorteregister van Schoterland tot en met 1919.",
   "online": "scan op bestelling",
   "hoe": "Vraag bij Tresoar een scan of afschrift van de geboorteakte aan.",
   "pri": 3
@@ -677,12 +663,41 @@ const ZOEKLIJST = [
   "kws": [
    "a-114"
   ],
-  "vraag": "Wanneer werd Lucas Symens Klijnstra (ca. 1774) gedoopt, en wanneer trouwde hij met Aaltje Harmens?",
-  "beslist": "Brengt deze lijn uit Sintjohannesga een generatie verder.",
+  "vraag": "Wanneer werd Lucas Symens Klijnstra (ca. 1774) gedoopt?",
+  "beslist": "Brengt deze lijn uit Sintjohannesga een generatie verder. Zijn trouw met Aaltje Harmens Berger is gevonden: 12 juni 1796 in Sintjohannesga.",
   "archief": "FamilySearch (scans van Tresoar)",
-  "bron": "DTB Schoterland, hervormd Sintjohannesga: doop ca. 1774 en trouw ca. 1795–1797",
+  "bron": "DTB Schoterland, hervormd Sintjohannesga: doop ca. 1774",
   "online": "online met inlog",
-  "hoe": "Zoek een doop van Lucas met vader Symen rond 1774, en de trouw met Aaltje Harmens rond 1796.",
+  "hoe": "Zoek een doop van Lucas met vader Symen (Simen, Siemon) rond 1774. In het trouwboek van 1796 heet hij Lukas Simens.",
+  "pri": 3
+ },
+ {
+  "boom": "a",
+  "kws": [
+   "a-231",
+   "a-230"
+  ],
+  "vraag": "Kwam Klaasje Harmens Zwier uit Zuidveen bij Steenwijk, als dochter van Harm Jans Zwier en Aeltje Lamberts?",
+  "beslist": "Een genealogie zegt dat zij in 1769 in Steenwijk met Harmen Beerents Berger trouwde en in 1748 met haar ouders in de Westerkluft van Zuidveen woonde. Geen Friese akte noemt haar herkomst. Op de scans bevestigd, brengt dat haar lijn een generatie verder, naar Overijssel.",
+  "archief": "Collectie Overijssel (Zwolle); FamilySearch",
+  "bron": "Trouwboek Steenwijk 1769 (Harmen Berends Berger × Klaasje Harmens Zwier, 10-02-1769); doopboek Steenwijk 1770 (Berend, 18-11-1770); ondertrouw Harm Jans Zwier × Aeltje Lamberts, Steenwijk 08-03-1744; volkstelling Kwartier Vollenhove 1748, nr. 2653",
+  "link": "https://www.windgenealogie.org/vo/vo-000320.htm",
+  "online": "vrij online",
+  "hoe": "Bekijk de trouw van 1769 en de doop van Berend (1770) op de scans van de kerkboeken van Steenwijk (Collectie Overijssel, via archieven.nl, of FamilySearch). Staat er waar Klaasje vandaan kwam? Zoek daarna haar doop rond 1745 met vader Harm (Hermen) Jans.",
+  "pri": 3
+ },
+ {
+  "boom": "a",
+  "kws": [
+   "a-183"
+  ],
+  "vraag": "Was Janke Geerts van Roeden (ca. 1745) een dochter van Geert Sammes uit Tjalleberd?",
+  "beslist": "Twee online stambomen zeggen het, zonder akte. Een doop of een boedel die Janke als kind van Geert Sammes noemt, brengt deze lijn een generatie verder, en laat zien of Wytske Ages ook haar moeder was.",
+  "archief": "Tresoar, via AlleFriezen; FamilySearch (doopboeken)",
+  "bron": "Doopboeken Tjalleberd 1740–1750; nedergerecht Aengwirden: recesboeken (inv. 008 en 009), proclamatie- en hypotheekboeken (een boedelverkoop na de dood van Geert Sammes)",
+  "link": "https://www.allefriezen.nl/",
+  "online": "online met inlog",
+  "hoe": "Al bekeken, zonder resultaat: het weesboek van Aengwirden 1746–1796 (inv. 018, opnamen 1–3, 30 en 55–80, de koppen van de akten), de memorie van Wiebe Geerts van Roeden (1827) en de online index met vele schrijfwijzen van Geert Sammes en Wytske Ages. Nog niet bekeken: het recesboek 1754–1762 (inv. 008) en de doopboeken van Tjalleberd, die alleen als scan bij FamilySearch staan.",
   "pri": 3
  },
  {
@@ -715,6 +730,20 @@ const ZOEKLIJST = [
   "link": "https://www.genealogiewerkbalk.nl/fs/?p=Oldeholtpa&j=&t=&q=dopen#results",
   "online": "online met inlog",
   "hoe": "Kijk op de scan van het RK-huwelijk van 4 mei 1754 of er een dispensatie staat (die zou zeggen of Eyse en Catharina neef en nicht waren), en zoek in het Gerecht Weststellingwerf en de RK-boeken van Oldeholtpade vóór 1733 naar Roelof Eyses (Eisses, Eysen) en Cornelisjen (Kneelsjen) Coops. Let op: er was ook een jongere Roelof Eyses in Steggerda (getrouwd rond 1752 met Aaltje Harmens, hervormd). Roelof uit Ter Idzard overleed vermoedelijk in januari 1751 (register van overledenen Oldeholtpade).",
+  "pri": 3
+ },
+ {
+  "boom": "h",
+  "kws": [
+   "675"
+  ],
+  "vraag": "Was de wees Cneelisjen Coops uit Blesdijke (1716, dochter van wijlen Coop Jans en Trijntjen Jans) dezelfde als Cornelisjen Coops, de vrouw van Roelof Eyses? En is zij de Cornelisjen die op 17 maart 1705 in Oldeholtpade werd gedoopt, dochter van Coop Jansen?",
+  "beslist": "Dan zijn de ouders van Cornelisjen Coops bekend. Nu is het een hypothese (D): de wees van 1716 was 13 of 14 jaar, het meisje van 1705 pas 11, en een Coop Jans stierf pas in 1754 in Oldeholtpade. Waren het twee meisjes, dan is niet bekend welke met Roelof trouwde.",
+  "archief": "FamilySearch (scans RK Oldeholtpade); Tresoar, via AlleFriezen",
+  "bron": "RK-doopboek Oldeholtpade en Wolvega, 17-03-1705 (Cornelisjen) en 13-06-1710 (Hilligen), vader Coop Jansen (Tresoar, toegang 28, inv. 780); RK-register van overledenen Oldeholtpade; autorisatieboek Weststellingwerf 1712–1732 (toegang 13-42, inv. 054)",
+  "link": "https://www.openarchieven.nl/frl:74f03ec0-7b6f-4255-a787-1f9c22d561b7",
+  "online": "online met inlog",
+  "hoe": "Lees op de scan van de doop van 1705 of er een moeder of getuigen staan. Zoek in het register van overledenen van Oldeholtpade een Coop Jans tussen 1705 en 1716, en in het autorisatieboek van Weststellingwerf een curatele over Hilligen Coops. Kijk ook in de akte over Jantjen Roelofs (1757) of er verwanten van moederskant genoemd worden.",
   "pri": 3
  },
  {
