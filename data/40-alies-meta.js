@@ -7,7 +7,7 @@
    ===================================================================== */
 const ALIES = {
   root: "Alies", rootFull: "Alies Hoekstra", brand: "Hoekstra · Bakker", parents: "Franke en Aaltje",
-  sibs: ["Hans", "Jikke", "Anja"], kids: ["Marit", "Tijmen", "Jorn"],
+  sibs: ["Hans · d6", "Jikke · d7", "Anja · d8"], sibsSrc: [["Overlijdensadvertentie van grootmoeder Jitske van der Molen · Leeuwarder Courant 31-08-1985", "https://resolver.kb.nl/resolve?urn=ddd:010565824:mpeg21:a0250"]], kids: ["Marit · d1", "Tijmen · d2", "Jorn · d3"],
   LINES: {
     8: { name: "Hoekstra", sub: "Bosma · Krekt · Meibos", region: "Mildam, Katlijk, Oudeschoot", stem: [8, 16, 32, 64, 128],
       intro: "Boeren, arbeiders en een herbergier in en rond Mildam, Katlijk en Oudeschoot, bij Heerenveen. Wiebe Hanzes Hoekstra hield in Mildam een café, dat zijn weduwe Tjitske Bosma na zijn dood voortzette. Zijn vader Hans was in 1817 kerkvoogd van Katlijk. Aan moederskant waren de Douwenga's in de Knipe doopsgezind." },
@@ -22,29 +22,29 @@ const ALIES = {
     13: { name: "De Vries", sub: "Engelsma · Van der End", region: "Broek, Ouwster-Nijega, Terkaple", stem: [13, 26, 52, 104, 208],
       intro: "Boeren en veehouders in Broek en Ouwster-Nijega, in de natte hooi- en rietlanden van Doniawerstal. Durk Sjoerds de Vries was rond 1832 een grote grondbezitter en stierf als rentenier. Via de doopsgezinde familie Engelsma uit Akmarijp kwam de familie in Terkaple terecht. Antje de Vries trouwde in 1903 haar neef Kornelis Bakker; haar moeder was zelf een Bakker." },
     14: { name: "Van der Molen", sub: "Maat · Klijnstra · Akkerman", region: "Sintjohannesga, Rohel, Rotsterhaule", stem: [14, 28, 56, 112, 224],
-      intro: "De Van der Molens kwamen uit Rottum en De Knipe en woonden vanaf 1807 in Sintjohannesga, Rohel en Rotsterhaule, midden in het laagveen van Schoterland. Veel voorouders in deze lijn leefden van het veen: veenbazen, turfmakers en arbeiders. Via Saakjen Akkerman sluit deze lijn aan op de familie Akkerman." },
+      intro: "De Van der Molens kwamen uit Rottum en De Knipe en woonden vanaf 1807 in Sintjohannesga, Rohel en Rotsterhaule, midden in het laagveen van Schoterland. Veel voorouders in deze lijn leefden van het veen: veenbazen, turfmakers en arbeiders. Via Saakjen Akkerman sluit deze lijn aan op de familie Akkerman. Via Aaltje Harmens Berger, de vrouw van Lucas Symens Klijnstra, reikt ze tot de familie Berger, die omstreeks 1772 uit Giethoorn in Overijssel naar Oudehaske kwam." },
     15: { name: "Gaastra", sub: "Brandsma · Veenstra · Van der Veer", region: "Oldeboorn, Akkrum, Beetsterzwaag", stem: [15, 30, 60, 120],
       intro: "De Gaastra's woonden in Oldeboorn aan de Boarn, met aangetrouwde families uit Akkrum, Beetsterzwaag en Haskerdijken. Arbeiders, boeren, een visser en een kuiper; verder terug een veerschipper, een politiedienaar en een zeekapitein die op zee verdronk." }
   },
   TXT: {
     heroTitle: "Boeren, veenbazen en veehouders rond <em>Heerenveen</em> en de Friese meren",
     heroLede: "De voorouders van Alies Hoekstra en haar broer en zussen, met bronnen terug tot {oldest}. Acht families uit Schoterland, Haskerland, Doniawerstal en Utingeradeel: van het veen rond de Tjeukemeer tot Oldeboorn aan de Boarn. Twee takken komen samen bij Jouke Akkerman en Niesje Wind, die via Franke én via Aaltje in de stamboom staan.",
-    layerVerhalen: "De rode draden uit de akten van de families van Alies.",
+    layerVerhalen: "De rode draden uit de akten van de familietak Hoekstra · Bakker.",
     layerVerwanten: "De journalist Jacob Hepkema, en wat er verder nog te zoeken is.",
     statusNote: "De burgerlijke stand (1811–1950) staat bijna volledig op akten. Verder terug gaat het onderzoek via de kerkboeken.",
     famMapSub: "Van Oldeboorn en Terkaple tot het veen rond de Tjeukemeer.",
-    verhalenLede: "Wat de akten samen vertellen over de families van Alies. Bij elk deel staat hoe zeker het is.",
-    verwanten: "Aan de kant van Alies is één bekende verwant gevonden: de Friese journalist en krantenuitgever Jacob Hepkema, een kleinzoon van voorouders in de lijn Hepkema. Naar edelen en bestuurders is nog niet systematisch gezocht."
+    verhalenLede: "Wat de akten samen vertellen over de familietak Hoekstra · Bakker. Bij elk deel staat hoe zeker het is.",
+    verwanten: "In de familietak Hoekstra · Bakker is één bekende verwant gevonden: de Friese journalist en krantenuitgever Jacob Hepkema, een kleinzoon van voorouders in de lijn Hepkema. Naar edelen en bestuurders is nog niet systematisch gezocht."
   },
   /* teksten voor de samengestelde boom "Harrie + Alies" (src/app.js, joinTrees) */
   SAMEN_TXT: {
     heroTitle: "Twee Friese families, <em>één</em> stamboom",
-    heroLede: "De voorouders van Marit, Tijmen en Jorn, met bronnen terug tot {oldest}. In de waaier staan links de families van hun vader Harrie (De Groot en Boersma), rechts die van hun moeder Alies (Hoekstra en Bakker). Ze woonden vaak dicht bij elkaar: {gedeeld} dorpen en steden komen in beide stambomen voor, van Heerenveen en Akkrum tot Oldeboorn en Oudeschoot.",
-    layerVerhalen: "De verhalen uit beide stambomen.",
-    layerVerwanten: "Bekende verwanten uit beide stambomen.",
+    heroLede: "De voorouders van Marit, Tijmen en Jorn, met bronnen terug tot {oldest}. In de waaier staan links de families van hun vader Harrie (De Groot en Boersma), rechts die van hun moeder Alies (Hoekstra en Bakker). Ze woonden vaak dicht bij elkaar: {gedeeld} dorpen en steden komen in beide familietakken voor, van Heerenveen en Akkrum tot Oldeboorn en Oudeschoot.",
+    layerVerhalen: "De verhalen uit beide familietakken.",
+    layerVerwanten: "Bekende verwanten uit beide familietakken.",
     famMapSub: "Van de Stellingwerven en Gaasterland tot Oldeboorn en de Tjeukemeer.",
-    verhalenLede: "De verhalen uit beide stambomen: eerst die van Harrie, dan die van Alies.",
-    verwanten: "Bekende verwanten uit beide stambomen. Aan de kant van Harrie: de heilige Titus Brandsma en kanunnik Otto Spitzen. Aan de kant van Alies: de journalist Jacob Hepkema."
+    verhalenLede: "De verhalen uit beide familietakken: eerst De Groot · Boersma, dan Hoekstra · Bakker.",
+    verwanten: "Bekende verwanten uit beide familietakken. Bij De Groot · Boersma: de heilige Titus Brandsma en kanunnik Otto Spitzen. Bij Hoekstra · Bakker: de journalist Jacob Hepkema."
   },
   PEOPLE: [], STORIES: [], FACTS: [], OPEN_QUESTIONS: [], CONFLICTS: [], NOTABLES: [], SOURCE_GROUPS: [], MEDIA: [], HISTORY_TOUCH: [],
   CHANGES: { v: "versie 10", newKws: [], updKws: [], removed: [] }
@@ -55,7 +55,7 @@ const ALIES = {
 Object.assign(PLACES, {
   "Beetsterzwaag": P_(53.061, 6.078, "Opsterland", FR),
   "Broek": P_(52.983, 5.777, "Doniawerstal", FR),
-  "Delfstrahuizen": P_(52.874, 5.824, "Haskerland", FR),
+  "Delfstrahuizen": P_(52.874, 5.824, "Schoterland", FR),
   "Dijken": P_(52.954, 5.711, "Doniawerstal", FR),
   "Echten": P_(52.873, 5.799, "Lemsterland", FR),
   "Goingarijp": P_(53.011, 5.772, "Doniawerstal", FR),
@@ -65,7 +65,7 @@ Object.assign(PLACES, {
   "Nijemirdum": P_(52.857, 5.570, "Gaasterland", FR),
   "Oudehorne": P_(52.966, 6.092, "Schoterland", FR),
   "Gaastmeer": P_(52.962, 5.583, "Wymbritseradeel", FR),
-  "Rotstergaast": P_(52.924, 5.937, "Schoterland", FR),
+  "Rotstergaast": P_(52.900, 5.891, "Schoterland", FR),
   "Langelille": P_(52.834, 5.869, "Schoterland", FR),
   "Oosterzee": P_(52.874, 5.858, "Lemsterland", FR),
   "Oldeouwer": P_(52.921, 5.799, "Doniawerstal", FR),

@@ -1,8 +1,8 @@
 /* Verhalen en opvallende feiten in de stamboom van Alies (kw = haar nummering, zie 40-alies-meta.js).
    Vorm: zie STORIES en FACTS in 20-stories.js. */
 ALIES.STORIES.push(
-{ id: "dubbel", title: "Twee keer Akkerman, twee keer Bakker", art: "branch", line: null,
-  lede: "Net als bij Harrie staan er in de stamboom van Alies voorouders twee keer in. Franke en Aaltje, de ouders van Alies, hebben gemeenschappelijke voorouders: Jouke Akkerman en Niesje Wind uit Rohel. En Aaltjes grootouders Kornelis Bakker en Antje de Vries waren volle neef en nicht.",
+{ id: "dubbel", needs: [2, 3], title: "Twee keer Akkerman, twee keer Bakker", art: "branch", line: null,
+  lede: "Net als bij De Groot · Boersma staan er in de familietak Hoekstra · Bakker voorouders twee keer in. Franke en Aaltje, de ouders van Alies, hebben gemeenschappelijke voorouders: Jouke Akkerman en Niesje Wind uit Rohel. En Aaltjes grootouders Kornelis Bakker en Antje de Vries waren volle neef en nicht.",
   people: [84, 85, 160, 161, 80, 42, 21, 20, 10, 5, 59, 29, 14, 7, 12, 13, 24, 27, 48, 49, 208, 209, 104, 147, 316, 317, 582, 583, 291, 305, 145, 152, 18, 19, 158, 243, 79, 121, 374, 185, 187, 92, 93],
   parts: [
     { h: "Jouke en Niesje, via Franke én via Aaltje", st: "A", p: [
@@ -12,7 +12,7 @@ ALIES.STORIES.push(
     ] },
     { h: "Achterneef en achternicht", st: "A", p: [
       "Ook binnen de lijn Akkerman komen twee takken samen. Johannes Akkerman en Niesje Akkerman, die in 1887 trouwden, waren achterneef en achternicht: hun grootvaders Douwe (1774) en Jouke (1779) waren broers, zonen van Johannes Jans Akkerman en Saakje Douwes.",
-      "Daardoor staat Johannes Jans Akkerman, die zich in 1771 al Ackerman noemde, drie keer in de stamboom van Alies."
+      "Daardoor staat Johannes Jans Akkerman, die zich in 1771 al Ackerman noemde, drie keer in de stamboom."
     ] },
     { h: "Kornelis en Antje, neef en nicht", st: "A", p: [
       "Kornelis Bakker uit Broek en Antje de Vries uit Ouwster-Nijega trouwden in 1903 in Utingeradeel. Zijn vader Sjoerd Wouters Bakker en haar moeder Hantje Wouters Bakker waren broer en zus, allebei kind van Wouter Sjoerds Bakker en Antje Wouters Schaap. Zes akten noemen die ouders.",
@@ -40,8 +40,8 @@ ALIES.STORIES.push(
       { t: "Dat Foekje en Angeniet zussen waren, volgt uit die doop en de lidmatenboeken samen; geen akte zegt het rechtstreeks. Zo waren Femmigjen Jacobs Haagsma, de overgrootmoeder van Watze, en Bouwe Siebolts Dijkstra, de overgrootvader van Antje, volle neef en nicht.", k: "afgeleid" }
     ] },
     { h: "Was het gewoon?", st: "A", p: [
-      { t: "In de Friese dorpen trouwde men vaak binnen een kleine kring van families die elkaar kenden. Ook in de stamboom van Harrie staan voorouders twee keer: vier paren hebben Kees en Vronie gemeen.", k: "context" },
-      "Harrie en Alies zelf hebben, voor zover nu bekend, geen gemeenschappelijke voorouders. Hun families woonden wel vaak dicht bij elkaar: ruim 25 dorpen en steden komen in beide stambomen voor."
+      { t: "In de Friese dorpen trouwde men vaak binnen een kleine kring van families die elkaar kenden. Ook in de familietak De Groot · Boersma staan voorouders twee keer: vier paren hebben Kees en Vronie gemeen.", k: "context" },
+      "Harrie en Alies zelf hebben, voor zover nu bekend, geen gemeenschappelijke voorouders. Hun families woonden wel vaak dicht bij elkaar: ruim 25 dorpen en steden komen in beide familietakken voor."
     ] }
   ] },
 { id: "veen", title: "Leven van het veen", art: "trades", line: 14,
@@ -63,7 +63,7 @@ ALIES.STORIES.push(
     ] }
   ] },
 { id: "namen-alies", title: "Namen van vóór en na 1811", art: "name", line: null,
-  lede: "In 1811 moest iedereen in Friesland een vaste achternaam kiezen. Bij de families van Alies gebeurde dat op allerlei manieren, en een paar namen bestonden al veel eerder.",
+  lede: "In 1811 moest iedereen in Friesland een vaste achternaam kiezen. In de familietak Hoekstra · Bakker gebeurde dat op allerlei manieren, en een paar namen bestonden al veel eerder.",
   people: [160, 784, 392, 88, 176, 96, 192, 144, 150, 151, 224, 112, 162, 126, 252],
   parts: [
     { h: "Ouder dan 1811", st: "A", p: [
@@ -117,7 +117,7 @@ ALIES.STORIES.push(
     ] }
   ] },
 { id: "geloof-alies", title: "Doopsgezind, hervormd en hernhutter", art: "church", line: null,
-  lede: "De families van Alies waren protestants. Maar onder de hervormde boeren en arbeiders zaten ook doopsgezinden, mensen die pas als volwassene werden gedoopt, en in Akkrum een familie hernhutters.",
+  lede: "De families in de tak Hoekstra · Bakker waren protestants. Maar onder de hervormde boeren en arbeiders zaten ook doopsgezinden, mensen die pas als volwassene werden gedoopt, en in Akkrum een familie hernhutters.",
   people: [208, 209, 104, 106, 134, 200, 602, 242, 197, 132, 99, 124, 67, 504, 505, 252, 253, 126, 1010, 360, 272, 196, 64, 214, 174, 270],
   parts: [
     { h: "Doopsgezinden in Joure en Broek", st: "A", p: [
@@ -141,10 +141,10 @@ ALIES.STORIES.push(
       "Gerke Idses was kerkvoogd van Goingarijp toen in 1771 de eerste steen van de nieuwe kerk werd gelegd. Hans Tjeerds Hoekstra was in 1817 kerkvoogd van Katlijk en voerde mee de dorpsadministratie. Gerrit Piers Sjaardema besteedde in 1831 als kerkvoogd van Oppenhuizen de bouw van een nieuwe school aan, voor 962 gulden."
     ] },
     { h: "Twee geloven in één stamboom", st: "A", p: [
-      { t: "Aan de kant van Harrie was bijna iedereen katholiek, maar ook daar zat een doopsgezinde wortel: Minne Meintes Boersma liet zich in 1793 als volwassene katholiek dopen. Aan de kant van Alies is geen enkele katholiek gevonden. In de stamboom van Marit, Tijmen en Jorn komen de twee samen.", k: "afgeleid" }
+      { t: "In de familietak De Groot · Boersma was bijna iedereen katholiek, maar ook daar zat een doopsgezinde wortel: Minne Meintes Boersma liet zich in 1793 als volwassene katholiek dopen. In de familietak Hoekstra · Bakker is geen enkele katholiek gevonden. In de stamboom De Groot · Hoekstra komen de twee samen.", k: "afgeleid" }
     ] }
   ] },
-{ id: "buren", title: "Buren zonder het te weten", art: "map", line: null,
+{ id: "buren", needs: ["s2", "s3"], title: "Buren zonder het te weten", art: "map", line: null,
   lede: "Harrie en Alies hebben, voor zover bekend, geen gemeenschappelijke voorouders. Toch kruisten hun families elkaar vaak: in dezelfde dorpen, in dezelfde jaren, één keer zelfs twee dagen na elkaar.",
   people: [11, 22, 23, 44, 187, 374, 375, 381, 186, 324, 325, 85, 84, 124, 90, 156, 146, 70, 8, 9, 32, 360, 356, 357],
   parts: [
@@ -160,7 +160,7 @@ ALIES.STORIES.push(
     ] },
     { h: "Follega, 1765–1767", st: "B", p: [
       "In het dorpje Follega bij Lemmer trouwden in maart 1765 Sybe Attes en Tjitske Idzes, voorouders van Alies. Een jaar later, in april 1766, trouwden daar Mintje Pieters en Annechien Noorlans, voorouders van Harrie.",
-      "In september 1767 werd in Follega Janke Siebes Visser geboren, dochter van Sybe en Tjitske. Rond dezelfde tijd werd daar Johannes Mintjes Vos geboren, die bijna 97 werd. Twee kinderen uit één klein dorp, elk aan een andere kant van de latere stamboom van Marit, Tijmen en Jorn.",
+      "In september 1767 werd in Follega Janke Siebes Visser geboren, dochter van Sybe en Tjitske. Rond dezelfde tijd werd daar Johannes Mintjes Vos geboren, die bijna 97 werd. Twee kinderen uit één klein dorp, elk in een andere familietak van de latere stamboom De Groot · Hoekstra.",
       { t: "Dat Mintje en Annechien de ouders van Johannes waren, is een sterke afleiding: zijn zus Aafke noemt hen in haar overlijdensakte.", k: "afgeleid" }
     ] },
     { h: "Haskerhorne en Westermeer", st: "B", p: [
@@ -172,7 +172,7 @@ ALIES.STORIES.push(
       { t: "In beide gevallen is de koppeling afgeleid uit het woord boerin of landbouwersche bij de naam van een man.", k: "afgeleid" }
     ] },
     { h: "Loten voor Napoleon", st: "A", p: [
-      "Van 1809 tot 1813 moesten jonge mannen loten voor het leger van Lodewijk Napoleon en daarna van het Franse keizerrijk. Wie het kon betalen, stuurde een plaatsvervanger. Aan de kant van Harrie deden Jentje Meinsma uit Irnsum (1809) en Fokke Galama uit Wommels (1813) dat, aan de kant van Alies Tjeerd Roels Heida (1811), Jan Hanses Woudstra (1812) en Watze Tjebbes Dijkstra (1813).",
+      "Van 1809 tot 1813 moesten jonge mannen loten voor het leger van Lodewijk Napoleon en daarna van het Franse keizerrijk. Wie het kon betalen, stuurde een plaatsvervanger. In de familietak De Groot · Boersma deden Jentje Meinsma uit Irnsum (1809) en Fokke Galama uit Wommels (1813) dat, in de familietak Hoekstra · Bakker Tjeerd Roels Heida (1811), Jan Hanses Woudstra (1812) en Watze Tjebbes Dijkstra (1813).",
       "Eén jongen ging wel: Wiebe Hessels Meibos uit Oudeschoot, een broer van een voorvader van Alies. Hij werd in 1811 fuselier, deserteerde in 1813 en werd eind 1814 als vermist opgegeven."
     ] },
     { h: "Dezelfde grondbezitters", st: "A", p: [
@@ -190,7 +190,7 @@ ALIES.STORIES.push(
     ] },
     { h: "Het koortsjaar", st: "A", p: [
       { t: "Na een zachte winter en een hete, droge zomer brak in 1826 de malaria uit, de 'tusschenpoozende koortsen'. Rond Heerenveen viel massale sterfte (Historisch Centrum Leeuwarden).", k: "context" },
-      "In de stamboom van Alies overleden dat jaar: Sjoerd Binkes Bakker (Sint Nicolaasga, 4 augustus), Aaltje Harmens Berger (Sintjohannesga, 27 september), de veenbaas Hendrik Jans Wind (Sintjohannesga, 9 oktober), Antje Sipkes (Haskerhorne, 13 oktober), en de melktapper Sybren Voerman (Lemmer, 1 november) en zijn dochter Antje, veertien dagen later. In maart was Johannes Jans Akkerman al in Rohel overleden.",
+      "In de familietak Hoekstra · Bakker overleden dat jaar: Sjoerd Binkes Bakker (Sint Nicolaasga, 4 augustus), Aaltje Harmens Berger (Sintjohannesga, 27 september), de veenbaas Hendrik Jans Wind (Sintjohannesga, 9 oktober), Antje Sipkes (Haskerhorne, 13 oktober), en de melktapper Sybren Voerman (Lemmer, 1 november) en zijn dochter Antje, veertien dagen later. In maart was Johannes Jans Akkerman al in Rohel overleden.",
       { t: "Geen enkele akte noemt een doodsoorzaak. Dat zij aan de koorts stierven, is dus niet bewezen; wel past de tijd en de streek bij de epidemie.", k: "hypothese" }
     ] },
     { h: "Daarna", st: "A", p: [
@@ -206,7 +206,7 @@ ALIES.FACTS.push(
   { kw: 248, y: "vóór 1800", t: "Verdronken op zee", x: "Ysbrand Thomas was zeekapitein en verdronk op zee, zegt de overlijdensakte van zijn zoon.", st: "A", story: "vakmensen" },
   { kw: 196, y: "1771", t: "Kerkvoogd bij een nieuwe kerk", x: "Op 24 april 1771 werd de eerste steen gelegd van de nieuwe kerk van Goingarijp. Gerke Idses was een van de twee kerkvoogden.", st: "A" },
   { kw: 32, y: "1872", t: "Een café in Mildam", x: "Wiebe Hanzes Hoekstra was al in 1857 boer en kastelein in Mildam; zijn weduwe Tjitske zette het café na zijn dood voort.", st: "A", story: "vakmensen" },
-  { kw: 160, y: "1771", t: "Al Akkerman vóór 1811", x: "Johannes Jans heette in 1771 en 1772 al Ackerman. Hij staat drie keer in de stamboom van Alies.", st: "A", story: "namen-alies" },
+  { kw: 160, y: "1771", t: "Al Akkerman vóór 1811", x: "Johannes Jans heette in 1771 en 1772 al Ackerman. Hij staat drie keer in de stamboom.", st: "A", story: "namen-alies" },
   { kw: 392, y: "1749", t: "Boer op eigen grond", x: "Ids Wouters pachtte in 1728 land in Goingarijp; in 1749 was hij eigenerfde boer.", st: "B" },
   { kw: 8, y: "1920", t: "Twee bruiloften in mei", x: "Wiebe Hoekstra en Afke Hepkema trouwden op 1 mei 1920, Franke Akkerman en Janke Wietsma op 12 mei. Hun kinderen Hans en Jantje trouwden in 1945.", st: "A", story: "oranjewoud" },
   { kw: 90, y: "1811", t: "Een ander ging in zijn plaats", x: "Tjeerd Roels Heida werd in 1811 ingeloot voor het leger. Murk Siedses Mooy, dagloner in Langezwaag, ging als plaatsvervanger. Tjeerd werd boer in Mildam.", st: "A", story: "vakmensen" },
@@ -219,7 +219,7 @@ ALIES.FACTS.push(
   { kw: 104, y: "1863", t: "Een rijke doopsgezinde boer", x: "Durk Sjoerds de Vries uit Broek, in 1799 gedoopt in de doopsgezinde gemeente van Joure, liet in 1863 land en huizen na ter waarde van ruim 77.000 gulden.", st: "A", story: "geloof-alies" },
   { kw: 132, y: "1785", t: "Gedoopt na de bruiloft", x: "Ype Annes Bosma werd in 1785 gedoopt op belijdenis, vier jaar na zijn huwelijk. Een kinderdoop van hem bestaat niet.", st: "A", story: "geloof-alies" },
   { kw: 214, y: "1831", t: "Een school voor 962 gulden", x: "Als kerkvoogd van Oppenhuizen besteedde Gerrit Piers Sjaardema in 1831 de bouw van een nieuwe school aan. Een jaar later stierven hij en zijn vrouw Jeltje, achttien dagen na elkaar.", st: "A", story: "geloof-alies" },
-  { kw: 85, y: "1832", t: "Op naam van haar man", x: "In het kadaster van 1832 staat 'Jouke Johannes Akkerman, landbouwersche': Niesje Wind, vier jaar weduwe, onder de naam van haar overleden man. In de stamboom van Harrie gebeurde hetzelfde met Akke Meinsma in Rauwerd.", st: "B", story: "buren" },
+  { kw: 85, y: "1832", t: "Op naam van haar man", x: "In het kadaster van 1832 staat 'Jouke Johannes Akkerman, landbouwersche': Niesje Wind, vier jaar weduwe, onder de naam van haar overleden man. In de familietak De Groot · Boersma gebeurde hetzelfde met Akke Meinsma in Rauwerd.", st: "B", story: "buren" },
   { kw: 274, y: "1831", t: "In het water", x: "Jan Feyes Punter, arbeider, overleed op 25 juli 1831 's avonds 'in het Meer in het water', 75 jaar oud. Dat hij verdronk, staat er niet letterlijk.", st: "A" },
   { kw: 137, y: "1812", t: "Haar eigen handtekening", x: "Janke Punter, arbeidersdochter, werd in 1807 zwanger weduwe. Onder haar tweede huwelijksakte van 1812 zette ze zelf haar naam: rond 1800 voor een vrouw van haar stand niet vanzelfsprekend.", st: "A" },
   { kw: 147, y: "1806", t: "Een gouden oorijzer", x: "Wat Baukje Sjoerds de Vries had geërfd, blijkt uit de nalatenschap van haar dochtertje Sjoerdje (1806): een vierde van een boerderij in Broek, kleine aandelen in huizen in Joure, en een gouden oorijzer.", st: "B" },
@@ -241,7 +241,7 @@ ALIES.HISTORY_TOUCH.push(
   { y: "1771", kw: 196, t: "Een nieuwe kerk in Goingarijp", d: "Op 24 april 1771 werd de eerste steen gelegd van de nieuwe kerk van Goingarijp. Gerke Idses was een van de twee kerkvoogden." },
   { y: "1811", kw: 90, t: "Loten voor Napoleon", d: "Tjeerd Roels Heida werd in 1811 ingeloot en stuurde een plaatsvervanger. Wiebe Hessels Meibos, een broer van voorvader Jan Hessels Meibos, werd fuselier, deserteerde in 1813 en werd eind 1814 als vermist opgegeven." },
   { y: "1825", kw: 76, t: "De watersnood", d: "Bij de stormvloed van februari 1825 braken de dijken onder meer bij Lemmer. Daar woonden de boer Atte Bouwes Dijkstra en de melktapper Sybren Voerman met zijn dochter Antje." },
-  { y: "1826", kw: 154, t: "Het koortsjaar", d: "Na de watersnood volgde de malaria. In de stamboom van Alies stierven in 1826 opvallend veel voorouders, de meesten tussen augustus en november; in Lemmer de melktapper Sybren Voerman en zijn dochter Antje binnen twee weken." },
+  { y: "1826", kw: 154, t: "Het koortsjaar", d: "Na de watersnood volgde de malaria. In de familietak Hoekstra · Bakker stierven in 1826 opvallend veel voorouders, de meesten tussen augustus en november; in Lemmer de melktapper Sybren Voerman en zijn dochter Antje binnen twee weken." },
   { y: "1874", kw: 72, t: "Een krant voor de gewone man", d: "Jacob Hepkema, kleinzoon van Jacob Hepkes Hepkema, begon in 1874 in Heerenveen het Nieuw Advertentieblad: een goedkope krant waarin ook de gewone man aan het woord kwam." },
   { y: "1923", kw: 8, t: "De Prinsenhoeve", d: "Wiebe Hoekstra en Afke Hepkema boerden van 1923 tot 1962 op de vroegere hofboerderij van de Friese Nassaus in Oranjewoud." }
 );
