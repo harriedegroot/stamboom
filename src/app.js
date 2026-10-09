@@ -415,7 +415,9 @@ const iTipVan = t => t && t.closest ? t.closest(ITIP_SEL) : null;
 document.addEventListener("pointerover", e => { if (e.pointerType === "touch") return; const el = iTipVan(e.target); if (!el || el === iTipEl) return;
   const warm = Date.now() - iTipWarm < 500 || !iTip.hidden; iTipHide(); iTipT = setTimeout(() => { iTipT = 0; if (el.matches(":hover")) iTipShow(el); }, warm ? 0 : 150); });
 document.addEventListener("pointerout", e => { const el = iTipVan(e.target); if (el && !el.contains(e.relatedTarget) && (el === iTipEl || !iTipEl)) iTipHide(true); });
-document.addEventListener("focusin", e => { const el = iTipVan(e.target); iTipHide(); if (el && el.matches(":focus-visible")) iTipShow(el); });
+/* focus shows the tooltip only for the keyboard: a focus that follows a tap or click (also one the page sets after it, e.g. the star) does not */
+let iTipPtr = 0; document.addEventListener("pointerdown", () => { iTipPtr = Date.now(); }, true);
+document.addEventListener("focusin", e => { const el = iTipVan(e.target); iTipHide(); if (el && el.matches(":focus-visible") && Date.now() - iTipPtr > 1000) iTipShow(el); });
 document.addEventListener("focusout", () => iTipHide());
 document.addEventListener("pointerdown", () => { iTipHide(); iTipWarm = 0; }, { capture: true, passive: true });
 addEventListener("keydown", e => { if (!iTip.hidden && (e.key === "Escape" || e.key === "Enter" || e.key === " ")) iTipHide(); }, true);
