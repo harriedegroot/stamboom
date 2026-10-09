@@ -1387,7 +1387,7 @@ function pnTargetBtn(kw, p) {
 }
 /* the overflow menu "⋯" of the bar: Open ernaast, Delen, Voorlezen, Volledig scherm (on the page: Terug naar het paneel). Each item
    presses the same button of the bar (which then stays out of sight). The loose icons are shown only while the small name fits
-   without being cut off (pnFitTop); a column always uses the menu */
+   without being cut off (pnFitTop); the same rule in a column and a tab */
 /* the link under the small map: the places of this life on the big map (89's route), only when that route knows this person */
 function pnMapText(kw, p) {
   const w = kw === 1 && rootGroup() ? "" : isMale(kw) === true ? "zijn" : isMale(kw) === false ? "haar" : "";
@@ -1611,7 +1611,7 @@ function pcRender(sub) {
   const n = ks.length, cmp = PC.mode === "vergelijk" && n > 1;
   if (!$(":scope > .pp-bar", sec)) { sec.innerHTML = `<div class="pp-bar"></div><p class="sr-only pp-live" aria-live="polite"></p><div class="pp-more"></div><div class="pp-tabs" role="tablist" aria-label="Open profielen"></div><div class="pp-cols"></div><div class="pp-cmp"></div>`; PC.cols = []; }
   /* the words: one name for the view everywhere ("Naast elkaar" / "Vergelijken"); the heading says "open" when the profiles are tabs */
-  const kop = cmp ? `${n} profielen vergeleken` : narrow ? `${n} profielen open` : `${n} profielen naast elkaar`;
+  const kop = cmp ? `${n} profielen vergeleken` : narrow || over.length ? `${n} profielen open` : `${n} profielen naast elkaar`;
   if (route.view === "profielen" && n > 1 && typeof treeTitle === "function") document.title = kop + " · " + treeTitle(); /* the title follows the mode (= the h1) */
   $(":scope > .pp-bar", sec).innerHTML = `<h1 class="pp-kop${n > 1 ? "" : " sr-only"}" tabindex="-1">${n > 1 ? esc(kop) : esc(person(ks[0]).n)}</h1>${n > 1 ? `<div class="pp-seg" role="group" aria-label="Weergave"><button type="button" data-pc-mode="naast" aria-pressed="${!cmp}">Naast elkaar</button><button type="button" data-pc-mode="vergelijk" aria-pressed="${cmp}">Vergelijken</button></div>` : ""}`;
   const colsEl = $(":scope > .pp-cols", sec), cmpEl = $(":scope > .pp-cmp", sec), tabsEl = $(":scope > .pp-tabs", sec), moreEl = $(":scope > .pp-more", sec);
@@ -1683,7 +1683,7 @@ document.addEventListener("click", e => {
   if (x && sec.contains(x)) { e.preventDefault(); e.stopImmediatePropagation(); const col = x.closest(".pp-col"), k = col ? (PC.cols.find(c => c.el === col) || {}).kw0 : +x.dataset.pcClose;
     if (!e.detail) PC.refocus = { i: col ? PC.cols.findIndex(c => c.el === col) : Math.max(0, PC.tab) }; /* keyboard: the focus goes to the column now in that place */
     pcSet(pcList(route.sub).filter(v => v !== k)); return; }
-  const mo = e.target.closest("[data-pc-more], [data-pc-col]"); if (mo && sec.contains(mo)) { e.preventDefault(); e.stopImmediatePropagation(); if (mo.getAttribute("aria-disabled") === "true") return;
+  const mo = e.target.closest("[data-pc-more], [data-pc-col]"); if (mo && sec.contains(mo)) { e.preventDefault(); e.stopImmediatePropagation(); if (mo.getAttribute("aria-disabled") === "true") { pcNote(mo.getAttribute("title") || "Er is geen plaats meer"); return; } /* a touch screen shows no title: say it */
     const k = +mo.dataset.pcCol; PC.more = PC.more === k ? null : k; pcSyncMore(); return; } /* the next family member of this column comes beside it */
   const o = e.target.closest("[data-open]"), col = o && o.closest(".pp-col");
   if (o && col && sec.contains(col)) { e.preventDefault(); e.stopImmediatePropagation(); const c = PC.cols.find(c => c.el === col), k = +o.dataset.open; if (!c || !person(k)) return;
@@ -9038,6 +9038,14 @@ RENDER.bewaard = () => { savedSure = false; renderBewaard(); };
 /* ---------- keep toast ---------- */
 /* After the star: a short message at the bottom of the screen that says where the saved people are ("Bewaard · Bekijk je lijst"),
    or that someone was taken off the list. One element, polite for screen readers; it goes away by itself after a few seconds. */
+/* a short visible note (same look as the star's message), e.g. why "Open ernaast" is off: a touch screen shows no title */
+let pcNoteTimer = 0;
+function pcNote(text) {
+  let el = $("#pcNote");
+  if (!el) { document.body.insertAdjacentHTML("beforeend", `<div id="pcNote" class="keep-toast" role="status" aria-live="polite" hidden></div>`); el = $("#pcNote"); }
+  el.innerHTML = `<span>${esc(text)}</span>`; el.hidden = false; el.classList.remove("keep-toast-weg");
+  clearTimeout(pcNoteTimer); pcNoteTimer = setTimeout(() => { el.classList.add("keep-toast-weg"); setTimeout(() => { el.hidden = true; }, 250); }, 3000);
+}
 let keepToastTimer = 0;
 function keepToast(on) {
   let el = $("#keepToast");
