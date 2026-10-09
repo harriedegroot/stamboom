@@ -539,7 +539,8 @@ const IMAGES = [
 "kws": [
 42,
 43
-]
+],
+"groep": "bidprentje"
 },
 {
 "id": "bidprentje-kw46-titus-groenestege-1911",
@@ -880,7 +881,7 @@ const IMAGES = [
 "w": 520,
 "h": 838,
 "t": "Hun zoon Rients Tjittes Huitema (1852–1941), broer van Age Tjittes Huitema (kw 28), op 27-jarige leeftijd (ca. 1879); kabinetfoto van Gebr. Gerdes, Bolsward en Sneek. Uit Stamboom Huitema (Genealogie Online).",
-"desc": "Handschrift op de foto: 'Rients Tj. Huitema 27 jaar'. Geplaatst bij Rients Tjittes Huitema (1852–1941) in Stamboom Huitema, met als ouders Tjitte Rientses Huitema en Marijke Witteveen (kw 56/57) en als broer Age Tjittes Huitema (kw 28). Niet in een archief bevestigd (C).",
+"desc": "Handschrift op de foto: 'Rients Tj. Huitema 27 jaar'. Geplaatst bij Rients Tjittes Huitema (1852–1941) in Stamboom Huitema, met als ouders Tjitte Rientses Huitema en Marijke Witteveen (kw 56 en kw 57) en als broer Age Tjittes Huitema (kw 28). Niet in een archief bevestigd (C).",
 "maker": "Gebr. Gerdes, fotografen te Bolsward en Sneek (opdruk op het karton)",
 "datum": "ca. 1879",
 "lic": "geen rechtenvermelding bij het beeld (Genealogie Online)",
@@ -2398,7 +2399,8 @@ const IMAGES = [
 "why": {
 "244": "De akte van bekendheid van 1825 legt vast dat hij op 13 oktober 1794 in Sondel overleed.",
 "122": "De akte van bekendheid bij zijn huwelijk (1825) noemt het overlijden van zijn vader."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-autorisatie-1664-kinderen-tryntie-lieuckema",
@@ -2428,7 +2430,8 @@ const IMAGES = [
 "833": "In januari 1664 krijgen zij en haar broers en zussen curatoren; zij wordt hier met name genoemd.",
 "1667": "In januari 1664 krijgen haar nagelaten kinderen curatoren.",
 "1666": "In januari 1664 krijgen zijn kinderen van wijlen Tryntie Lieuckema curatoren."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-inventaris-1679-sterfhuis-aeltien-jans-joure",
@@ -2456,7 +2459,8 @@ const IMAGES = [
 "why": {
 "a-2349": "De beschrijving van haar boedel, februari 1679.",
 "a-2348": "De boedelbeschrijving van 1679 noemt hem 'in leven burger en coopman op de Flecke Jouwer'."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-kerk-sondel-1721",
@@ -2536,7 +2540,8 @@ const IMAGES = [
 ],
 "why": {
 "a-268": "Zijn doop op belijdenis (1771) en zijn overlijden (1795) in het lidmatenregister van de doopsgezinden in de Bovenknijpe."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-lidmaten-bovenknijpe-1813-andries-douwes-douwenga",
@@ -2562,7 +2567,8 @@ const IMAGES = [
 ],
 "why": {
 "a-134": "Zijn doop op belijdenis, 14 februari 1813, in het lidmatenregister van de doopsgezinden in de Bovenknijpe."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-lidmaten-sondel-1752-sipke-jans-gertie-gerrits",
@@ -2590,7 +2596,8 @@ const IMAGES = [
 "why": {
 "a-314": "Zij staan in 1752 samen als echtelieden ('E:L:') op de lidmatenlijst van Sondel.",
 "a-315": "Zij staan in 1752 samen als echtelieden ('E:L:') op de lidmatenlijst van Sondel."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-makkum-doniakerk-interieur-1965",
@@ -2648,7 +2655,8 @@ const IMAGES = [
 "why": {
 "244": "Zijn zoon Willem Namlis neemt in 1811 de familienaam Asma aan.",
 "122": "Zijn broer Willem Namlis neemt in 1811 de familienaam Asma aan, de naam die Johannes ook gaat dragen."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-nedergerecht-harlingen-1692-wezen-swerms",
@@ -2678,7 +2686,8 @@ const IMAGES = [
 "a-2330": "In maart 1692 krijgen hun weeskinderen curatoren.",
 "a-2331": "In maart 1692 krijgen hun weeskinderen curatoren.",
 "a-1165": "In maart 1692 krijgen zij en haar broers en zussen curatoren, na de dood van haar ouders."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-nedergerecht-haskerland-1679-wezen-jan-tiebbes",
@@ -2708,7 +2717,8 @@ const IMAGES = [
 "a-2348": "In februari 1679 krijgen zijn zes weeskinderen curatoren.",
 "a-2349": "In februari 1679 krijgen haar zes weeskinderen curatoren.",
 "a-1174": "Hij vraagt in februari 1679, 19 jaar oud, om curatoren voor zichzelf en zijn broers en zussen."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-nedergerecht-schoterland-1758-kinderen-evert-clases",
@@ -2738,7 +2748,8 @@ const IMAGES = [
 "a-756": "Kort na hun dood (1757 en 1758) krijgen hun kinderen curatoren.",
 "a-757": "Kort na hun dood (1757 en 1758) krijgen hun kinderen curatoren.",
 "a-378": "In januari 1758 krijgt hij met zijn broers curatoren, na de dood van zijn ouders."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-nedergerecht-schoterland-1763-wieger-en-jan-andries",
@@ -2768,7 +2779,8 @@ const IMAGES = [
 "a-270": "In januari 1763 krijgen hij en zijn broer Jan curatoren.",
 "a-540": "In januari 1763 krijgen hun zonen Wieger en Jan curatoren; Andries Siesses was toen al overleden.",
 "a-541": "In januari 1763 krijgen hun zonen Wieger en Jan curatoren; Andries Siesses was toen al overleden."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-nedergerecht-schoterland-1797-kinderen-klaas-everts",
@@ -2796,7 +2808,8 @@ const IMAGES = [
 "why": {
 "a-378": "In april 1797 krijgen hun minderjarige kinderen Jelle en Janke curatoren; zij waren toen allebei overleden.",
 "a-379": "In april 1797 krijgen hun minderjarige kinderen Jelle en Janke curatoren; zij waren toen allebei overleden."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1630-boedel-tiete-lieuckema",
@@ -2826,7 +2839,8 @@ const IMAGES = [
 "3334": "Het weesboek beschrijft in januari 1630 zijn nagelaten boedel, voor zijn weduwe en kinderen.",
 "3335": "Het weesboek noemt haar in januari 1630 als zijn nagelaten weduwe.",
 "1667": "Het weesboek noemt haar in januari 1630 als dochter van wijlen Tiete Lieuckema, 'olt 8 jaer'."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1636-weeskinderen-tiete-lieuckema",
@@ -2856,7 +2870,8 @@ const IMAGES = [
 "3335": "Het weesboek gaat in mei 1636 over haar kinderen met wijlen Tiete Lieuckema.",
 "3334": "Het weesboek gaat in mei 1636 over zijn weeskinderen.",
 "1667": "Het weesboek gaat in mei 1636 over haar en de andere weeskinderen van Tiete Lieuckema."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1647-handtekeningen-spanga-lieuckema",
@@ -2884,7 +2899,8 @@ const IMAGES = [
 "why": {
 "1666": "Zijn eigen handtekening, Coop Jacobs Spanga, in het weesboek van november 1647.",
 "1667": "Haar eigen handtekening, Trintie Lieuckema, in het weesboek van november 1647."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1648-sijn-susters-man",
@@ -2912,7 +2928,8 @@ const IMAGES = [
 "why": {
 "1666": "In november 1648 kiest zijn zwager Meye Lieuckema hem tot curator, als 'sijn susters man'.",
 "1667": "Haar broer Meye noemt Coop Jacobs Spanga in november 1648 'sijn susters man'."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1664-omslag-inventaris-tryntie-lieuckema",
@@ -2938,7 +2955,8 @@ const IMAGES = [
 ],
 "why": {
 "1667": "Het omslag van de inventaris van haar boedel, 1664."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k10-weesboek-1664-sterfhuis-tryntie-lieuckema",
@@ -2968,7 +2986,8 @@ const IMAGES = [
 "1667": "Het weesboek beschrijft in november 1664 haar nagelaten boedel in Makkum.",
 "1666": "Hij laat in november 1664 de boedel van zijn overleden eerste vrouw beschrijven.",
 "833": "De boedel van haar moeder wordt in november 1664 beschreven voor haar en haar broers en zussen."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-autorisatie-haskerland-1804-kinderen-blomsma",
@@ -2996,7 +3015,8 @@ const IMAGES = [
 "why": {
 "a-138": "In september 1804 krijgen zijn vier kinderen curatoren; hij was grofsmid in Nijehaske en toen al overleden.",
 "a-139": "In september 1804 krijgen haar kinderen curatoren, omdat zij op het punt stond te hertrouwen."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-autorisatie-schoterland-1783-thee-aukes-franke-thees",
@@ -3024,7 +3044,8 @@ const IMAGES = [
 "why": {
 "a-324": "In 1783 wordt hij curator over de kinderen van Lutske Thees, naar haar naam vermoedelijk zijn dochter.",
 "a-162": "In 1783 wordt hij met Thee Aukes curator over de kinderen van Lutske Thees, naar haar naam vermoedelijk zijn zus."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-gaasterland-1740-weeskind-thae-bokkes",
@@ -3054,7 +3075,8 @@ const IMAGES = [
 "996": "In juli 1740 krijgt hun zoon Bocke, vier jaar, curatoren; beide ouders waren toen overleden.",
 "997": "In juli 1740 krijgt hun zoon Bocke, vier jaar, curatoren; beide ouders waren toen overleden.",
 "498": "Hij is het weeskind Bocke (4 jaar) uit deze akte van 1740; in 1756 voer hij 'ter see'."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-haskerland-1744-kleindochters-yts-gerkes",
@@ -3086,7 +3108,8 @@ const IMAGES = [
 "a-586": "In 1744 krijgen zijn dochters Jeltje en Ytske een curator; hij was toen overleden.",
 "a-1175": "Haar kleindochters Jeltje en Ytske erven in 1744 van haar; het nedergerecht noemt haar uitdrukkelijk hun grootmoeder.",
 "a-1174": "De akte van 1744 noemt hem als grootvader van Jeltje en Ytske Hettes Baar."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-hernhutters-akkrum-1764-pitter-en-wimke",
@@ -3114,7 +3137,8 @@ const IMAGES = [
 "why": {
 "a-504": "Het register van de hernhutters in Akkrum beschrijft hen rond 1764: hij 57, zij 54 jaar, met zeven volwassen kinderen.",
 "a-505": "Het register van de hernhutters in Akkrum beschrijft hen rond 1764: hij 57, zij 54 jaar, met zeven volwassen kinderen."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-kerk-giethoorn-1929",
@@ -3224,7 +3248,8 @@ const IMAGES = [
 "why": {
 "864": "In 1692 is hij, als 'aangehuwde oom', curator over de kinderen van Gerben Freercx en Trijntie Jacobs.",
 "865": "In 1692 krijgen de kinderen van Gerben Freercx en Trijntie Jacobs curatoren; als zij een dochter van Gerben was, zijn dit haar broers en zussen (nog niet zeker)."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-lidmaten-joure-1720-hette-pyters-baert",
@@ -3250,7 +3275,8 @@ const IMAGES = [
 ],
 "why": {
 "a-586": "Zijn belijdenis in Joure, 31 oktober 1720."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-lidmaten-oudeschoot-1747-jan-andries-eltjen-eyts",
@@ -3280,7 +3306,8 @@ const IMAGES = [
 "a-670": "Hij komt in november 1747 met zijn vrouw Eltjen Eyts van Oudehorne naar Oudeschoot.",
 "a-756": "Zij komen in november 1747 met attestatie van Ouwsterhaule naar Oudeschoot.",
 "a-757": "Zij komen in november 1747 met attestatie van Ouwsterhaule naar Oudeschoot."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-overlijden-akkrum-1812-elisabeth-gerrits",
@@ -3306,7 +3333,8 @@ const IMAGES = [
 ],
 "why": {
 "a-253": "Haar overlijdensakte, Akkrum 1812; de akte noemt haar ouders."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-overlijden-oudehorne-1848-martjen-jans-bosma",
@@ -3332,7 +3360,8 @@ const IMAGES = [
 ],
 "why": {
 "a-133": "Haar overlijdensakte, Oudehorne 1848; de akte noemt haar ouders anders dan de doop (Jan Jeips en Antje Harmens)."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-overlijden-schoterland-1822-wieger-andries-de-boer",
@@ -3360,7 +3389,8 @@ const IMAGES = [
 "why": {
 "a-270": "Zijn overlijdensakte, Brongerga 25 oktober 1822.",
 "a-271": "De overlijdensakte van haar man noemt haar als zijn overleden vrouw, Lijsbeth Wiegers."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-overlijden-sintjohannesga-1826-lijsbeth-jans-migchels",
@@ -3388,7 +3418,8 @@ const IMAGES = [
 "why": {
 "a-171": "Haar overlijdensakte, Sintjohannesga 1826.",
 "a-170": "De overlijdensakte van zijn vrouw (september 1826) noemt hem huisman en veenbaas in Sintjohannesga; hij overleed twee weken later."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k11-vledder-1689-huwelijk-gerwert-fressen",
@@ -3416,7 +3447,8 @@ const IMAGES = [
 "why": {
 "642": "Hun huwelijk in Vledder, 24 november 1689; hij was toen al weduwnaar, zij weduwe.",
 "643": "Hun huwelijk in Vledder, 24 november 1689; hij was toen al weduwnaar, zij weduwe."
-}
+},
+"groep": "akte"
 },
 {
 "id": "nieuw-k6-krant-1817-liauckema-scheltinga-state",
@@ -4331,7 +4363,8 @@ const IMAGES = [
 "kws": [
 14,
 15
-]
+],
+"groep": "graf"
 },
 {
 "id": "persoon-kw39-graf",
@@ -4354,7 +4387,8 @@ const IMAGES = [
 "kws": [
 39,
 38
-]
+],
+"groep": "graf"
 },
 {
 "id": "persoon-kw48-rouw",
@@ -4376,7 +4410,8 @@ const IMAGES = [
 "file": "advertenties/907.jpg",
 "kws": [
 48
-]
+],
+"groep": "rouw"
 },
 {
 "id": "persoon-kw49-rouw",
@@ -4399,7 +4434,8 @@ const IMAGES = [
 "kws": [
 49,
 48
-]
+],
+"groep": "rouw"
 },
 {
 "id": "persoon-kw50-rouw",
@@ -4421,7 +4457,8 @@ const IMAGES = [
 "file": "advertenties/5268.jpg",
 "kws": [
 50
-]
+],
+"groep": "rouw"
 },
 {
 "id": "persoon-kw52-graf",
@@ -4444,7 +4481,8 @@ const IMAGES = [
 "kws": [
 52,
 53
-]
+],
+"groep": "graf"
 },
 {
 "id": "persoon-kw52-rouw",
@@ -4467,7 +4505,8 @@ const IMAGES = [
 "kws": [
 52,
 53
-]
+],
+"groep": "rouw"
 },
 {
 "id": "persoon-kw56-graf",
@@ -4490,7 +4529,8 @@ const IMAGES = [
 "kws": [
 56,
 57
-]
+],
+"groep": "graf"
 },
 {
 "id": "plaats-abbega",
@@ -7262,7 +7302,8 @@ const IMAGES = [
 "kws": [
 190,
 406
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-dochter-kw295-smits-1826",
@@ -7286,7 +7327,8 @@ const IMAGES = [
 "orig": "https://archiefrkfriesland.nl/archiefdata/advertenties/41503.jpg",
 "kws": [
 295
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw100-poelsma-1860",
@@ -7311,7 +7353,8 @@ const IMAGES = [
 "kws": [
 100,
 50
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw103-jorna-1865",
@@ -7336,7 +7379,8 @@ const IMAGES = [
 "kws": [
 103,
 102
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw104-terwisscha-1857",
@@ -7361,7 +7405,8 @@ const IMAGES = [
 "kws": [
 104,
 105
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw105-koelman-1867",
@@ -7386,7 +7431,8 @@ const IMAGES = [
 "kws": [
 105,
 104
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw18-kingma-1923",
@@ -7436,7 +7482,8 @@ const IMAGES = [
 "orig": "https://archiefrkfriesland.nl/archiefdata/advertenties/62217.jpg",
 "kws": [
 236
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw28-huitema-1920",
@@ -7499,7 +7546,7 @@ const IMAGES = [
 "w": 417,
 "h": 200,
 "t": "Rouwbericht van Joannes Groenestege, Steenwijkerwold 1866",
-"desc": "'Hedan overleed, tijdig voorzien met de H. H. Sacramenten der stervenden, onze waarde en teêr beminde Vader en Behuwdvader, JOANNES GROENESTEGE, in den ouderdom van 73 jaren en 10 maanden. Steenwijkerwold, den 26 Januarij 1866.' Ondertekend door E. en A. Tiel Groenestege en Titus en A.B. Groenestege-Spitzen (kw 46/47). Datum en leeftijd kloppen met het profiel.",
+"desc": "'Hedan overleed, tijdig voorzien met de H. H. Sacramenten der stervenden, onze waarde en teêr beminde Vader en Behuwdvader, JOANNES GROENESTEGE, in den ouderdom van 73 jaren en 10 maanden. Steenwijkerwold, den 26 Januarij 1866.' Ondertekend door E. en A. Tiel Groenestege en Titus en A.B. Groenestege-Spitzen (kw 46 en kw 47). Datum en leeftijd kloppen met het profiel.",
 "maker": "krantenadvertentie",
 "datum": "1866-01-26",
 "lic": "Archief RK Friesland (geen licentie vermeld)",
@@ -7514,7 +7561,8 @@ const IMAGES = [
 92,
 46,
 47
-]
+],
+"groep": "rouw"
 },
 {
 "id": "rouw-kw93-terwisscha-1862",
@@ -7539,7 +7587,8 @@ const IMAGES = [
 "kws": [
 93,
 92
-]
+],
+"groep": "rouw"
 },
 {
 "id": "stad-bolsward",
