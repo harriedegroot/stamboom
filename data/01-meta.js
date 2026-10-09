@@ -14,7 +14,7 @@
    40..43-alies-*    de stamboom van Alies Hoekstra
    Tijdperken, begrippen, plaatsen en het wijzigingslog gelden voor alle drie de stambomen.
    ===================================================================== */
-const VERSION = "Versie 19 · 8 oktober 2026";
+const VERSION = "Versie 20 · 9 oktober 2026";
 const OA = "https://www.openarchieven.nl/";
 const RKF_SCAN = n => `https://archiefrkfriesland.nl/archiefdata/advertenties/${n}.jpg`;
 const PEOPLE = [];
@@ -49,7 +49,7 @@ const LINES = {
        intro: "Van een doopsgezinde familie in Rauwerd, die in 1793 katholiek werd, via een schipper in Irnsum (Minne Meintes, die in 1811 de naam Boesma liet noteren) naar boeren rond Oosterwierum en Hidaard. Meinte Boersma trok met zijn gezin door Groningen, Friesland en Drenthe. Aangetrouwd: Poelsma's uit Leeuwarden en Teppema's uit Loënga en Tirns.",
        stem: [12, 24, 48, 96, 192] },
   13: { name: "Terwisscha van Scheltinga", sub: "Galema · Kooiker", region: "Scharnegoutum en Dronrijp",
-       intro: "Een familienaam die al vóór 1811 bestond: in 1692 trouwde in Makkum een Bocco Seerps Scheltinga. Zijn kleinzoon Titus Bokkes werd in 1726 bij Makkum geboren en trok rond 1746 met zijn zussen naar Weststellingwerf, waar hij zich ook Terwisscha noemde. Titus en Abeltje Jans woonden rond 1786–1796 in Ter Idzard; hun zoon Assuerus trouwde in Workum met de chirurgijnsdochter Sybrigje Koelman en trok naar Baarderadeel. Daarna Scharnegoutum, Tirns en Dronrijp. Hetzelfde voorouderpaar staat ook aan de kant van Kees, en een kleinzoon van Assuerus' dochter Apollonia was de heilige Titus Brandsma.",
+       intro: "Een familienaam die al vóór 1811 bestond: in 1692 trouwde in Makkum een Bocco Seerps Scheltinga. Zijn kleinzoon Titus Bokkes werd in 1726 bij Makkum geboren en trok rond 1746 met zijn zussen naar Weststellingwerf, waar hij zich ook Terwisscha noemde. Titus en Abeltje Jans woonden rond 1786–1796 in Ter Idzard; hun zoon Assuerus trouwde in Workum met de chirurgijnsdochter Sybrigje Koelman en trok naar Baarderadeel. Daarna Scharnegoutum, Tirns en Dronrijp. Hetzelfde voorouderpaar staat ook in de familietak De Groot · De Vries, en een kleinzoon van Assuerus' dochter Apollonia was de heilige Titus Brandsma.",
        stem: [13, 26, 52, 104, 208, 416, 832, 1664] },
   14: { name: "Huitema", sub: "Flapper · Witteveen", region: "Wonseradeel en Wymbritseradeel",
        intro: "Boeren uit Zuidwest-Friesland: Abbega, Hieslum, Idzega, Greonterp, Tjalhuizum en Scharnegoutum. Aangetrouwd: Van der Wey uit Hieslum, Witteveen uit Snikzwaag, Flapper en Rollema uit Hartwerd en Exmorra, en Jorna uit Lollum en Midlum. Tjitte Huitema en Riemke de Jong kregen minstens twaalf kinderen.",
@@ -64,9 +64,9 @@ const CONTEXT = [
   { y: 1580, y2: 1795, short: "Schuilkerken", t: "Katholiek geloof alleen in het verborgen", d: "In de Republiek was de katholieke eredienst verboden. Katholieken kerkten in schuilkerken of staties en trouwden voor de wet in de Hervormde kerk.", tl: false },
   { y: 1795, short: "1795", t: "Bataafse Revolutie", d: "Vrijheid van godsdienst. Katholieken mogen weer openlijk kerken bouwen." },
   { y: 1744, y2: 1745, short: "Veepest", t: "Veepest", d: "Van oktober 1744 tot september 1745 stierven in Friesland bijna 200.000 runderen; in 1769–1770 nog eens ruim 98.000. Voor een Friese boer was de koe alles: melk, boter, kaas en geld. Het quotisatiekohier van 1749 noemt soms nog de 'verloren beesten'." },
-  { y: 1749, short: "1749", t: "Quotisatiekohier", d: "Een belastingtelling van alle Friese huishoudens. In de stamboom van Harrie staat Hylke Tysses erin als boer in Haskerhorne, 'matig in staat'; in die van Alies Ids Wouters als eigenerfde boer in Goingarijp." },
-  { y: 1811, short: "1811", t: "Burgerlijke stand en vaste achternamen", d: "Gemeenten registreren geboorte, huwelijk en overlijden. In 1811 en 1812 laten Friese families een vaste achternaam inschrijven: in de stamboom van Harrie onder meer De Groot, Kingma, Boesma, Westendorp, De Jong, Meinsma en Van der Wey, in die van Alies onder meer Bakker, Schaap, Gaastra, Van der Molen, Klijnstra en Van der Veer." },
-  { y: 1825, short: "1825", t: "Watersnood", d: "Op 4 februari 1825 braken langs de Zuiderzee de dijken door. 379 doden, van wie 305 in Overijssel; 60 procent van Friesland stond onder water. Kuinre en Blankenham (stamboom van Harrie) lagen aan die kust, en bij Lemmer (stamboom van Alies) brak de dijk door." },
+  { y: 1749, short: "1749", t: "Quotisatiekohier", d: "Een belastingtelling van alle Friese huishoudens. In de familie De Groot · Boersma staat Hylke Tysses erin als boer in Haskerhorne, 'matig in staat'; in de familie Hoekstra · Bakker Ids Wouters als eigenerfde boer in Goingarijp." },
+  { y: 1811, short: "1811", t: "Burgerlijke stand en vaste achternamen", d: "Gemeenten registreren geboorte, huwelijk en overlijden. In 1811 en 1812 laten Friese families een vaste achternaam inschrijven: in de familie De Groot · Boersma onder meer De Groot, Kingma, Boesma, Westendorp, De Jong, Meinsma en Van der Wey, in de familie Hoekstra · Bakker onder meer Bakker, Schaap, Gaastra, Van der Molen, Klijnstra en Van der Veer." },
+  { y: 1825, short: "1825", t: "Watersnood", d: "Op 4 februari 1825 braken langs de Zuiderzee de dijken door. 379 doden, van wie 305 in Overijssel; 60 procent van Friesland stond onder water. Kuinre en Blankenham (familie De Groot · Boersma) lagen aan die kust, en bij Lemmer (familie Hoekstra · Bakker) brak de dijk door." },
   { y: 1826, y2: 1827, short: "Koortsjaren", t: "Koortsjaren", d: "Na de watersnood bleef brak water op het land staan. In 1826 en 1827 eiste de malaria ('tusschenpoozende koortsen') duizenden levens; rond Heerenveen viel massale sterfte. In de twee stambomen overlijden in 1826 veertien voorouders, dertien van hen tussen juli en november. Doodsoorzaken staan niet in de akten: het verband is context, geen bewijs." },
   { y: 1832, short: "1832", t: "Kadaster", d: "Het eerste landelijke kadaster legt van elk perceel de eigenaar vast. Daaruit blijkt wie grond bezat en wie pachtte." },
   { y: 1853, short: "1853", t: "Bisschoppen terug", d: "Herstel van de katholieke kerkorganisatie in Nederland. Overal verrijzen nieuwe katholieke kerken." },
@@ -100,8 +100,8 @@ const GLOSSARY = [
   ["DTB", "Doop-, trouw- en begraafboeken van de kerken, vóór de burgerlijke stand van 1811."],
   ["Ondertrouw", "Aantekening van een voorgenomen huwelijk, vaak bij het gerecht of de kerk, enkele weken voor de bruiloft."],
   ["Kerknaam", "Latijnse naam die katholieken bij doop of huwelijk kregen: Abeltje werd Apollonia, Saapke Sabina, Akke Agatha."],
-  ["Kloosternaam", "Naam die een kloosterzuster of -broeder bij intrede kreeg, zoals Rembertus voor Agatha ten Berge (stamboom van Harrie)."],
-  ["Sluiswachter", "Man die een sluis bediende en het waterpeil bewaakte. In de stamboom van Harrie was Anne Thijsses de Groot het in 1848 in Steggerda."],
+  ["Kloosternaam", "Naam die een kloosterzuster of -broeder bij intrede kreeg, zoals Rembertus voor Agatha ten Berge (familie De Groot · Boersma)."],
+  ["Sluiswachter", "Man die een sluis bediende en het waterpeil bewaakte. In de familie De Groot · Boersma was Anne Thijsses de Groot het in 1848 in Steggerda."],
   ["Kastelein", "Herbergier, uitbater van een herberg of café."],
   ["Veenbaas", "Ondernemer die turf liet steken, drogen en per schip vervoeren."],
   ["Ketelboeter", "Ambachtsman die koperen en ijzeren ketels en potten repareerde."],
