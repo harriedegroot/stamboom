@@ -105,7 +105,7 @@ const ACHTERNAMEN = [
     "https://en.wikipedia.org/wiki/De_Vries"
    ]
   ],
-  "familie": "Twee lijnen dragen deze naam: bij Harrie de katholieke boeren uit Ter Idzard en Steggerda, bij Alies de boeren uit Broek en Ouwster-Nijega. Onze gegevens leggen geen verband tussen beide families.",
+  "familie": "Twee lijnen dragen deze naam: in de familie De Groot · Boersma de katholieke boeren uit Ter Idzard en Steggerda, in de familie Hoekstra · Bakker de boeren uit Broek en Ouwster-Nijega. Onze gegevens leggen geen verband tussen beide families.",
   "familie_st": "A"
  },
  {
